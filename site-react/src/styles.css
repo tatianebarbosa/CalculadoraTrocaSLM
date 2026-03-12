@@ -4,7 +4,7 @@
 :root {
   color-scheme: light;
   --shell-max: 1680px;
-  --shell-gap: 96px;
+  --shell-gap: 120px;
   --font-ui: "Nunito Sans", "Segoe UI", "Aptos", sans-serif;
   --font-display: "Nunito Sans", "Segoe UI", "Aptos", sans-serif;
   --bg: #f4f5f7;
@@ -85,7 +85,7 @@ select {
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   padding: 20px max(16px, calc(var(--shell-gap) / 2)) 18px;
-  background: #f7f8fa;
+  background: var(--bg);
 }
 
 .site-header__brand {
@@ -1328,7 +1328,7 @@ input:disabled {
 /* Ajustes responsivos */
 @media (max-width: 1120px) {
   .app-shell {
-    --shell-gap: 64px;
+    --shell-gap: 80px;
   }
 
   .login-layout,
@@ -1421,7 +1421,7 @@ input:disabled {
 
 @media (max-width: 680px) {
   .app-shell {
-    --shell-gap: 32px;
+    --shell-gap: 40px;
     width: var(--shell-width);
     margin: 10px auto 24px;
   }
