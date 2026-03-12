@@ -82,10 +82,10 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
-  padding: 24px max(16px, calc(var(--shell-gap) / 2), calc((100vw - var(--shell-max)) / 2)) 18px;
+  padding: 20px clamp(16px, 2vw, 32px) 18px;
+  background: #f7f8fa;
 }
 
 .site-header__brand {
