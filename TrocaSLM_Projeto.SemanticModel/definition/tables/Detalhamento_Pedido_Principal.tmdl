@@ -1,0 +1,53 @@
+table Detalhamento_Pedido_Principal
+	lineageTag: a17e0280-cda4-4c84-b29b-4d1e1bf3d146
+
+	measure 'Valor Detalhamento Pedido Principal' =
+			
+			SWITCH(
+			    SELECTEDVALUE(Detalhamento_Pedido_Principal[Item]),
+			    "SLM base", [SLM Base Principal],
+			    "Workbook obrigatório", [Workbook Principal],
+			    "Matemática Aplicada", [Matematica Principal],
+			    "Pearson Math", [Pearson Math Principal],
+			    "Pearson Science", [Pearson Science Principal],
+			    "Valor considerado no pedido principal", [Valor Considerado no Pedido Principal],
+			    "Valor pago dos materiais", [Valor Pago dos Materiais]
+			)
+		formatString: R$ #,##0.00
+		lineageTag: 4cb9f931-5f1f-41b9-a1b3-93d5d33f08f2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Ordem
+		formatString: 0
+		lineageTag: db7142aa-d2d1-4ca2-a4c4-a13284f8c4d1
+		summarizeBy: none
+		sourceColumn: [Ordem]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Item
+		lineageTag: 4cc2da2c-1bfc-48f0-90c8-6915dcbd8adf
+		summarizeBy: none
+		sourceColumn: [Item]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Detalhamento_Pedido_Principal = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "Ordem", INTEGER,
+				    "Item", STRING,
+				    {
+				        {1, "SLM base"},
+				        {2, "Workbook obrigatório"},
+				        {3, "Matemática Aplicada"},
+				        {4, "Pearson Math"},
+				        {5, "Pearson Science"},
+				        {6, "Valor considerado no pedido principal"},
+				        {7, "Valor pago dos materiais"}
+				    }
+				)
+
+	annotation PBI_Id = 6f09dc6ac8bb44f88ff44d3b8f5dde13

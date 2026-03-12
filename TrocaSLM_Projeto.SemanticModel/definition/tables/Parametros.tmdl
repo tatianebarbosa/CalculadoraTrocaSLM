@@ -1,0 +1,25 @@
+table Parametros
+	lineageTag: 3506e426-6a03-4c13-8f45-a2bb733fb833
+
+	column Valor
+		dataType: string
+		lineageTag: 8bc2022b-cc8a-41b2-9e00-9e6e894d61a7
+		summarizeBy: none
+		sourceColumn: Valor
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Parametros = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\tatiane.xavier\OneDrive - SEB - Sistema Educacional Brasileiro\TrocaSLM\base_powerbi_troca_slm.xlsx"), null, true),
+				    Parametros_Sheet = Fonte{[Item="Parametros",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Parametros_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"Tabela", type text}, {"Valor", type any}}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Tipo Alterado",{"Tabela"})
+				in
+				    #"Colunas Removidas"
+
+	annotation PBI_ResultType = Table
+

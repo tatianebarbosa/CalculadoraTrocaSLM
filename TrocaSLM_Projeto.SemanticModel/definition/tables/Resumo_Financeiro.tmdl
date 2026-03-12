@@ -1,0 +1,51 @@
+table Resumo_Financeiro
+	lineageTag: 814f6150-b09d-44df-8a1c-2f7a4846dc26
+
+	measure 'Valor Resumo Financeiro' =
+			
+			SWITCH(
+			    SELECTEDVALUE(Resumo_Financeiro[Item]),
+			    "Valor dos materiais que ficará disponível na loja", [Valor dos Materiais que Ficara Disponivel na Loja],
+			    "Valor dos juros que ficará disponível na loja", [Valor dos Juros que Ficara Disponivel na Loja],
+			    "Valor total que ficará disponível na loja", [Valor Total que Ficara Disponivel na Loja],
+			    "Valor da nova compra", [Valor da Nova Compra],
+			    "Diferença a pagar pelo responsável", [Diferenca a Pagar pelo Responsavel],
+			    "Saldo que sobraria na loja", [Saldo que Sobraria na Loja]
+			)
+		formatString: R$ #,##0.00
+		lineageTag: 6d341e94-2658-4fb8-80d6-a3b1bd24500d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Ordem
+		formatString: 0
+		lineageTag: db7f6b65-af5e-4c30-a320-3164600f2bf5
+		summarizeBy: none
+		sourceColumn: [Ordem]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Item
+		lineageTag: fdfba0d0-ec76-4ed5-bd2e-6a5d42766d79
+		summarizeBy: none
+		sourceColumn: [Item]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Resumo_Financeiro = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "Ordem", INTEGER,
+				    "Item", STRING,
+				    {
+				        {1, "Valor dos materiais que ficará disponível na loja"},
+				        {2, "Valor dos juros que ficará disponível na loja"},
+				        {3, "Valor total que ficará disponível na loja"},
+				        {4, "Valor da nova compra"},
+				        {5, "Diferença a pagar pelo responsável"},
+				        {6, "Saldo que sobraria na loja"}
+				    }
+				)
+
+	annotation PBI_Id = c24ee81f3ab24557af8e0146516a4c26

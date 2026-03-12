@@ -1,0 +1,20 @@
+table SimNao_Principal_Science
+	lineageTag: a5b8c3f0-50b2-4e01-baf3-72b603322f4d
+
+	column Opcao
+		lineageTag: 16a4b91a-2c6b-4bc6-8a83-85d028d3dcba
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Opcao]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition SimNao_Principal_Science = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "Opcao", STRING,
+				    { {"Sim"}, {"Não"} }
+				)
+
+	annotation PBI_Id = 1e567d0a9b214509b50f0f44fe7d99e1

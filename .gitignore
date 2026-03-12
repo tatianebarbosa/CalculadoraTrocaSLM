@@ -1,0 +1,12 @@
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+site-react/node_modules/
+site-react/dist/
+site-react/.env
+site-react/.env.local
+site-react/.env.sharepoint
+site-react/.env.sharepoint.local
+site-react/vite-dev.out
+site-react/vite-dev.err
+site-react/scripts/__pycache__/
+tmp*.xlsx

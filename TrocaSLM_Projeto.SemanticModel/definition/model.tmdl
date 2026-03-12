@@ -1,0 +1,31 @@
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["Base","Parametros","Como_Usar"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Base
+ref table Parametros
+ref table Como_Usar
+ref table Juros
+ref table Voucher_Nova
+ref table PedidoPrincipal_Turma
+ref table NovaCompra_Turma
+ref table SimNao_Principal
+ref table SimNao_Principal_Science
+ref table Voucher_Principal
+ref table SimNao_Nova
+ref table SimNao_Nova_Science
+ref table Detalhamento_Pedido_Principal
+ref table Resumo_Financeiro
+
+ref cultureInfo pt-BR
+

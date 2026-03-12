@@ -1,0 +1,85 @@
+table Como_Usar
+	isHidden
+	lineageTag: 9dc801ae-7c16-450d-b7c7-9eaa13196c71
+
+	column 'Arquivo base para Power BI - Calculadora de Troca SLM'
+		dataType: string
+		isHidden
+		lineageTag: 72fad6c6-19e1-4c75-bb0c-628a8460f373
+		summarizeBy: none
+		sourceColumn: Arquivo base para Power BI - Calculadora de Troca SLM
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column2
+		dataType: string
+		isHidden
+		lineageTag: 14c82748-92c9-4d9b-a085-c595ccfdabe3
+		summarizeBy: none
+		sourceColumn: Column2
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column3
+		dataType: string
+		isHidden
+		lineageTag: db3f9d86-71f7-428b-b923-e6b013ff639d
+		summarizeBy: none
+		sourceColumn: Column3
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column4
+		dataType: string
+		isHidden
+		lineageTag: df63a8de-8d24-49e0-a02f-46b825317df3
+		summarizeBy: none
+		sourceColumn: Column4
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column5
+		dataType: string
+		isHidden
+		lineageTag: 06f4b41a-be59-4fce-8287-976d5ad0c73e
+		summarizeBy: none
+		sourceColumn: Column5
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column6
+		dataType: string
+		isHidden
+		lineageTag: 7075f799-a524-4418-bec2-2d1b6a8c9fea
+		summarizeBy: none
+		sourceColumn: Column6
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Como_Usar = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\tatiane.xavier\OneDrive - SEB - Sistema Educacional Brasileiro\TrocaSLM\base_powerbi_troca_slm.xlsx"), null, true),
+				    Como_Usar_Sheet = Fonte{[Item="Como_Usar",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Como_Usar_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"Arquivo base para Power BI - Calculadora de Troca SLM", type text}, {"Column2", type any}, {"Column3", type any}, {"Column4", type any}, {"Column5", type any}, {"Column6", type any}})
+				in
+				    #"Tipo Alterado"
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+

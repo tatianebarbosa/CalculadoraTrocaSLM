@@ -1,0 +1,19 @@
+{
+  "name": "site-react",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "refresh:catalog": "node ./scripts/export_catalog_snapshot.mjs",
+    "build": "npm run refresh:catalog && vite build",
+    "build:sharepoint": "npm run refresh:catalog && vite build --mode sharepoint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.1.4",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "vite": "^7.3.1"
+  }
+}

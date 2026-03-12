@@ -1,0 +1,220 @@
+table SimNao_Principal
+	lineageTag: 246c009d-6ba2-4b78-a060-c3a2054c09f7
+
+	measure 'Valor dos Materiais que Ficara Disponivel na Loja' =
+			
+			([SLM Base Principal] * (1 - [Voucher Principal %]))
+			+ [Workbook Principal]
+			+ [Matematica Principal]
+			+ [Pearson Math Principal]
+			+ [Pearson Science Principal]
+		formatString: R$ #,##0.00
+		lineageTag: 803b6301-d1ff-4d50-b75b-f66eb598c56a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Valor dos Juros que Ficara Disponivel na Loja' =
+			
+			[Valor Juros]
+		formatString: R$ #,##0.00
+		lineageTag: ad4fa970-8a17-4b0f-b565-ebd086d398ec
+
+	measure 'Valor Total que Ficara Disponivel na Loja' =
+			
+			[Valor dos Materiais que Ficara Disponivel na Loja]
+			+ [Valor dos Juros que Ficara Disponivel na Loja]
+		formatString: R$ #,##0.00
+		lineageTag: 8804036d-7490-4b1b-8364-b2d8df2d5eb6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Valor da Nova Compra' =
+			
+			([SLM Base Nova] * (1 - [Voucher Nova %]))
+			+ [Workbook Nova]
+			+ [Matematica Nova]
+			+ [Pearson Math Nova]
+			+ [Pearson Science Nova]
+		formatString: R$ #,##0.00
+		lineageTag: 230187ab-19e1-4c55-b54e-64e8c3ce5bd6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Diferenca a Pagar pelo Responsavel' =
+			
+			VAR dif = [Valor da Nova Compra] - [Valor Total que Ficara Disponivel na Loja]
+			RETURN IF(dif > 0, dif, 0)
+		formatString: R$ #,##0.00
+		lineageTag: dd5993b3-7724-4d32-af0d-907126a072c9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Saldo que Sobraria na Loja' =
+			
+			VAR sobra = [Valor Total que Ficara Disponivel na Loja] - [Valor da Nova Compra]
+			RETURN IF(sobra > 0, sobra, 0)
+		formatString: R$ #,##0.00
+		lineageTag: 4b3aac69-07c6-44ff-90e6-664aff33b88e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Pode Fazer a Troca' =
+			
+			IF(
+			    [Saldo que Sobraria na Loja] > 0,
+			    "NAO PODE TROCAR",
+			    "PODE TROCAR"
+			)
+		lineageTag: b0e56cfd-73c2-4131-ba8d-9ad79b0ddf7e
+
+	measure 'Valor Considerado no Pedido Principal' =
+			
+			[Valor dos Materiais que Ficara Disponivel na Loja]
+		formatString: R$ #,##0.00
+		lineageTag: 0d74ed63-1f72-4b51-8a8b-a0c1c1e65839
+
+	measure 'Valor Pago dos Materiais' =
+			
+			[Valor dos Materiais que Ficara Disponivel na Loja]
+		formatString: R$ #,##0.00
+		lineageTag: 7d7e9af6-5745-42fc-8a0b-6d19b16f0b43
+
+	measure 'Cor do Resultado' =
+			
+			IF([Pode Fazer a Troca] = "PODE TROCAR", "#D8E7D2", "#F3C9C9")
+		lineageTag: 9f4e242b-4b57-4588-8846-c2a51f6f9121
+
+	measure 'Cor do Texto Resultado' =
+			
+			IF([Pode Fazer a Troca] = "PODE TROCAR", "#1F5A34", "#8B1E1E")
+		lineageTag: 99b9f69c-d035-47ad-a0bf-18d280c8125d
+
+	measure 'Resumo Simples' =
+			
+			IF(
+			    [Pode Fazer a Troca] = "NAO PODE TROCAR",
+			    "Não pode seguir com a troca. Sobraria o valor de " &
+			    FORMAT([Saldo que Sobraria na Loja], "R$ #,##0.00") &
+			    " na loja.",
+			    IF(
+			        [Diferenca a Pagar pelo Responsavel] > 0,
+			        "Pode seguir com a troca. O responsável deverá pagar a diferença de " &
+			        FORMAT([Diferenca a Pagar pelo Responsavel], "R$ #,##0.00") & ".",
+			        "Pode seguir com a troca sem diferença a pagar."
+			    )
+			)
+		lineageTag: f44a4c0c-8256-40dd-91a5-67860809fea8
+
+	measure 'Motivo da Analise' =
+			
+			IF(
+			    [Pode Fazer a Troca] = "NAO PODE TROCAR",
+			    "A nova compra possui valor menor que o valor que ficará disponível na loja, gerando saldo remanescente.",
+			    IF(
+			        [Diferenca a Pagar pelo Responsavel] > 0,
+			        "A troca pode seguir, mas será necessário pagamento de diferença pelo responsável.",
+			        "A troca pode seguir sem diferença a pagar."
+			    )
+			)
+		lineageTag: ab52c9d2-7b54-478b-ad0c-ab9097b802cd
+
+	measure 'Mensagem para Escola' =
+			
+			VAR turmaPrincipal = SELECTEDVALUE(PedidoPrincipal_Turma[Turma])
+			VAR turmaNova = SELECTEDVALUE(NovaCompra_Turma[Turma])
+			VAR valorPrincipal = FORMAT([Valor Considerado no Pedido Principal], "R$ #,##0.00")
+			VAR valorNova = FORMAT([Valor da Nova Compra], "R$ #,##0.00")
+			VAR diferenca = FORMAT([Diferenca a Pagar pelo Responsavel], "R$ #,##0.00")
+			VAR saldo = FORMAT([Saldo que Sobraria na Loja], "R$ #,##0.00")
+			VAR semSelecao =
+			    NOT HASONEVALUE(PedidoPrincipal_Turma[Turma]) ||
+			    NOT HASONEVALUE(NovaCompra_Turma[Turma])
+			RETURN
+			IF(
+			    semSelecao,
+			    "Selecione a turma do pedido principal e a turma da nova compra para gerar a mensagem pronta para envio à escola.",
+			    IF(
+			        [Pode Fazer a Troca] = "NAO PODE TROCAR",
+			        "Não vamos seguir com a troca neste caso. O pedido principal foi realizado para a turma " & turmaPrincipal &
+			        ", no valor de " & valorPrincipal &
+			        ", e a nova compra seria para a turma " & turmaNova &
+			        ", no valor de " & valorNova &
+			        ". Após a análise da composição do pedido principal, da nova compra e do valor efetivamente pago, identificamos saldo remanescente de " & saldo &
+			        " na loja. Por esse motivo, a troca não deve ser concluída neste cenário.",
+			        IF(
+			            [Diferenca a Pagar pelo Responsavel] > 0,
+			            "Vamos seguir com a troca neste caso. O pedido principal foi realizado para a turma " & turmaPrincipal &
+			            ", no valor de " & valorPrincipal &
+			            ", e a nova compra será para a turma " & turmaNova &
+			            ", no valor de " & valorNova &
+			            ". Após a análise da composição do pedido principal, da nova compra e do valor efetivamente pago, identificamos que é possível seguir com a troca neste cenário. Como o valor disponível na loja não é suficiente para cobrir totalmente a nova compra, haverá diferença de " & diferenca &
+			            " a pagar pelo responsável. Após a confirmação da troca, será necessário aguardar 24 horas e, depois desse prazo, a escola deverá realizar o ajuste da matrícula do(a) aluno(a) na turma correta dentro do LEX. Somente após esse ajuste o valor ficará disponível na loja para realização da nova compra. Antes desse prazo, não deve ser feita nenhuma alteração no LEX. No momento da compra, orientem o responsável a verificar se o valor foi abatido corretamente antes de finalizar o pedido.",
+			            "Vamos seguir com a troca neste caso. O pedido principal foi realizado para a turma " & turmaPrincipal &
+			            ", no valor de " & valorPrincipal &
+			            ", e a nova compra será para a turma " & turmaNova &
+			            ", no valor de " & valorNova &
+			            ". Após a análise da composição do pedido principal, da nova compra e do valor efetivamente pago, identificamos que é possível seguir com a troca neste cenário. Como o valor disponível na loja é suficiente para a nova compra, não haverá diferença a pagar pelo responsável. Após a confirmação da troca, será necessário aguardar 24 horas e, depois desse prazo, a escola deverá realizar o ajuste da matrícula do(a) aluno(a) na turma correta dentro do LEX. Somente após esse ajuste o valor ficará disponível na loja para realização da nova compra. Antes desse prazo, não deve ser feita nenhuma alteração no LEX. No momento da compra, orientem o responsável a verificar se o valor foi abatido corretamente antes de finalizar o pedido."
+			        )
+			    )
+			)
+		lineageTag: 5964ce8f-ff13-4654-8d79-6a6f9b27b8fa
+
+	measure 'Mensagem para Responsavel' =
+			
+			VAR turmaPrincipal = SELECTEDVALUE(PedidoPrincipal_Turma[Turma])
+			VAR turmaNova = SELECTEDVALUE(NovaCompra_Turma[Turma])
+			VAR valorPrincipal = FORMAT([Valor Considerado no Pedido Principal], "R$ #,##0.00")
+			VAR valorNova = FORMAT([Valor da Nova Compra], "R$ #,##0.00")
+			VAR diferenca = FORMAT([Diferenca a Pagar pelo Responsavel], "R$ #,##0.00")
+			VAR saldo = FORMAT([Saldo que Sobraria na Loja], "R$ #,##0.00")
+			VAR semSelecao =
+			    NOT HASONEVALUE(PedidoPrincipal_Turma[Turma]) ||
+			    NOT HASONEVALUE(NovaCompra_Turma[Turma])
+			RETURN
+			IF(
+			    semSelecao,
+			    "Selecione a turma do pedido principal e a turma da nova compra para gerar a mensagem pronta para envio ao responsável.",
+			    IF(
+			        [Pode Fazer a Troca] = "NAO PODE TROCAR",
+			        "Não será possível seguir com a troca do material neste caso. O pedido principal foi realizado para a turma " & turmaPrincipal &
+			        ", no valor de " & valorPrincipal &
+			        ", e a nova compra seria para a turma " & turmaNova &
+			        ", no valor de " & valorNova &
+			        ". Após a análise da composição do pedido principal, da nova compra e do valor efetivamente pago, identificamos saldo remanescente de " & saldo &
+			        " na loja. Por esse motivo, a troca não deve ser concluída neste cenário.",
+			        IF(
+			            [Diferenca a Pagar pelo Responsavel] > 0,
+			            "Vamos seguir com a troca do material neste caso. O pedido principal foi realizado para a turma " & turmaPrincipal &
+			            ", no valor de " & valorPrincipal &
+			            ", e a nova compra será para a turma " & turmaNova &
+			            ", no valor de " & valorNova &
+			            ". Após a análise da composição do pedido principal, da nova compra e do valor efetivamente pago, identificamos que é possível seguir com a troca neste cenário. Como o valor disponível na loja não é suficiente para cobrir totalmente a nova compra, haverá diferença de " & diferenca &
+			            " a pagar. Após a confirmação da troca, será necessário aguardar 24 horas e, depois desse prazo, avisar a escola para que ela realize o ajuste da matrícula na turma correta dentro do LEX. Somente após esse ajuste o valor ficará disponível na loja para realização da nova compra. Antes de finalizar o pedido, orientamos que seja verificado se o valor foi abatido corretamente.",
+			            "Vamos seguir com a troca do material neste caso. O pedido principal foi realizado para a turma " & turmaPrincipal &
+			            ", no valor de " & valorPrincipal &
+			            ", e a nova compra será para a turma " & turmaNova &
+			            ", no valor de " & valorNova &
+			            ". Após a análise da composição do pedido principal, da nova compra e do valor efetivamente pago, identificamos que é possível seguir com a troca neste cenário. Como o valor disponível na loja é suficiente para a nova compra, não haverá diferença a pagar. Após a confirmação da troca, será necessário aguardar 24 horas e, depois desse prazo, avisar a escola para que ela realize o ajuste da matrícula na turma correta dentro do LEX. Somente após esse ajuste o valor ficará disponível na loja para realização da nova compra. Antes de finalizar o pedido, orientamos que seja verificado se o valor foi abatido corretamente."
+			        )
+			    )
+			)
+		lineageTag: d9a2b7bc-c621-4534-8ce8-bc7e8897cc09
+
+	column Opcao
+		lineageTag: 86767021-0704-4caa-aafb-d5704e84e6a0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Opcao]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition SimNao_Principal = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "Opcao", STRING,
+				    { {"Sim"}, {"Não"} }
+				)
+
+	annotation PBI_Id = ef2b91db002c4406ac9c79683fe69bf2
+

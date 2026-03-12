@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "TrocaSLM_Projeto"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "2d7dc0ce-2a6e-4d4f-b2ff-0b24b75432e9"
+  }
+}

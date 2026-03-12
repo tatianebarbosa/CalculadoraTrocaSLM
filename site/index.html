@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de Troca SLM</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <!-- Cabecalho principal e bloco da logo -->
+      <header class="hero">
+        <div class="hero__copy">
+          <p class="hero__eyebrow">Maple Bear</p>
+          <h1>Calculadora de Troca de Material</h1>
+          <p class="hero__subtitle">
+            Ferramenta interna para analisar a troca de material entre o pedido
+            principal e a nova compra.
+          </p>
+        </div>
+
+        <div class="logo-slot" id="logoSlot">
+          <div class="logo-slot__badge">Logo</div>
+          <div class="logo-slot__text">
+            <strong>Espaço da marca</strong>
+            <span>Adicione a logo oficial da Maple Bear aqui.</span>
+          </div>
+          <label class="logo-slot__button" for="logoUpload">Escolher imagem</label>
+          <input id="logoUpload" type="file" accept="image/*" hidden />
+        </div>
+      </header>
+
+      <!-- Regra resumida da operacao -->
+      <section class="rules-card">
+        <div>
+          <h2>Como a análise funciona</h2>
+          <p>
+            A análise compara o pedido principal com a nova compra, considerando
+            SLM, workbook, Matemática Aplicada e Pearson selecionados. Quando
+            Pearson for adquirido junto com o SLM, será considerado desconto de
+            R$ 44 por Pearson selecionado. O voucher é aplicado somente sobre o
+            SLM base, e os juros entram como crédito financeiro adicional.
+          </p>
+        </div>
+        <div class="rules-card__highlight">
+          Se sobrar valor na loja, a troca não pode seguir. Se faltar valor, a
+          troca pode seguir com pagamento da diferença.
+        </div>
+      </section>
+
+      <!-- Paineis da calculadora -->
+      <main class="dashboard-grid">
+        <section class="panel panel--form">
+          <div class="panel__header">
+            <h2>Pedido Principal</h2>
+            <span>Campos de entrada</span>
+          </div>
+
+          <div class="form-stack">
+            <label class="field">
+              <span>Turma</span>
+              <select id="principalTurma"></select>
+            </label>
+
+            <div class="field">
+              <span>Pearson Math?</span>
+              <div class="segmented" data-target="principalPearsonMath"></div>
+            </div>
+
+            <div class="field">
+              <span>Pearson Science?</span>
+              <div class="segmented" data-target="principalPearsonScience"></div>
+            </div>
+
+            <label class="field">
+              <span>Voucher no SLM (R$)</span>
+              <input id="principalVoucher" type="number" min="0" step="1" value="0" />
+            </label>
+
+            <label class="field">
+              <span>Valor dos juros (R$)</span>
+              <input id="jurosValor" type="number" min="0" step="1" value="0" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel panel--detail">
+          <div class="panel__header">
+            <h2>Detalhamento do Pedido Principal</h2>
+            <span>Valores reais da composição</span>
+          </div>
+
+          <table class="detail-table">
+            <tbody id="principalDetailRows"></tbody>
+          </table>
+        </section>
+
+        <section class="panel panel--form">
+          <div class="panel__header">
+            <h2>Nova Compra</h2>
+            <span>Campos de entrada</span>
+          </div>
+
+          <div class="form-stack">
+            <label class="field">
+              <span>Turma</span>
+              <select id="novaTurma"></select>
+            </label>
+
+            <div class="field">
+              <span>Pearson Math?</span>
+              <div class="segmented" data-target="novaPearsonMath"></div>
+            </div>
+
+            <div class="field">
+              <span>Pearson Science?</span>
+              <div class="segmented" data-target="novaPearsonScience"></div>
+            </div>
+
+            <label class="field">
+              <span>Voucher no SLM (R$)</span>
+              <input id="novaVoucher" type="number" min="0" step="1" value="0" />
+            </label>
+          </div>
+
+          <div class="micro-summary">
+            <div>
+              <span>Turma atual</span>
+              <strong id="novaTurmaPreview">-</strong>
+            </div>
+            <div>
+              <span>Valor previsto</span>
+              <strong id="novaValorPreview">R$ 0,00</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel--summary">
+          <div class="panel__header">
+            <h2>Resumo da Troca</h2>
+            <span>Visão executiva</span>
+          </div>
+
+          <div class="summary-cards">
+            <article class="metric-card metric-card--green">
+              <span>Valor pago até agora</span>
+              <strong id="cardValorPago">R$ 0,00</strong>
+            </article>
+            <article class="metric-card metric-card--blue">
+              <span>Novo valor do pedido</span>
+              <strong id="cardNovoPedido">R$ 0,00</strong>
+            </article>
+            <article class="metric-card metric-card--gold">
+              <span>Saldo na loja disponível</span>
+              <strong id="cardSaldoDisponivel">R$ 0,00</strong>
+            </article>
+            <article class="metric-card metric-card--peach">
+              <span>Diferença a pagar</span>
+              <strong id="cardDiferenca">R$ 0,00</strong>
+            </article>
+          </div>
+
+          <div class="status-banner" id="statusBanner">PODE TROCAR</div>
+          <div class="inline-warning" id="voucherNotice" hidden></div>
+
+          <div class="summary-actions">
+            <button class="action-chip" type="button" data-scroll="financialPanel">
+              Relatório Financeiro
+            </button>
+            <button class="action-chip" type="button" data-scroll="escolaPanel">
+              Mensagem para a Escola
+            </button>
+            <button class="action-chip" type="button" data-scroll="responsavelPanel">
+              Mensagem para o Responsável
+            </button>
+          </div>
+        </section>
+
+        <section class="panel panel--detail">
+          <div class="panel__header">
+            <h2>Detalhamento da Nova Compra</h2>
+            <span>Composição completa do novo pedido</span>
+          </div>
+
+          <table class="detail-table">
+            <tbody id="novaDetailRows"></tbody>
+          </table>
+        </section>
+
+        <section class="panel panel--financial" id="financialPanel">
+          <div class="panel__header">
+            <h2>Relatório Financeiro</h2>
+            <span>Bloco operacional</span>
+          </div>
+
+          <table class="financial-table">
+            <tbody id="financialRows"></tbody>
+          </table>
+        </section>
+
+        <section class="panel panel--simple">
+          <div class="panel__header">
+            <h2>Resumo Simples</h2>
+            <span>Texto interno</span>
+          </div>
+
+          <p class="simple-text" id="simpleSummary"></p>
+
+          <div class="cta-row">
+            <button class="cta-button" id="copyEscolaButton" type="button">
+              Copiar mensagem para a escola
+            </button>
+            <button class="cta-button" id="copyResponsavelButton" type="button">
+              Copiar mensagem para o responsável
+            </button>
+          </div>
+        </section>
+
+        <section class="panel panel--message" id="escolaPanel">
+          <div class="panel__header">
+            <h2>Mensagem pronta para envio à escola</h2>
+            <span>Texto completo</span>
+          </div>
+          <div class="message-box" id="schoolMessage"></div>
+        </section>
+
+        <section class="panel panel--message" id="responsavelPanel">
+          <div class="panel__header">
+            <h2>Mensagem pronta para envio ao responsável</h2>
+            <span>Texto completo</span>
+          </div>
+          <div class="message-box" id="guardianMessage"></div>
+        </section>
+      </main>
+
+      <!-- Credito simples da pagina -->
+      <footer class="page-credit" aria-label="Credito de desenvolvimento">
+        Desenvolvido por Tatiane Xavier · Março/2026
+      </footer>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

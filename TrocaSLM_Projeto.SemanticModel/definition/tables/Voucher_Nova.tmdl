@@ -1,0 +1,37 @@
+table Voucher_Nova
+	lineageTag: dded39c6-a38f-40ce-af76-895b720f1b51
+
+	measure 'Voucher Nova Selecionado' =
+			
+			SELECTEDVALUE(Voucher_Nova[Percentual], 0)
+		formatString: 0
+		lineageTag: 6f71829b-c79c-4f20-a17b-ef2d5b1270b3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Voucher Nova %' =
+			
+			DIVIDE([Voucher Nova Selecionado], 100)
+		lineageTag: 955420fe-1298-4093-99f2-919acfa26240
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Percentual
+		formatString: 0
+		lineageTag: 2e12dc8d-53db-479e-a028-3d6f5c5bfd76
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Percentual]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Voucher_Nova = calculated
+		mode: import
+		source =
+				SELECTCOLUMNS(
+				    GENERATESERIES(0, 100, 1),
+				    "Percentual", [Value]
+				)
+
+	annotation PBI_Id = a82cfdac7dfc49d7a557bfea04846abf
+

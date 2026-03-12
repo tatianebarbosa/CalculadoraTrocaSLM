@@ -1,0 +1,21 @@
+table SimNao_Nova
+	lineageTag: dbe2f823-d2b5-4a8b-a138-4680d84370f9
+
+	column Opcao
+		lineageTag: fb773f58-a191-451c-b5b2-6d6a06e4e63f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Opcao]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition SimNao_Nova = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "Opcao", STRING,
+				    { {"Sim"}, {"Não"} }
+				)
+
+	annotation PBI_Id = d1a74425adc04de79c1651af6460f538
+

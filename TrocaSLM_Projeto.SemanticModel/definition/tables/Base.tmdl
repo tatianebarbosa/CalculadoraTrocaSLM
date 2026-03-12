@@ -1,0 +1,95 @@
+table Base
+	lineageTag: 1490a116-cee4-4b11-99ea-f4da8be1e072
+
+	column Turma
+		dataType: string
+		lineageTag: 15848e8b-6f77-4efb-b9b8-c62c23ba8900
+		summarizeBy: none
+		sourceColumn: Turma
+
+		annotation SummarizationSetBy = Automatic
+
+	column SLM_Base
+		dataType: int64
+		formatString: 0
+		lineageTag: dbfb8086-d2b2-4103-856e-b77437edb995
+		summarizeBy: sum
+		sourceColumn: SLM_Base
+
+		annotation SummarizationSetBy = Automatic
+
+	column Workbook_Obrigatorio
+		dataType: int64
+		formatString: 0
+		lineageTag: 112aeab3-7117-43dd-b762-797d598b4ba2
+		summarizeBy: sum
+		sourceColumn: Workbook_Obrigatorio
+
+		annotation SummarizationSetBy = Automatic
+
+	column Matematica_Aplicada
+		dataType: int64
+		formatString: 0
+		lineageTag: f9ece020-fc84-4e11-840d-6a55135a695f
+		summarizeBy: sum
+		sourceColumn: Matematica_Aplicada
+
+		annotation SummarizationSetBy = Automatic
+
+	column Pearson_Math
+		dataType: int64
+		formatString: 0
+		lineageTag: d19ef0b3-2d0a-41d6-a3f8-8bd7cd3964a7
+		summarizeBy: sum
+		sourceColumn: Pearson_Math
+
+		annotation SummarizationSetBy = Automatic
+
+	column Pearson_Science
+		dataType: int64
+		formatString: 0
+		lineageTag: 6cb1ca29-f456-4848-8f55-a4839e05d6ce
+		summarizeBy: sum
+		sourceColumn: Pearson_Science
+
+		annotation SummarizationSetBy = Automatic
+
+	column Total_Obrigatorio
+		dataType: int64
+		formatString: 0
+		lineageTag: f09f5dd5-762f-4d6e-b8d7-a16ac6251d16
+		summarizeBy: sum
+		sourceColumn: Total_Obrigatorio
+
+		annotation SummarizationSetBy = Automatic
+
+	column Total_Com_Todos_Pearson
+		dataType: int64
+		formatString: 0
+		lineageTag: 0734f48e-ce31-4248-a018-c91e0d866594
+		summarizeBy: sum
+		sourceColumn: Total_Com_Todos_Pearson
+
+		annotation SummarizationSetBy = Automatic
+
+	column Observacao
+		dataType: string
+		lineageTag: 93945d1c-59f2-43c9-bd6d-a93369f2f9a1
+		summarizeBy: none
+		sourceColumn: Observacao
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Base = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\tatiane.xavier\OneDrive - SEB - Sistema Educacional Brasileiro\TrocaSLM\base_powerbi_troca_slm.xlsx"), null, true),
+				    Base_Sheet = Fonte{[Item="Base",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Base_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"Turma", type text}, {"SLM_Base", Int64.Type}, {"Workbook_Obrigatorio", Int64.Type}, {"Matematica_Aplicada", Int64.Type}, {"Pearson_Math", Int64.Type}, {"Pearson_Science", Int64.Type}, {"Total_Obrigatorio", Int64.Type}, {"Total_Com_Todos_Pearson", Int64.Type}, {"Observacao", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+

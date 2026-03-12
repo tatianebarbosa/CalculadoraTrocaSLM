@@ -1,0 +1,21 @@
+// Base local de seguranca.
+// Se a leitura do Excel compartilhado falhar, a calculadora continua usando estes valores.
+export const DEFAULT_CATALOG = [
+  { turma: "Early Toddler (Bear Care)", slm: 2999, workbook: 0, matematica: 0, pearsonMath: 0, pearsonScience: 0 },
+  { turma: "Toddler", slm: 2999, workbook: 0, matematica: 0, pearsonMath: 0, pearsonScience: 0 },
+  { turma: "Nursery", slm: 3222, workbook: 0, matematica: 0, pearsonMath: 0, pearsonScience: 0 },
+  { turma: "Junior Kindergarten", slm: 3828, workbook: 0, matematica: 0, pearsonMath: 0, pearsonScience: 0 },
+  { turma: "Senior Kindergarten", slm: 3828, workbook: 0, matematica: 0, pearsonMath: 0, pearsonScience: 0 },
+  { turma: "Year 1", slm: 4065, workbook: 147, matematica: 0, pearsonMath: 0, pearsonScience: 0 },
+  { turma: "Year 2", slm: 4065, workbook: 126, matematica: 0, pearsonMath: 0, pearsonScience: 0 },
+  { turma: "Year 3", slm: 4065, workbook: 81, matematica: 0, pearsonMath: 366, pearsonScience: 0 },
+  { turma: "Year 4", slm: 4065, workbook: 66, matematica: 0, pearsonMath: 366, pearsonScience: 283 },
+  { turma: "Year 5", slm: 4065, workbook: 66, matematica: 0, pearsonMath: 366, pearsonScience: 283 },
+  { turma: "Year 6", slm: 4182, workbook: 66, matematica: 165, pearsonMath: 366, pearsonScience: 319 },
+  { turma: "Year 7", slm: 4182, workbook: 66, matematica: 165, pearsonMath: 486, pearsonScience: 314 },
+  { turma: "Year 8", slm: 4182, workbook: 66, matematica: 165, pearsonMath: 486, pearsonScience: 314 },
+  { turma: "Year 9", slm: 4182, workbook: 66, matematica: 165, pearsonMath: 413, pearsonScience: 314 },
+  { turma: "Year 10", slm: 4485, workbook: 0, matematica: 0, pearsonMath: 0, pearsonScience: 0 },
+  { turma: "Year 11", slm: 4485, workbook: 0, matematica: 0, pearsonMath: 0, pearsonScience: 0 },
+  { turma: "Year 12", slm: 4485, workbook: 0, matematica: 0, pearsonMath: 0, pearsonScience: 0 }
+];

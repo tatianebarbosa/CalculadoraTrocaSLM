@@ -1,0 +1,83 @@
+table PedidoPrincipal_Turma
+	lineageTag: b86da242-8e98-46c1-8ceb-747e358d2aa2
+
+	measure 'SLM Base Principal' =
+			
+			VAR turma = SELECTEDVALUE(PedidoPrincipal_Turma[Turma])
+			RETURN
+			CALCULATE(MAX(Base[SLM_Base]), Base[Turma] = turma)
+		formatString: R$ #,##0.00
+		lineageTag: 11c43bf7-9437-4080-83a0-c8b4dd6e0047
+
+	measure 'Workbook Principal' =
+			
+			VAR turma = SELECTEDVALUE(PedidoPrincipal_Turma[Turma])
+			RETURN
+			CALCULATE(MAX(Base[Workbook_Obrigatorio]), Base[Turma] = turma)
+		formatString: R$ #,##0.00
+		lineageTag: c42dd913-17a1-4638-8e0e-7be5000e6a15
+
+	measure 'Matematica Principal' =
+			
+			VAR turma = SELECTEDVALUE(PedidoPrincipal_Turma[Turma])
+			RETURN
+			CALCULATE(MAX(Base[Matematica_Aplicada]), Base[Turma] = turma)
+		formatString: R$ #,##0.00
+		lineageTag: 8d9ab42e-ba06-4cff-b463-14c98a9d1729
+
+	measure 'Pearson Science Principal' =
+			
+			VAR turma = SELECTEDVALUE(PedidoPrincipal_Turma[Turma])
+			VAR opcao = SELECTEDVALUE(SimNao_Principal[Opcao], "Não")
+			VAR valor = CALCULATE(MAX(Base[Pearson_Science]), Base[Turma] = turma)
+			RETURN IF(opcao = "Sim", valor, 0)
+		formatString: R$ #,##0.00
+		lineageTag: ea5b9935-ccc5-474d-b21d-6edaf6d7f68b
+
+	measure 'Pearson Math Principal' =
+			
+			VAR turma = SELECTEDVALUE(PedidoPrincipal_Turma[Turma])
+			VAR opcao = SELECTEDVALUE(SimNao_Principal[Opcao], "Não")
+			VAR valor = CALCULATE(MAX(Base[Pearson_Math]), Base[Turma] = turma)
+			RETURN IF(opcao = "Sim", valor, 0)
+		formatString: R$ #,##0.00
+		lineageTag: e6e3b39a-16d7-4011-a5d9-dbfd8f06c924
+
+	measure 'SLM Base Nova' =
+			
+			VAR turma = SELECTEDVALUE(NovaCompra_Turma[Turma])
+			RETURN
+			CALCULATE(MAX(Base[SLM_Base]), Base[Turma] = turma)
+		formatString: R$ #,##0.00
+		lineageTag: 009095ed-6148-4fbb-bb54-0b248fee1ec2
+
+	measure 'Workbook Nova' =
+			
+			VAR turma = SELECTEDVALUE(NovaCompra_Turma[Turma])
+			RETURN
+			CALCULATE(MAX(Base[Workbook_Obrigatorio]), Base[Turma] = turma)
+		formatString: R$ #,##0.00
+		lineageTag: 090e34af-8f81-4dee-b318-e5d239b70d4a
+
+	measure 'Matematica Nova' =
+			
+			VAR turma = SELECTEDVALUE(NovaCompra_Turma[Turma])
+			RETURN
+			CALCULATE(MAX(Base[Matematica_Aplicada]), Base[Turma] = turma)
+		formatString: R$ #,##0.00
+		lineageTag: 75f43292-5788-4919-ac08-31dd857ae114
+
+	column Turma
+		lineageTag: fdfe684e-d3cf-44a2-b933-7173d5ddc3ff
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: Base[Turma]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition PedidoPrincipal_Turma = calculated
+		mode: import
+		source = DISTINCT(Base[Turma])
+
+	annotation PBI_Id = a8a361b49cad4a2699442845f518c4b5
+

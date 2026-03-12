@@ -1,0 +1,35 @@
+table NovaCompra_Turma
+	lineageTag: ccea56ff-a01a-47a9-8037-17798950661e
+
+	measure 'Pearson Math Nova' =
+			
+			VAR turma = SELECTEDVALUE(NovaCompra_Turma[Turma])
+			VAR opcao = SELECTEDVALUE(SimNao_Nova[Opcao], "Não")
+			VAR valor = CALCULATE(MAX(Base[Pearson_Math]), Base[Turma] = turma)
+			RETURN IF(opcao = "Sim", valor, 0)
+		formatString: R$ #,##0.00
+		lineageTag: 0f3fe89f-957b-4b56-88f3-43c8d2d563a0
+
+	measure 'Pearson Science Nova' =
+			
+			VAR turma = SELECTEDVALUE(NovaCompra_Turma[Turma])
+			VAR opcao = SELECTEDVALUE(SimNao_Nova[Opcao], "Não")
+			VAR valor = CALCULATE(MAX(Base[Pearson_Science]), Base[Turma] = turma)
+			RETURN IF(opcao = "Sim", valor, 0)
+		formatString: R$ #,##0.00
+		lineageTag: 49dc60ac-f7c6-4a7c-8cc5-38b92edc0d15
+
+	column Turma
+		lineageTag: 56cd0adf-a7e4-48f5-919b-32969543925f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: Base[Turma]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition NovaCompra_Turma = calculated
+		mode: import
+		source = DISTINCT(Base[Turma])
+
+	annotation PBI_Id = c58cec3e2ca84ab3a9ce8f6cb1546ffe
+

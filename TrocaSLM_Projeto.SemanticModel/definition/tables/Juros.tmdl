@@ -1,0 +1,36 @@
+table Juros
+	lineageTag: f687fd0b-2dbb-443b-b205-34097a66eb71
+
+	measure 'Juros Selecionado' =
+			
+			SELECTEDVALUE(Juros[Valor], 0)
+		formatString: R$ #,##0.00
+		lineageTag: 7fc53e6f-c877-4a6c-8ca0-d8276639d9ad
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Valor Juros' =
+			
+			[Juros Selecionado]
+		formatString: R$ #,##0.00
+		lineageTag: 245f77a5-f481-41d7-856e-833a052f1ab3
+
+	column Valor
+		formatString: R$ #,##0.00
+		lineageTag: 28988595-051c-40bc-ab18-0a0d3b201fa2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Valor]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Juros = calculated
+		mode: import
+		source =
+				SELECTCOLUMNS(
+				    GENERATESERIES(0, 5000, 1),
+				    "Valor", [Value]
+				)
+
+	annotation PBI_Id = 58bd2b5f22bb46ba9ca44fa1335f1686
+

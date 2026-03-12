@@ -1,0 +1,37 @@
+table Voucher_Principal
+	lineageTag: 77684fad-4063-4dd7-9e02-db6d441889c0
+
+	measure 'Voucher Principal Selecionado' =
+			
+			SELECTEDVALUE(Voucher_Principal[Percentual], 0)
+		formatString: 0
+		lineageTag: 5d53bb13-46db-4a55-9ae2-663e185f4f7f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Voucher Principal %' =
+			
+			DIVIDE([Voucher Principal Selecionado], 100)
+		lineageTag: 15115a28-53bd-4d43-b1d1-09840762186f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Percentual
+		formatString: 0
+		lineageTag: d75a8ef3-43ef-4c94-96ec-5bed911e81fa
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Percentual]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Voucher_Principal = calculated
+		mode: import
+		source =
+				SELECTCOLUMNS(
+				    GENERATESERIES(0, 100, 1),
+				    "Percentual", [Value]
+				)
+
+	annotation PBI_Id = 9ba062ee868f401e9235e99297e9d4dc
+
