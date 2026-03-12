@@ -23,7 +23,7 @@ export default function LoginScreen({ logoUrl, accessCode, onAccessCodeChange, o
           </section>
 
           <section className="login-card">
-            <span className="login-card__eyebrow">Controle visual de acesso</span>
+            <span className="login-card__eyebrow">Acesso interno</span>
             <h2>Entrar na calculadora</h2>
             <p className="login-card__intro">
               Digite o codigo da equipe para organizar o acesso interno.
