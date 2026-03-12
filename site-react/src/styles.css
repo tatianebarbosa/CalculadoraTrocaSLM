@@ -1449,7 +1449,6 @@ input:disabled {
   .compound-field,
   .section-title,
   .site-header,
-  .site-header__brand,
   .site-header__actions {
     grid-template-columns: 1fr;
     flex-direction: column;
@@ -1457,6 +1456,16 @@ input:disabled {
 
   .site-header {
     align-items: flex-start;
+  }
+
+  .site-header__brand {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .site-header__brand-name {
+    margin-left: 0;
   }
 
   .site-header__actions {
