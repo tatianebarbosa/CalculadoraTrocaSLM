@@ -26,8 +26,7 @@ export default function LoginScreen({ logoUrl, accessCode, onAccessCodeChange, o
             <span className="login-card__eyebrow">Controle visual de acesso</span>
             <h2>Entrar na calculadora</h2>
             <p className="login-card__intro">
-              Digite o codigo da equipe para organizar o acesso interno. Este passo nao substitui a protecao do
-              ambiente restrito.
+              Digite o codigo da equipe para organizar o acesso interno.
             </p>
 
             <form className="login-form" name="maple-bear-login" autoComplete="on" onSubmit={onSubmit}>
