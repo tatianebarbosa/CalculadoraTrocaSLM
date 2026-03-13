@@ -3,8 +3,8 @@
 /* Variaveis visuais da interface */
 :root {
   color-scheme: light;
-  --shell-max: 1480px;
-  --shell-gap: 96px;
+  --shell-max: 1660px;
+  --shell-gap: clamp(32px, 5vw, 112px);
   --font-ui: "Nunito Sans", "Segoe UI", "Aptos", sans-serif;
   --font-display: "Nunito Sans", "Segoe UI", "Aptos", sans-serif;
   --bg: #f4f5f7;
@@ -25,13 +25,13 @@
   --shadow: none;
   --shadow-soft: none;
   --radius-xl: 8px;
-  --card-pad-y: 20px;
-  --card-pad-x: 20px;
+  --card-pad-y: clamp(18px, 1.25vw, 22px);
+  --card-pad-x: clamp(18px, 1.25vw, 22px);
   --space-title-subtitle: 6px;
   --space-subtitle-content: 14px;
   --space-form-group: 14px;
   --space-card-section: 20px;
-  --space-page-card: 20px;
+  --space-page-card: clamp(16px, 1.3vw, 24px);
 }
 
 * {
@@ -330,9 +330,9 @@ select {
 /* Intro e layout dos paineis */
 .page-intro {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.58fr);
-  gap: 28px;
-  margin: 14px 0 28px;
+  grid-template-columns: minmax(0, 1.45fr) minmax(360px, 0.78fr);
+  gap: clamp(24px, 2vw, 36px);
+  margin: 18px 0 32px;
   align-items: stretch;
 }
 
@@ -340,6 +340,12 @@ select {
 .page-intro__rule {
   align-self: stretch;
   min-width: 0;
+}
+
+.page-intro__copy {
+  display: grid;
+  align-content: start;
+  max-width: 780px;
 }
 
 .page-intro__eyebrow,
@@ -378,7 +384,7 @@ select {
 
 .page-intro__subtitle {
   margin: 0 0 32px;
-  max-width: 620px;
+  max-width: 700px;
   color: #546577;
   font-size: 0.92rem;
   line-height: 1.42;
@@ -393,7 +399,8 @@ select {
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #ffffff;
-  max-width: 540px;
+  width: min(100%, 500px);
+  max-width: 500px;
   justify-self: end;
 }
 
@@ -458,7 +465,7 @@ select {
 }
 
 .panel {
-  padding: 20px 20px 16px;
+  padding: clamp(18px, 1.35vw, 22px) clamp(18px, 1.35vw, 22px) 16px;
   border-radius: var(--radius-xl);
   border: 1px solid var(--line);
   background: #ffffff;
@@ -495,7 +502,7 @@ select {
 .panel--principal-detail {
   grid-column: 5 / span 6;
   grid-row: 1;
-  padding: 20px 20px 16px;
+  padding: clamp(18px, 1.35vw, 22px) clamp(18px, 1.35vw, 22px) 16px;
   border-radius: var(--radius-xl);
   border-color: #c7d2de;
   background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
@@ -1524,7 +1531,7 @@ input:disabled {
 
 .catalog-table {
   width: 100%;
-  min-width: 980px;
+  min-width: 1080px;
   border-collapse: collapse;
   background: #fff;
 }
@@ -1593,14 +1600,62 @@ input:disabled {
 }
 
 /* Ajustes responsivos */
-@media (max-width: 1120px) {
+@media (min-width: 1560px) {
+  :root {
+    --shell-max: 1760px;
+  }
+
+  .page-intro {
+    grid-template-columns: minmax(0, 1.55fr) minmax(420px, 0.8fr);
+  }
+
+  .page-grid {
+    grid-template-columns: repeat(16, minmax(0, 1fr));
+  }
+
+  .panel--principal {
+    grid-column: 1 / span 4;
+  }
+
+  .panel--principal-detail {
+    grid-column: 5 / span 8;
+  }
+
+  .panel--nova {
+    grid-column: 13 / -1;
+  }
+
+  .panel--explanation {
+    grid-column: 1 / span 5;
+  }
+
+  .panel--messages {
+    grid-column: 6 / -1;
+  }
+
+  .catalog-table {
+    min-width: 1180px;
+  }
+}
+
+@media (max-width: 1260px) {
   .app-shell {
-    --shell-gap: 80px;
+    --shell-gap: clamp(28px, 4vw, 76px);
   }
 
   .login-layout,
   .page-intro {
     grid-template-columns: 1fr;
+  }
+
+  .page-intro__copy,
+  .page-intro__rule {
+    max-width: none;
+  }
+
+  .page-intro__rule {
+    width: 100%;
+    justify-self: start;
   }
 
   .login-card {
@@ -1609,20 +1664,16 @@ input:disabled {
   }
 
   .page-grid {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 
   .panel--principal,
   .panel--principal-detail,
   .panel--nova,
+  .panel--explanation,
+  .panel--messages,
   .panel--base {
     grid-column: 1 / -1;
-    grid-row: auto;
-  }
-
-  .panel--explanation,
-  .panel--messages {
-    grid-column: span 3;
     grid-row: auto;
   }
 
@@ -1644,16 +1695,12 @@ input:disabled {
 
 }
 
-@media (max-width: 920px) {
+@media (max-width: 960px) {
   .messages-actions {
     grid-template-columns: 1fr;
   }
 
   .messages-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .page-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1694,9 +1741,9 @@ input:disabled {
   }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 720px) {
   .app-shell {
-    --shell-gap: 40px;
+    --shell-gap: clamp(18px, 6vw, 36px);
     width: var(--shell-width);
     margin: 10px auto 24px;
   }
