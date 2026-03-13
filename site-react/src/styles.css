@@ -1013,10 +1013,10 @@ input:disabled {
   gap: 4px;
   align-content: start;
   padding: 10px 12px;
-  border: 1px solid rgba(126, 74, 38, 0.12);
+  border: none;
   border-radius: 0;
-  background: #fbfcfd;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.82);
+  background: transparent;
+  box-shadow: none;
 }
 
 .detail-overview__action-card span {

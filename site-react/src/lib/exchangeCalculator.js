@@ -286,7 +286,17 @@ function buildSchoolMessage(calc) {
     return `Vamos seguir com a troca neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}.${jurosSentence} Após a análise, identificamos diferença de ${formatMoney(calc.difference)} a pagar para concluir a compra do material correto. Após a confirmação da troca, será necessário aguardar 24 horas. Depois desse prazo, a escola deverá ajustar a matrícula do(a) aluno(a) na turma correta no LEX para liberar a nova compra. Até que esse ajuste seja concluído, não deve ser feita nenhuma alteração no LEX.`;
   }
 
-  return `Vamos seguir com a troca neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}.${jurosSentence} Após analisarmos o pedido principal, a nova compra e o valor efetivamente pago, verificamos que os materiais ficam no mesmo valor. Não haverá diferença a pagar pelo responsável nem sobra disponível na loja. Após a confirmação da troca, será necessário aguardar 24 horas e, depois desse prazo, a escola deverá realizar o ajuste da matrícula do(a) aluno(a) na turma correta na LEX. Somente após esse ajuste o material correto ficará disponível na loja para a nova compra. Antes desse prazo, não deve ser feita nenhuma alteração na LEX.`;
+  return `Vamos seguir com a troca neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, também no valor de ${formatMoney(calc.nova.paidMaterials)}. Como os materiais permanecem com o mesmo valor, não haverá diferença a pagar nem saldo sobrando na loja.
+
+Após a confirmação da troca, o crédito será disponibilizado em até 24 horas no CPF do responsável pela compra principal. Antes desse prazo, não deve ser feita nenhuma alteração na LEX.
+
+Depois das 24 horas, a escola deverá:
+
+- ajustar a matrícula do aluno na turma correta na LEX;
+- orientar o responsável a acessar novamente a loja com o mesmo CPF da compra principal;
+- realizar a nova compra do material correto.
+
+Somente após a liberação do crédito e o ajuste da matrícula na LEX o material correto ficará disponível para compra.`;
 }
 
 function buildGuardianMessage(calc) {
@@ -312,7 +322,13 @@ function buildGuardianMessage(calc) {
     return `Vamos seguir com a troca do material neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}.${jurosSentence} Após a análise, identificamos diferença de ${formatMoney(calc.difference)} a pagar para concluir a compra do material correto. Após a confirmação da troca, será necessário aguardar 24 horas. Depois desse prazo, pedimos que entre em contato com a escola para que ela realize o ajuste da matrícula no LEX e libere a nova compra. Antes de finalizar o pedido, orientamos que o abatimento seja conferido com atenção.`;
   }
 
-  return `Vamos seguir com a troca do material neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}.${jurosSentence} Após analisarmos o pedido principal, a nova compra e o valor efetivamente pago, verificamos que os materiais ficam no mesmo valor. Não haverá diferença a pagar nem sobra disponível na loja. Após a confirmação da troca, será necessário aguardar 24 horas e, depois desse prazo, avisar a escola para que ela realize o ajuste da matrícula na turma correta na LEX. Somente após esse ajuste o material correto ficará disponível na loja para a nova compra. Antes de finalizar o pedido, orientamos que o abatimento seja conferido com atenção.`;
+  return `Vamos seguir com a troca neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, também no valor de ${formatMoney(calc.nova.paidMaterials)}. Como os materiais permanecem com o mesmo valor, não haverá diferença a pagar nem saldo sobrando na loja.
+
+Após a confirmação da troca, o crédito será disponibilizado em até 24 horas no CPF utilizado na compra principal. Antes desse prazo, não será necessário realizar nenhuma ação.
+
+Depois das 24 horas, será necessário entrar em contato com a escola para que ela ajuste a matrícula do aluno na turma correta na LEX. Até a finalização da troca e o cumprimento desse prazo, não deve ser feito nenhum ajuste na LEX da família.
+
+Após a conclusão desse ajuste, você poderá acessar novamente a loja com o mesmo CPF da compra principal e realizar a nova compra do material correto.`;
 }
 
 export function calculateExchange(form, catalog) {
