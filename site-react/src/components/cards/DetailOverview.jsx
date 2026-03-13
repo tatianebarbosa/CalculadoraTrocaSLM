@@ -52,6 +52,9 @@ export default function DetailOverview({ calc }) {
     !calc.canExchange && (!calc.requiresCancellationForJuros || calc.difference <= 0)
       ? "detail-overview__grid detail-overview__grid--compact"
       : "detail-overview__grid";
+  const financialSectionClass = isBlocked
+    ? "detail-overview__section detail-overview__section--financial is-blocked"
+    : "detail-overview__section detail-overview__section--financial";
   const financialItems = [
     {
       label: "Valor do pedido principal",
@@ -83,7 +86,7 @@ export default function DetailOverview({ calc }) {
         </div>
       </section>
 
-      <section className="detail-overview__section detail-overview__section--financial">
+      <section className={financialSectionClass}>
         <p className="detail-overview__section-label">Impacto financeiro</p>
 
         <div className={financialHighlightClass}>
