@@ -12,7 +12,7 @@ export default function ResultSection({ calc }) {
 
       <DetailOverview calc={calc} />
 
-      <div className="explanation-card detail-explanation-card">
+      <div className={calc.canExchange ? "explanation-card detail-explanation-card" : "explanation-card detail-explanation-card is-blocked"}>
         <p>{calc.quickSummary}</p>
       </div>
 

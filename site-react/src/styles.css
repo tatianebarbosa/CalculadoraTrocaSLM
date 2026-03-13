@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&display=swap");
+﻿@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&display=swap");
 
 /* Variaveis visuais da interface */
 :root {
@@ -829,7 +829,7 @@ input:disabled {
 }
 
 .detail-overview__highlight span::before {
-  content: "Valor total disponível na loja";
+  content: "Crédito que ficará disponível na loja";
   font-size: 0.72rem;
   color: #315e43;
   font-weight: 700;
@@ -903,7 +903,7 @@ input:disabled {
 }
 
 .detail-overview__meta-row:nth-child(2) span::before {
-  content: "Ação necessária";
+  content: "AÃ§Ã£o necessÃ¡ria";
   font-size: 0.72rem;
   color: var(--muted);
   font-weight: 600;
@@ -970,6 +970,11 @@ input:disabled {
   border-color: #eadfd3;
 }
 
+.detail-explanation-card.is-blocked {
+  background: #fbebed;
+  border-color: #efd1d4;
+}
+
 .detail-explanation-card p {
   color: #2f231b;
   font-size: 1rem;
@@ -977,6 +982,10 @@ input:disabled {
   line-height: 1.55;
   text-align: center;
   text-wrap: pretty;
+}
+
+.detail-explanation-card.is-blocked p {
+  color: #8b1d1f;
 }
 
 .detail-warning-card {
@@ -1589,3 +1598,4 @@ input:disabled {
     align-items: start;
   }
 }
+

@@ -111,14 +111,14 @@ function buildQuickOutcome(calc) {
   }
 
   if (!calc.canExchange) {
-    return `A troca não pode seguir, pois sobraria ${formatMoney(calc.leftover)} na loja.`;
+    return `A troca não pode ser seguida, pois sobraria ${formatMoney(calc.leftover)} na loja.`;
   }
 
   if (calc.difference > 0) {
-    return `A troca pode seguir com diferença a pagar de ${formatMoney(calc.difference)}.`;
+    return `Seguir com a troca, e a diferença de ${formatMoney(calc.difference)} ficará disponível para pagamento na loja.`;
   }
 
-  return "A troca pode seguir. Os materiais ficam no mesmo valor.";
+  return "Seguir com a troca, pois não há diferença de valor entre os materiais.";
 }
 
 export function buildJurosWarning(calc) {
