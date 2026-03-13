@@ -250,7 +250,7 @@
       return "";
     }
 
-    return "Aviso: houve uso de voucher no pedido principal. Apos o cancelamento, esse voucher volta para utilizacao em 24 horas e pode ser reutilizado na nova compra.";
+    return "Aviso: houve uso de voucher no pedido principal. Após o cancelamento, esse voucher volta para utilização em 24 horas e pode ser reutilizado na nova compra.";
   }
 
   function buildVoucherReactivationSentence(calc) {
@@ -258,7 +258,7 @@
       return "";
     }
 
-    return " Como houve uso de voucher no pedido principal, ele sera liberado novamente em 24 horas apos o cancelamento e podera ser reutilizado na nova compra.";
+    return " Como houve uso de voucher no pedido principal, ele será liberado novamente em 24 horas após o cancelamento e poderá ser reutilizado na nova compra.";
   }
 
   function appendVoucherReactivationSentence(text, calc) {

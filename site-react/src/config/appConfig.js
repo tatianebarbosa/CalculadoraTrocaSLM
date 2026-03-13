@@ -7,7 +7,7 @@ const rawCatalogSourceMode =
 // Ajustes centrais da calculadora.
 export const PEARSON_ORDER_DISCOUNT = 44;
 export const COPY_FEEDBACK_MS = 1600;
-// Controle visual para ambiente interno/restrito. Nao tratar este codigo como camada de seguranca.
+// Controle visual para ambiente interno/restrito. Não tratar este código como camada de segurança.
 export const ACCESS_CODE = "SAF2026@";
 export const ACCESS_STORAGE_KEY = "troca-saf-login";
 export const ACCESS_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
@@ -21,7 +21,7 @@ export const CATALOG_SOURCE_MODE = ["api", "static", "auto"].includes(rawCatalog
 export const CATALOG_WRITE_ENABLED = runtimeEnv.DEV || runtimeEnv.VITE_ENABLE_CATALOG_WRITE === "true";
 export const PUBLISHED_CATALOG_NOTICE = "";
 export const LIVE_CATALOG_NOTICE =
-  "Dados carregados. Os novos valores serao usados nos calculos da calculadora.";
+  "Dados carregados. Os novos valores serão usados nos cálculos da calculadora.";
 
 export const RULE_TEXT =
   "A análise compara o valor pago no pedido principal com o valor da nova compra, considerando SLM, workbook, Matemática Aplicada e Pearson, quando houver. O voucher é aplicado somente sobre o valor do SLM base. Aviso: neste momento, quando houver juros no pedido principal, a troca não pode seguir. A loja está reembolsando esse valor indevidamente, o que gera sobra na loja. Se sobrar valor na loja, a troca não pode seguir. Se faltar valor, a troca pode seguir com pagamento da diferença.";

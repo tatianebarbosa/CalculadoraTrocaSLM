@@ -3,22 +3,22 @@ import { formatMoney } from "../../lib/formatters";
 
 function buildFinalReinforcement(calc) {
   if (!calc.ready) {
-    return "Complete a simulacao.";
+    return "Complete a simulação.";
   }
 
   if (calc.requiresCancellationForJuros) {
-    return "A troca nao pode seguir neste momento, pois os juros estao sendo reembolsados e isso gera sobra de valor na loja.";
+    return "A troca não pode seguir neste momento, pois os juros estão sendo reembolsados e isso gera sobra de valor na loja.";
   }
 
   if (!calc.canExchange) {
-    return "A troca nao pode seguir, pois sobraria credito na loja.";
+    return "A troca não pode seguir, pois sobraria crédito na loja.";
   }
 
   if (calc.difference > 0) {
-    return "Troca liberada com diferenca a pagar.";
+    return "Troca liberada com diferença a pagar.";
   }
 
-  return "Troca liberada sem diferenca de valor.";
+  return "Troca liberada sem diferença de valor.";
 }
 
 export default function DetailOverview({ calc }) {
@@ -28,20 +28,20 @@ export default function DetailOverview({ calc }) {
   const exchangeRoute = calc.ready ? `${calc.form.principalTurma} para ${calc.form.novaTurma}` : "Selecione as turmas";
   const actionLabel = calc.canExchange
     ? calc.difference > 0
-      ? "Diferenca a pagar"
+      ? "Diferença a pagar"
       : "Mesmo valor"
     : "Valor que sobraria na loja";
   const actionValue = calc.canExchange
     ? calc.difference > 0
       ? formatMoney(calc.difference)
-      : "Sem diferenca"
+      : "Sem diferença"
     : formatMoney(calc.leftover);
   const finalReinforcement = buildFinalReinforcement(calc);
   const highlightLabel = calc.requiresCancellationForJuros
     ? "Juros reembolsados na loja"
     : calc.canExchange
-      ? "Credito que ficara disponivel na loja"
-      : "Sobra de credito na loja";
+      ? "Crédito que ficará disponível na loja"
+      : "Sobra de crédito na loja";
   const highlightValue = calc.requiresCancellationForJuros
     ? formatMoney(calc.jurosCredit)
     : calc.canExchange
@@ -75,7 +75,7 @@ export default function DetailOverview({ calc }) {
     });
   } else if (calc.requiresCancellationForJuros && calc.difference > 0) {
     financialItems.push({
-      label: "Diferenca apos a nova compra",
+      label: "Diferença após a nova compra",
       value: formatMoney(calc.difference)
     });
   }
@@ -84,7 +84,7 @@ export default function DetailOverview({ calc }) {
     <div className="detail-overview">
       <section className="detail-overview__section detail-overview__section--status">
         <div className={isBlocked ? "detail-overview__status is-blocked" : "detail-overview__status"}>
-          <strong>{isBlocked ? "NAO PODE TROCAR" : "PODE TROCAR"}</strong>
+          <strong>{isBlocked ? "NÃO PODE TROCAR" : "PODE TROCAR"}</strong>
         </div>
       </section>
 
@@ -112,28 +112,28 @@ export default function DetailOverview({ calc }) {
         <div className="detail-overview__action-grid">
           <div className="detail-overview__action-card detail-overview__action-card--primary">
             <div className="detail-overview__action-heading">
-              <span>Acao necessaria</span>
+              <span>Ação necessária</span>
             </div>
             {shouldShowRefundInfo ? (
               <span className="detail-overview__info">
                 <button
                   className="detail-overview__info-trigger"
                   type="button"
-                  aria-label="Informacoes sobre reembolso"
+                  aria-label="Informações sobre reembolso"
                   aria-describedby={refundInfoTooltipId}
                 >
                   i
                 </button>
                 <span className="detail-overview__info-tooltip" id={refundInfoTooltipId} role="tooltip">
-                  Se for boleto, a solicitacao e feita pelo ERP. Se for cartao de credito, o reembolso e feito de
-                  forma automatica com o cancelamento do pedido.
+                  Se for boleto, a solicitação é feita pelo ERP. Se for cartão de crédito, o reembolso é feito de
+                  forma automática com o cancelamento do pedido.
                 </span>
               </span>
             ) : null}
             <strong>{buildFinancialAction(calc)}</strong>
           </div>
           <div className="detail-overview__action-card detail-overview__action-card--secondary">
-            <span>Proximo passo</span>
+            <span>Próximo passo</span>
             <strong>{buildNextStep(calc)}</strong>
           </div>
         </div>

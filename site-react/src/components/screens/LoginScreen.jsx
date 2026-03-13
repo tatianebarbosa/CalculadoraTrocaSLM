@@ -23,12 +23,12 @@ export default function LoginScreen({ logoUrl, accessCode, onAccessCodeChange, o
             <span className="login-card__eyebrow">Acesso interno</span>
             <h2>Entrar no assistente</h2>
             <p className="login-card__intro">
-              Digite o codigo da equipe para organizar o acesso interno.
+              Digite o código da equipe para organizar o acesso interno.
             </p>
 
             <form className="login-form" name="maple-bear-login" autoComplete="on" onSubmit={onSubmit}>
               <label className="login-form__manager-anchor" htmlFor="login-username">
-                Usuario
+                Usuário
                 <input
                   id="login-username"
                   name="username"
@@ -48,7 +48,7 @@ export default function LoginScreen({ logoUrl, accessCode, onAccessCodeChange, o
                   type="password"
                   value={accessCode}
                   onChange={(event) => onAccessCodeChange(event.target.value)}
-                  placeholder="Digite o codigo"
+                  placeholder="Digite o código"
                   autoComplete="current-password"
                   autoFocus
                 />
