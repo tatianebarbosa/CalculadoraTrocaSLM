@@ -32,7 +32,28 @@ export const RULE_TEXT =
 export const JUROS_WARNING_TEXT =
   "Aviso: os juros também são reembolsados na loja. Se houver sobra na loja por causa dos juros, a troca não pode seguir.";
 
-export const DISPLAY_RULE_TEXT = `${RULE_TEXT} ${JUROS_WARNING_TEXT}`;
+export const DISPLAY_RULE_ITEMS = [
+  {
+    label: "Considera no cálculo",
+    text: "SLM, workbook, Matemática Aplicada e Pearson."
+  },
+  {
+    label: "Voucher",
+    text: "aplicado somente sobre o SLM base."
+  },
+  {
+    label: "Juros",
+    text: "entram como crédito financeiro adicional."
+  },
+  {
+    label: "Se houver sobra na loja",
+    text: "a troca não pode seguir."
+  },
+  {
+    label: "Se faltar valor",
+    text: "a troca pode seguir com pagamento da diferença."
+  }
+];
 
 export const DEFAULT_FORM = {
   principalTurma: "Year 3",

@@ -1,5 +1,11 @@
 # Publicacao do site
 
+## Hospedagem oficial
+
+- O fluxo atual de publicacao deste projeto e o Vercel.
+- Nao ha configuracao de Netlify versionada neste repositorio.
+- Com o arquivo `../vercel.json`, o Vercel instala e builda automaticamente a pasta `site-react` mesmo com o projeto importado pela raiz do repo.
+
 ## Diretriz de acesso
 
 - Publicar apenas em ambiente interno ou restrito.
@@ -18,9 +24,23 @@
 1. Confirme se o arquivo `../base_powerbi_troca_slm.xlsx` esta atualizado.
 2. Rode `npm install` dentro de `site-react`.
 3. Rode `npm run build`.
-4. Publique o conteudo da pasta `dist` na hospedagem escolhida.
+4. Publique a pasta `dist` na hospedagem escolhida, ou use o fluxo automatizado do Vercel descrito abaixo.
 
 Para SharePoint, siga o fluxo detalhado em `SHAREPOINT.md`.
+
+## Publicar no Vercel
+
+1. Importe este repositorio no Vercel.
+2. Mantenha o `Root Directory` como `/`.
+3. Pode deixar a deteccao como `Other`; o `vercel.json` da raiz define o build correto.
+4. Clique em `Deploy`.
+
+O Vercel vai executar:
+
+- `npm install --prefix site-react`
+- `npm run build --prefix site-react`
+
+O site publicado saira de `site-react/dist`.
 
 ## Comandos uteis
 

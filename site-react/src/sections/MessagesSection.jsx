@@ -14,14 +14,14 @@ export default function MessagesSection({ calc, copiedKey, onCopy }) {
         <MessageCard
           title="Mensagem para a escola"
           body={calc.schoolMessage}
-          buttonLabel="Copiar mensagem para a escola"
+          buttonLabel="Copiar para a escola"
           copied={copiedKey === "school"}
           onCopy={() => onCopy("school", calc.schoolMessage)}
         />
         <MessageCard
           title="Mensagem para o responsável"
           body={calc.guardianMessage}
-          buttonLabel="Copiar mensagem para o responsável"
+          buttonLabel="Copiar para o responsável"
           copied={copiedKey === "guardian"}
           onCopy={() => onCopy("guardian", calc.guardianMessage)}
         />

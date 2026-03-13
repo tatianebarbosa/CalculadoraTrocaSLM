@@ -33,7 +33,7 @@ export default function CatalogSection({
             onClick={onUnlockOpen}
             disabled={isCatalogLoading}
           >
-            Liberar ajuste
+            Liberar edição
           </button>
         ) : null}
 
@@ -45,18 +45,13 @@ export default function CatalogSection({
               onClick={onSave}
               disabled={isCatalogSaving || isCatalogLoading}
             >
-              {isCatalogSaving ? "Salvando..." : "Salvar"}
+              {isCatalogSaving ? "Salvando alterações..." : "Salvar alterações"}
             </button>
             <button className="catalog-editor__button catalog-editor__button--danger" type="button" onClick={onReset}>
-              Restaurar valores padrão
+              Restaurar valores
             </button>
-            <button
-              className="catalog-editor__button catalog-editor__button--close"
-              type="button"
-              onClick={onLock}
-              aria-label="Sair da edição sem salvar"
-            >
-              X
+            <button className="catalog-editor__button" type="button" onClick={onLock} aria-label="Fechar edição sem salvar">
+              Fechar
             </button>
           </div>
         ) : null}
@@ -112,7 +107,7 @@ export default function CatalogSection({
                       />
                     </td>
                   ))}
-                  <td data-label="Total obrigatorio">{formatMoney(totalObrigatorio)}</td>
+                  <td data-label="Total obrigatório">{formatMoney(totalObrigatorio)}</td>
                   <td data-label="Total com os Pearson">{formatMoney(totalComPearsons)}</td>
                 </tr>
               );

@@ -4,7 +4,7 @@ import {
   COPY_FEEDBACK_MS,
   DEFAULT_FORM,
   DEFAULT_LOGO_URL,
-  DISPLAY_RULE_TEXT,
+  DISPLAY_RULE_ITEMS,
   LIVE_CATALOG_NOTICE,
   PUBLISHED_CATALOG_NOTICE
 } from "./config/appConfig";
@@ -293,8 +293,8 @@ export default function App() {
               href="https://seb.operations.dynamics.com/?cmp=mbc&mi=PreOrderListPage"
               target="_blank"
               rel="noreferrer"
-              title="Abrir troca SLM em nova aba"
-              aria-label="Abrir troca SLM em nova aba"
+              title="Abrir nova troca em outra aba"
+              aria-label="Abrir nova troca em outra aba"
             >
               Nova troca
             </a>
@@ -317,7 +317,13 @@ export default function App() {
           </div>
           <div className="page-intro__rule">
             <span>Regra central</span>
-            <p>{DISPLAY_RULE_TEXT}</p>
+            <ul className="page-intro__rule-list">
+              {DISPLAY_RULE_ITEMS.map((item) => (
+                <li key={item.label}>
+                  <strong>{item.label}:</strong> {item.text}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 

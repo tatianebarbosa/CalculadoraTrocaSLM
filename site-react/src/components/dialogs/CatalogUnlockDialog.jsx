@@ -10,7 +10,7 @@ export default function CatalogUnlockDialog({ accessCode, onAccessCodeChange, on
       >
         <span className="catalog-unlock-dialog__eyebrow">Edição da base</span>
         <h3 id="catalog-unlock-title">Digite a senha</h3>
-        <p className="catalog-unlock-dialog__intro">Use o mesmo código do login para liberar os ajustes.</p>
+        <p className="catalog-unlock-dialog__intro">Use o mesmo código do login para liberar a edição.</p>
 
         <form className="catalog-unlock-dialog__form" onSubmit={onSubmit}>
           <input
@@ -30,7 +30,7 @@ export default function CatalogUnlockDialog({ accessCode, onAccessCodeChange, on
               Cancelar
             </button>
             <button className="catalog-editor__button catalog-editor__button--primary" type="submit" disabled={!accessCode.trim()}>
-              Liberar ajuste
+              Liberar edição
             </button>
           </div>
         </form>
