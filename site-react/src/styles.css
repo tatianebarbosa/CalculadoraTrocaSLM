@@ -921,11 +921,11 @@ input:disabled {
 .messages-grid {
   display: grid;
   gap: 6px;
+  align-content: start;
 }
 
 .explanation-stack {
   grid-template-columns: 1fr;
-  flex: 1;
 }
 
 .explanation-card {
@@ -1004,7 +1004,6 @@ input:disabled {
 
 .messages-grid {
   grid-template-columns: 1fr;
-  flex: 1;
 }
 
 .panel--messages .message-card {
