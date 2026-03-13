@@ -27,7 +27,7 @@ export const RULE_TEXT =
   "A análise compara o valor pago no pedido principal com o valor da nova compra, considerando SLM, workbook, Matemática Aplicada e Pearson, quando houver. O voucher é aplicado somente sobre o valor do SLM base. Aviso: neste momento, quando houver juros no pedido principal, a troca não pode seguir. A loja está reembolsando esse valor indevidamente, o que gera sobra na loja. Se sobrar valor na loja, a troca não pode seguir. Se faltar valor, a troca pode seguir com pagamento da diferença.";
 
 export const JUROS_WARNING_TEXT =
-  "Aviso: neste momento, sempre que houver juros no pedido principal, o time deve tratar a troca como não pode trocar. A loja está reembolsando esse valor por falha operacional, e isso gera sobra na loja. O correto seria a loja não devolver juros, então essa orientação pode mudar no futuro. Para seguir, será necessário cancelar o pedido, aguardar 24 horas e ajustar a matrícula no LEX antes da nova compra.";
+  "Juros geram sobra de valor na loja e impedem a troca do material.";
 
 export const DISPLAY_RULE_ITEMS = [
   {

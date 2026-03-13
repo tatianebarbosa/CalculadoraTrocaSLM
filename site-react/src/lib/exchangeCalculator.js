@@ -167,10 +167,10 @@ function buildVoucherMessageParagraph(calc) {
   }
 
   if (calc.requiresCancellationForJuros || !calc.canExchange) {
-    return "\n\nAviso: houve uso de voucher no pedido principal. Após o cancelamento, esse voucher será reativado em até 24 horas e poderá ser reutilizado na nova compra.";
+    return "\n\nCaso tenha havido voucher no pedido principal, esse valor ficará disponível novamente em até 24 horas e deverá ser reaplicado na nova compra, considerando que o voucher cobre apenas o valor do SLM base, sem incidência sobre materiais Pearson.";
   }
 
-  return "\n\nAviso: houve uso de voucher no pedido principal. Após a confirmação da troca, esse voucher será reativado em até 24 horas e poderá ser reutilizado na nova compra.";
+  return "\n\nFoi aplicado um voucher no pedido principal. Após a troca, o voucher volta à sua disponibilidade em até 24 horas, no mesmo CPF e com o mesmo código, para ser reaplicado na nova compra. O voucher é válido somente sobre o valor do SLM base, não sendo aplicado aos materiais Pearson.";
 }
 
 function appendVoucherMessageParagraph(text, calc) {
@@ -291,31 +291,19 @@ function buildSchoolMessage(calc) {
   const principalAmount = formatMoney(calc.principal.paidMaterials);
 
   if (calc.requiresCancellationForJuros) {
-    return `Neste momento, não será possível seguir com a troca diretamente neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Como há juros aplicados no pedido principal, haverá saldo disponibilizado na loja referente a esses juros.
+    return `Neste momento, não será possível seguir com a troca neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra seria para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Como há juros aplicados no pedido principal, a troca não pode seguir diretamente.
 
-Nesses casos, será necessário cancelar o pedido principal. Após o cancelamento, o crédito ficará disponível em até 24 horas no CPF do responsável pela compra principal. Antes desse prazo, não deve ser feita nenhuma alteração na LEX.
+Nesse cenário, será necessário seguir com o cancelamento do pedido principal e o respectivo reembolso. Até a conclusão desse processo e o prazo de 24 horas, não deve ser realizada nenhuma alteração na LEX, para que o cancelamento não seja impactado.
 
-Depois das 24 horas, a escola deverá:
-
-- ajustar a matrícula do aluno na turma correta na LEX;
-- orientar o responsável a acessar novamente a loja com o mesmo CPF da compra principal;
-- realizar a nova compra do material correto.
-
-Somente após a liberação do crédito e o ajuste da matrícula na LEX a nova compra poderá ser concluída.`;
+Depois das 24 horas, a escola deverá ajustar a matrícula do aluno na turma correta na LEX, para que o SLM correspondente volte a ficar disponível na loja. Após esse ajuste, poderá ser realizada uma nova compra do material correto, com novo pagamento.`;
   }
 
   if (!calc.canExchange) {
     return `Não será possível seguir com a troca neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra seria para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Como sobraria ${formatMoney(calc.leftover)} na loja, a troca não pode seguir.
 
-Será necessário cancelar o pedido principal. Após o cancelamento, o crédito ficará disponível em até 24 horas no CPF do responsável pela compra principal. Antes desse prazo, não deve ser feita nenhuma alteração na LEX.
+Nesse cenário, será necessário seguir com o cancelamento do pedido principal e o respectivo reembolso. Até a conclusão desse processo e o prazo de 24 horas, não deve ser realizada nenhuma alteração na LEX, para que o cancelamento não seja impactado.
 
-Depois das 24 horas, a escola deverá:
-
-- ajustar a matrícula do aluno na turma correta na LEX;
-- orientar o responsável a acessar novamente a loja com o mesmo CPF da compra principal;
-- realizar a nova compra do material correto.
-
-Somente após a liberação do crédito e o ajuste da matrícula na LEX o material correto ficará disponível para compra.`;
+Depois das 24 horas, a escola deverá ajustar a matrícula do aluno na turma correta na LEX, para que o SLM correspondente volte a ficar disponível na loja. Após esse ajuste, poderá ser realizada uma nova compra do material correto, com novo pagamento.`;
   }
 
   if (calc.difference > 0) {
@@ -353,23 +341,19 @@ function buildGuardianMessage(calc) {
   const principalAmount = formatMoney(calc.principal.paidMaterials);
 
   if (calc.requiresCancellationForJuros) {
-    return `Neste momento, não será possível seguir com a troca diretamente neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Como há juros aplicados no pedido principal, haverá saldo disponibilizado na loja referente a esses juros.
+    return `Neste momento, não será possível seguir com a troca neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra seria para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Como há juros aplicados no pedido principal, a troca não pode seguir diretamente.
 
-Nesses casos, será necessário cancelar o pedido principal. Após o cancelamento, o crédito ficará disponível em até 24 horas no CPF utilizado na compra principal. Antes desse prazo, não será necessário realizar nenhuma ação.
+Nesse cenário, será necessário seguir com o cancelamento do pedido principal e o respectivo reembolso. Antes da conclusão desse processo e do prazo de 24 horas, não será necessário realizar nenhuma ação.
 
-Depois das 24 horas, será necessário entrar em contato com a escola para que ela ajuste a matrícula do aluno na turma correta na LEX. Até a finalização da troca e o cumprimento desse prazo, não deve ser feito nenhum ajuste na LEX da família.
-
-Após a conclusão desse ajuste, você poderá acessar novamente a loja com o mesmo CPF da compra principal e realizar a nova compra do material correto.`;
+Depois das 24 horas, será necessário entrar em contato com a escola para que ela ajuste a matrícula do aluno na turma correta na LEX. Somente após esse ajuste o material correto voltará a ficar disponível na loja. A partir disso, poderá ser realizada uma nova compra do material correto, com novo pagamento.`;
   }
 
   if (!calc.canExchange) {
     return `Não será possível seguir com a troca neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra seria para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Como sobraria ${formatMoney(calc.leftover)} na loja, a troca não pode seguir.
 
-Será necessário cancelar o pedido principal. Após o cancelamento, o crédito ficará disponível em até 24 horas no CPF utilizado na compra principal. Antes desse prazo, não será necessário realizar nenhuma ação.
+Nesse cenário, será necessário seguir com o cancelamento do pedido principal e o respectivo reembolso. Antes da conclusão desse processo e do prazo de 24 horas, não será necessário realizar nenhuma ação.
 
-Depois das 24 horas, será necessário entrar em contato com a escola para que ela ajuste a matrícula do aluno na turma correta na LEX. Até a finalização da troca e o cumprimento desse prazo, não deve ser feito nenhum ajuste na LEX da família.
-
-Após a conclusão desse ajuste, você poderá acessar novamente a loja com o mesmo CPF da compra principal e realizar a nova compra do material correto.`;
+Depois das 24 horas, será necessário entrar em contato com a escola para que ela ajuste a matrícula do aluno na turma correta na LEX. Somente após esse ajuste o material correto voltará a ficar disponível na loja. A partir disso, poderá ser realizada uma nova compra do material correto, com novo pagamento.`;
   }
 
   if (calc.difference > 0) {
