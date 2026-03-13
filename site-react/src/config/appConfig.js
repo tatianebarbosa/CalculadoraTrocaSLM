@@ -27,31 +27,31 @@ export const LIVE_CATALOG_NOTICE =
   "Dados carregados. Os novos valores serao usados nos calculos da calculadora.";
 
 export const RULE_TEXT =
-  "A análise compara o pedido principal com a nova compra, considerando SLM, workbook, Matemática Aplicada e Pearson selecionados. O voucher é aplicado somente sobre o SLM base, e os juros entram como crédito financeiro adicional. Se sobrar valor na loja, a troca não pode seguir. Se faltar valor, a troca pode seguir com pagamento da diferença.";
+  "A análise compara o valor pago no pedido principal com o valor da nova compra, considerando SLM, workbook, Matemática Aplicada e Pearson, quando houver. O voucher é aplicado somente sobre o valor do SLM base. Quando houver juros no pedido principal, será necessário cancelar o pedido. Se sobrar valor na loja, a troca não pode seguir. Se faltar valor, a troca pode seguir com pagamento da diferença.";
 
 export const JUROS_WARNING_TEXT =
-  "Aviso: os juros também são reembolsados na loja. Se houver sobra na loja por causa dos juros, a troca não pode seguir.";
+  "Juros: entram como crédito financeiro adicional. Quando houver juros no pedido principal, a troca não pode seguir diretamente, porque sobra valor na loja referente aos juros. Nesses casos, é necessário cancelar o pedido, aguardar 24 horas e ajustar a matrícula no LEX antes da nova compra.";
 
 export const DISPLAY_RULE_ITEMS = [
   {
-    label: "Considera no cálculo",
-    text: "SLM, workbook, Matemática Aplicada e Pearson."
+    label: "",
+    text: "A análise compara o valor pago no pedido principal com o valor da nova compra, considerando SLM, workbook, Matemática Aplicada e Pearson, quando houver."
   },
   {
-    label: "Voucher",
-    text: "aplicado somente sobre o SLM base."
+    label: "",
+    text: "O voucher é aplicado somente sobre o valor do SLM base."
   },
   {
-    label: "Juros",
-    text: "entram como crédito financeiro adicional."
+    label: "",
+    text: "Quando houver juros no pedido principal, será necessário cancelar o pedido."
   },
   {
-    label: "Se houver sobra na loja",
-    text: "a troca não pode seguir."
+    label: "",
+    text: "Se sobrar valor na loja, a troca não pode seguir."
   },
   {
-    label: "Se faltar valor",
-    text: "a troca pode seguir com pagamento da diferença."
+    label: "",
+    text: "Se faltar valor, a troca pode seguir com pagamento da diferença."
   }
 ];
 

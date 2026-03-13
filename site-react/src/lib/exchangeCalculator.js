@@ -110,8 +110,12 @@ function buildQuickOutcome(calc) {
     return "Preencha o pedido principal e a nova compra para gerar o resumo.";
   }
 
+  if (calc.requiresCancellationForJuros) {
+    return "A troca não pode seguir diretamente neste caso, pois os juros geram sobra de valor na loja.";
+  }
+
   if (!calc.canExchange) {
-    return `A troca não pode ser seguida, pois sobraria ${formatMoney(calc.leftover)} na loja.`;
+    return "A troca não pode seguir, pois sobraria crédito na loja.";
   }
 
   if (calc.difference > 0) {
@@ -126,10 +130,6 @@ export function buildJurosWarning(calc) {
     return null;
   }
 
-  if (calc.leftoverJurosPart > 0) {
-    return `Aviso: ${formatMoney(calc.leftoverJurosPart)} da sobra na loja viria dos juros reembolsados. Quando os juros geram sobra na loja, a troca não pode seguir.`;
-  }
-
   return JUROS_WARNING_TEXT;
 }
 
@@ -142,7 +142,7 @@ export function buildVoucherReactivationWarning(calc) {
     return null;
   }
 
-  return "Aviso: houve uso de voucher no pedido principal. Apos o cancelamento, esse voucher volta para utilizacao em 24 horas e pode ser reutilizado na nova compra.";
+  return "Aviso: houve uso de voucher no pedido principal. Após o cancelamento, esse voucher volta para utilização em 24 horas e pode ser reutilizado na nova compra.";
 }
 
 function buildVoucherReactivationSentence(calc) {
@@ -150,7 +150,7 @@ function buildVoucherReactivationSentence(calc) {
     return "";
   }
 
-  return " Como houve uso de voucher no pedido principal, ele sera liberado novamente em 24 horas apos o cancelamento e podera ser reutilizado na nova compra.";
+  return " Como houve uso de voucher no pedido principal, ele será liberado novamente em 24 horas após o cancelamento e poderá ser reutilizado na nova compra.";
 }
 
 function appendVoucherReactivationSentence(text, calc) {
@@ -160,6 +160,10 @@ function appendVoucherReactivationSentence(text, calc) {
 export function buildFinancialAction(calc) {
   if (!calc.ready) {
     return "Complete a simulação";
+  }
+
+  if (calc.requiresCancellationForJuros) {
+    return "Cancelar pedido principal";
   }
 
   if (!calc.canExchange) {
@@ -178,8 +182,12 @@ export function buildNextStep(calc) {
     return "Preencher os dados";
   }
 
+  if (calc.requiresCancellationForJuros) {
+    return "Aguardar 24h e ajustar a matrícula no LEX";
+  }
+
   if (!calc.canExchange) {
-    return "Aguardar 24h e refazer matricula na LEX";
+    return "Aguardar 24h e refazer matrícula na LEX";
   }
 
   return "Aguardar 24h e ajustar a matrícula na LEX";
@@ -207,11 +215,9 @@ function buildRuleUsed(calc) {
   }
 
   if (calc.jurosCredit > 0) {
-    ruleParts.push("Os juros entraram como crédito financeiro adicional.");
-
-    if (calc.leftoverJurosPart > 0) {
-      ruleParts.push(`Parte da sobra na loja viria dos juros reembolsados: ${formatMoney(calc.leftoverJurosPart)}.`);
-    }
+    ruleParts.push(
+      "Os juros entram como crédito financeiro adicional. Quando houver juros no pedido principal, a troca não pode seguir diretamente, porque sobra valor na loja referente aos juros; por isso, é necessário cancelar o pedido principal."
+    );
   }
 
   return ruleParts.join(" ");
@@ -222,8 +228,12 @@ function buildReason(calc) {
     return "Selecione a turma do pedido principal e a turma da nova compra para iniciar a análise.";
   }
 
+  if (calc.requiresCancellationForJuros) {
+    return "A troca não pode seguir diretamente neste caso, pois os juros geram sobra de valor na loja. Nesses casos, será necessário cancelar o pedido principal.";
+  }
+
   if (!calc.canExchange) {
-    return `A troca não pode seguir, pois sobraria ${formatMoney(calc.leftover)} na loja. Esse valor não pode ficar disponível para uso em outras compras.`;
+    return "A troca não pode seguir, pois sobraria crédito na loja. Esse valor não pode ficar disponível para uso em outras compras.";
   }
 
   if (calc.difference > 0) {
@@ -236,6 +246,10 @@ function buildReason(calc) {
 function buildSimpleSummary(calc) {
   if (!calc.ready) {
     return "Preencha o pedido principal e a nova compra para gerar o resumo simples.";
+  }
+
+  if (calc.requiresCancellationForJuros) {
+    return `A troca não pode seguir diretamente neste caso. Pedido principal: ${calc.form.principalTurma}. Nova compra: ${calc.form.novaTurma}. Como os juros geram sobra de valor na loja, será necessário cancelar o pedido principal, aguardar 24 horas, ajustar a matrícula no LEX e só então seguir com a nova compra.`;
   }
 
   if (!calc.canExchange) {
@@ -260,12 +274,16 @@ function buildSchoolMessage(calc) {
       ? ` Além disso, há ${formatMoney(calc.jurosCredit)} de juros disponíveis como crédito financeiro.`
       : "";
 
+  if (calc.requiresCancellationForJuros) {
+    return `Não será possível seguir com a troca diretamente neste caso, pois há juros aplicados no pedido principal e eles geram sobra de valor na loja. O pedido foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Nesses casos, será necessário cancelar o pedido principal. Após o cancelamento, será necessário aguardar 24 horas. Depois desse prazo, a escola deverá ajustar a matrícula do(a) aluno(a) na turma correta no LEX para liberar a nova compra do material. Somente após esse ajuste o valor ficará disponível na loja para concluir a nova compra.`;
+  }
+
   if (!calc.canExchange) {
-    return `Não será possível seguir com a troca do material. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra seria para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}.${jurosSentence} Após analisarmos o pedido principal, a nova compra e o valor efetivamente pago, verificamos que sobraria ${formatMoney(calc.leftover)} na loja. Como esse valor não pode ficar disponível para uso em outras compras, será necessário cancelar o pedido principal. Após o cancelamento, será necessário aguardar 24 horas. Depois desse prazo, a escola deverá realizar a matrícula do(a) aluno(a) na turma correta na LEX e, somente após esse ajuste, o material correto ficará disponível na loja para uma nova compra integral.`;
+    return `Não será possível seguir com a troca do material. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra seria para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Após a análise, identificamos que sobraria ${formatMoney(calc.leftover)} na loja. Como esse valor não pode ficar disponível para uso em outras compras, será necessário cancelar o pedido principal. Após o cancelamento, aguardar 24 horas. Depois desse prazo, a escola deverá realizar a matrícula do(a) aluno(a) na turma correta no LEX para liberar a nova compra do material correto.`;
   }
 
   if (calc.difference > 0) {
-    return `Vamos seguir com a troca neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}.${jurosSentence} Após a análise da composição do pedido principal, da nova compra e do valor efetivamente pago, identificamos que é possível seguir com a troca neste cenário. Como o valor disponível na loja é menor que o valor da nova compra, será necessário que o responsável realize o pagamento da diferença de ${formatMoney(calc.difference)} para concluir a compra do material correto. Após a confirmação da troca, será necessário aguardar 24 horas e, depois desse prazo, a escola deverá realizar o ajuste da matrícula do(a) aluno(a) na turma correta na LEX. Somente após esse ajuste o valor ficará disponível na loja para realização da nova compra. Antes desse prazo, não deve ser feita nenhuma alteração na LEX.`;
+    return `Vamos seguir com a troca neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}.${jurosSentence} Após a análise, identificamos diferença de ${formatMoney(calc.difference)} a pagar para concluir a compra do material correto. Após a confirmação da troca, será necessário aguardar 24 horas. Depois desse prazo, a escola deverá ajustar a matrícula do(a) aluno(a) na turma correta no LEX para liberar a nova compra. Até que esse ajuste seja concluído, não deve ser feita nenhuma alteração no LEX.`;
   }
 
   return `Vamos seguir com a troca neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}.${jurosSentence} Após analisarmos o pedido principal, a nova compra e o valor efetivamente pago, verificamos que os materiais ficam no mesmo valor. Não haverá diferença a pagar pelo responsável nem sobra disponível na loja. Após a confirmação da troca, será necessário aguardar 24 horas e, depois desse prazo, a escola deverá realizar o ajuste da matrícula do(a) aluno(a) na turma correta na LEX. Somente após esse ajuste o material correto ficará disponível na loja para a nova compra. Antes desse prazo, não deve ser feita nenhuma alteração na LEX.`;
@@ -282,12 +300,16 @@ function buildGuardianMessage(calc) {
       ? ` Além disso, há ${formatMoney(calc.jurosCredit)} de juros disponíveis como crédito financeiro.`
       : "";
 
+  if (calc.requiresCancellationForJuros) {
+    return `Não será possível seguir com a troca diretamente neste caso, pois há juros aplicados no pedido principal e eles geram sobra de valor na loja. O pedido foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Nesses casos, será necessário cancelar o pedido principal. Após o cancelamento, será necessário aguardar 24 horas. Depois desse prazo, pedimos que entre em contato com a escola para que ela realize o ajuste da matrícula no LEX e libere a nova compra do material correto. Somente após esse ajuste será possível concluir a nova compra.`;
+  }
+
   if (!calc.canExchange) {
-    return `Não será possível seguir com a troca do material. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra seria para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}.${jurosSentence} Após analisarmos o pedido principal, a nova compra e o valor efetivamente pago, verificamos que sobraria ${formatMoney(calc.leftover)} na loja. Como esse valor não pode ficar disponível para uso em outras compras, será necessário cancelar o pedido principal. Após o cancelamento, será necessário aguardar 24 horas. Depois desse prazo, pedimos que entre em contato com a escola para que ela realize a matrícula correta na LEX e, somente após esse ajuste, o material correto ficará disponível na loja para uma nova compra integral.`;
+    return `Não será possível seguir com a troca do material. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra seria para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Após a análise, identificamos que sobraria ${formatMoney(calc.leftover)} na loja. Como esse valor não pode ficar disponível para uso em outras compras, será necessário cancelar o pedido principal. Após o cancelamento, será preciso aguardar 24 horas. Depois desse prazo, pedimos que entre em contato com a escola para que ela realize a matrícula correta no LEX e, assim, a nova compra do material possa ser liberada.`;
   }
 
   if (calc.difference > 0) {
-    return `Vamos seguir com a troca do material neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}.${jurosSentence} Após a análise da composição do pedido principal, da nova compra e do valor efetivamente pago, identificamos que é possível seguir com a troca neste cenário. Como o valor disponível na loja é menor que o valor da nova compra, será necessário realizar o pagamento da diferença de ${formatMoney(calc.difference)}. Após a confirmação da troca, será necessário aguardar 24 horas e, depois desse prazo, avisar a escola para que ela realize o ajuste da matrícula na turma correta na LEX. Somente após esse ajuste o valor ficará disponível na loja para realização da nova compra. Antes de finalizar o pedido, orientamos que o abatimento seja conferido com atenção.`;
+    return `Vamos seguir com a troca do material neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}.${jurosSentence} Após a análise, identificamos diferença de ${formatMoney(calc.difference)} a pagar para concluir a compra do material correto. Após a confirmação da troca, será necessário aguardar 24 horas. Depois desse prazo, pedimos que entre em contato com a escola para que ela realize o ajuste da matrícula no LEX e libere a nova compra. Antes de finalizar o pedido, orientamos que o abatimento seja conferido com atenção.`;
   }
 
   return `Vamos seguir com a troca do material neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}.${jurosSentence} Após analisarmos o pedido principal, a nova compra e o valor efetivamente pago, verificamos que os materiais ficam no mesmo valor. Não haverá diferença a pagar nem sobra disponível na loja. Após a confirmação da troca, será necessário aguardar 24 horas e, depois desse prazo, avisar a escola para que ela realize o ajuste da matrícula na turma correta na LEX. Somente após esse ajuste o material correto ficará disponível na loja para a nova compra. Antes de finalizar o pedido, orientamos que o abatimento seja conferido com atenção.`;
@@ -317,11 +339,13 @@ export function calculateExchange(form, catalog) {
   const difference = roundCurrency(Math.max(nova.paidMaterials - totalAvailable, 0));
   const leftover = roundCurrency(Math.max(totalAvailable - nova.paidMaterials, 0));
   const leftoverJurosPart = roundCurrency(Math.min(jurosCredit, leftover));
-  const canExchange = ready && leftover <= 0;
+  const requiresCancellationForJuros = ready && jurosCredit > 0;
+  const canExchange = ready && leftover <= 0 && !requiresCancellationForJuros;
 
   const baseCalc = {
     ready,
     canExchange,
+    requiresCancellationForJuros,
     principal,
     nova,
     jurosCredit,

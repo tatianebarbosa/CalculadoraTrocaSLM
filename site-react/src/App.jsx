@@ -316,11 +316,15 @@ export default function App() {
             </p>
           </div>
           <div className="page-intro__rule">
-            <span>Regra central</span>
+            <span className="page-intro__rule-title">Regra central</span>
             <ul className="page-intro__rule-list">
               {DISPLAY_RULE_ITEMS.map((item) => (
-                <li key={item.label}>
-                  <strong>{item.label}:</strong> {item.text}
+                <li key={item.label || item.text}>
+                  <span className="page-intro__rule-copy">
+                    {item.label ? <strong className="page-intro__rule-label">{item.label}:</strong> : null}
+                    {item.label ? " " : null}
+                    <span className="page-intro__rule-text">{item.text}</span>
+                  </span>
                 </li>
               ))}
             </ul>
