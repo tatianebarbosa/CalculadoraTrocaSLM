@@ -21,8 +21,6 @@ export const CATALOG_SOURCE_MODE = ["api", "static", "auto"].includes(rawCatalog
 export const CATALOG_WRITE_ENABLED = runtimeEnv.DEV || runtimeEnv.VITE_ENABLE_CATALOG_WRITE === "true";
 export const PUBLISHED_CATALOG_NOTICE =
   "Base publicada carregada. Nesta versao, a base fica somente leitura. Para atualizar os valores, gere um novo catalog.json e publique o site novamente.";
-export const READ_ONLY_CATALOG_HELPER =
-  "Versao publicada: a tabela abaixo fica somente para consulta. Para alterar os valores, atualize a base local e publique uma nova versao do site.";
 export const LIVE_CATALOG_NOTICE =
   "Dados carregados. Os novos valores serao usados nos calculos da calculadora.";
 

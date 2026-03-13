@@ -1,4 +1,4 @@
-import { EDITABLE_CATALOG_FIELDS, READ_ONLY_CATALOG_HELPER } from "../config/appConfig";
+import { EDITABLE_CATALOG_FIELDS } from "../config/appConfig";
 import CatalogValueCell from "../components/catalog/CatalogValueCell";
 import { getCatalogTotals } from "../lib/catalogApi";
 import { formatMoney } from "../lib/formatters";
@@ -56,12 +56,6 @@ export default function CatalogSection({
           </div>
         ) : null}
       </div>
-
-      {!canEditCatalog ? (
-        <div className="catalog-editor">
-          <p className="catalog-editor__feedback">{READ_ONLY_CATALOG_HELPER}</p>
-        </div>
-      ) : null}
 
       {shouldShowCatalogNotice && catalogNotice ? (
         <div className="catalog-editor">
