@@ -39,6 +39,7 @@ export default function PrincipalFormSection({
             value={form.principalPearsonMath}
             onChange={(value) => updateForm("principalPearsonMath", value)}
             options={BOOLEAN_OPTIONS}
+            shouldHighlightOption={(optionValue) => optionValue === true}
           />
         </Field>
 
@@ -48,6 +49,7 @@ export default function PrincipalFormSection({
             value={form.principalPearsonScience}
             onChange={(value) => updateForm("principalPearsonScience", value)}
             options={BOOLEAN_OPTIONS}
+            shouldHighlightOption={(optionValue) => optionValue === true}
           />
         </Field>
 
@@ -60,6 +62,7 @@ export default function PrincipalFormSection({
               value={form.principalVoucherMode}
               onChange={(value) => updateForm("principalVoucherMode", value)}
               options={VOUCHER_MODE_OPTIONS}
+              shouldHighlightOption={() => Number(form.principalVoucherValue) > 0}
             />
             <input
               type="number"

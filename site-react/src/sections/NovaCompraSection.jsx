@@ -39,6 +39,7 @@ export default function NovaCompraSection({
             value={form.novaPearsonMath}
             onChange={(value) => updateForm("novaPearsonMath", value)}
             options={BOOLEAN_OPTIONS}
+            shouldHighlightOption={(optionValue) => optionValue === true}
           />
         </Field>
 
@@ -48,6 +49,7 @@ export default function NovaCompraSection({
             value={form.novaPearsonScience}
             onChange={(value) => updateForm("novaPearsonScience", value)}
             options={BOOLEAN_OPTIONS}
+            shouldHighlightOption={(optionValue) => optionValue === true}
           />
         </Field>
 
@@ -60,6 +62,7 @@ export default function NovaCompraSection({
               value={form.novaVoucherMode}
               onChange={(value) => updateForm("novaVoucherMode", value)}
               options={VOUCHER_MODE_OPTIONS}
+              shouldHighlightOption={() => Number(form.novaVoucherValue) > 0}
             />
             <input
               type="number"

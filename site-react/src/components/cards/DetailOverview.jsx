@@ -105,11 +105,11 @@ export default function DetailOverview({ calc }) {
         <p className="detail-overview__section-label">O que fazer</p>
 
         <div className="detail-overview__action-grid">
-          <div className="detail-overview__action-card">
+          <div className="detail-overview__action-card detail-overview__action-card--primary">
             <span>Ação necessária</span>
             <strong>{buildFinancialAction(calc)}</strong>
           </div>
-          <div className="detail-overview__action-card">
+          <div className="detail-overview__action-card detail-overview__action-card--secondary">
             <span>Próximo passo</span>
             <strong>{buildNextStep(calc)}</strong>
           </div>
@@ -118,10 +118,9 @@ export default function DetailOverview({ calc }) {
 
       <section className="detail-overview__section detail-overview__section--details">
         <p className="detail-overview__comparison">{exchangeRoute}</p>
-
-        <div className={isBlocked ? "detail-explanation-card is-blocked" : "detail-explanation-card"}>
-          <p>{finalReinforcement}</p>
-        </div>
+        <p className={isBlocked ? "detail-overview__footnote is-blocked" : "detail-overview__footnote"}>
+          {finalReinforcement}
+        </p>
       </section>
     </div>
   );
