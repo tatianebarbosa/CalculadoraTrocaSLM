@@ -198,6 +198,11 @@ select {
   padding: 20px 0;
 }
 
+.login-hero__brand {
+  width: fit-content;
+  margin: 0 0 4px;
+}
+
 .login-hero h1,
 .login-card h2 {
   margin: 0;
@@ -227,7 +232,7 @@ select {
 }
 
 .login-card__eyebrow {
-  color: var(--accent-dark);
+  color: var(--red);
   font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -302,7 +307,7 @@ select {
   padding: 0 16px;
   border: 1px solid transparent;
   border-radius: 12px;
-  background: var(--accent-dark);
+  background: var(--red);
   color: #ffffff;
   font-size: 0.82rem;
   font-weight: 800;
@@ -317,35 +322,41 @@ select {
 }
 
 .login-card__submit:hover:not(:disabled) {
-  background: var(--accent-dark-hover);
+  background: #94191d;
   transform: translateY(-1px);
 }
 
 .login-card__submit:disabled {
-  background: var(--accent-dark);
-  opacity: 0.6;
+  background: var(--red);
+  opacity: 1;
   cursor: not-allowed;
 }
 
 /* Intro e layout dos paineis */
 .page-intro {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(360px, 0.78fr);
-  gap: clamp(24px, 2vw, 36px);
+  grid-template-columns: repeat(14, minmax(0, 1fr));
+  column-gap: 14px;
+  row-gap: clamp(22px, 3vw, 36px);
   margin: 18px 0 32px;
-  align-items: stretch;
-}
-
-.page-intro__copy,
-.page-intro__rule {
-  align-self: stretch;
-  min-width: 0;
+  align-items: start;
 }
 
 .page-intro__copy {
+  grid-column: 1 / span 8;
   display: grid;
+  gap: clamp(14px, 1.2vw, 20px);
   align-content: start;
-  max-width: 780px;
+  align-self: center;
+  width: 100%;
+  max-width: none;
+  justify-self: stretch;
+  min-width: 0;
+}
+
+.page-intro__rule {
+  align-self: stretch;
+  min-width: 0;
 }
 
 .page-intro__eyebrow,
@@ -359,7 +370,7 @@ select {
 
 .page-intro__eyebrow {
   color: var(--red);
-  margin: 0 0 8px;
+  margin: 0;
 }
 
 .section-title__eyebrow {
@@ -374,34 +385,40 @@ select {
 
 .page-intro h1 {
   display: grid;
-  gap: 2px;
-  margin-bottom: 14px;
-  font-size: clamp(2rem, 3vw, 2.75rem);
-  line-height: 0.96;
+  gap: clamp(4px, 0.5vw, 8px);
+  margin: 0;
+  max-width: 18ch;
+  font-size: clamp(2.25rem, 1.9rem + 2vw, 3.55rem);
+  line-height: 0.94;
+  letter-spacing: -0.02em;
   font-weight: 800;
   color: #0f1f30;
+  text-wrap: balance;
 }
 
 .page-intro__subtitle {
-  margin: 0 0 32px;
-  max-width: 700px;
-  color: #546577;
-  font-size: 0.92rem;
-  line-height: 1.42;
+  margin: 0;
+  width: min(100%, clamp(560px, 46vw, 760px));
+  max-width: none;
+  color: #425467;
+  font-size: clamp(1rem, 0.94rem + 0.24vw, 1.1rem);
+  font-weight: 600;
+  line-height: 1.62;
 }
 
 .page-intro__rule {
+  grid-column: 9 / -1;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 10px;
-  padding: 18px 20px;
+  gap: clamp(12px, 1vw, 18px);
+  padding: clamp(20px, 1.8vw, 28px) clamp(22px, 2vw, 30px);
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #ffffff;
-  width: min(100%, 500px);
-  max-width: 500px;
-  justify-self: end;
+  width: 100%;
+  max-width: none;
+  justify-self: stretch;
 }
 
 .page-intro__rule-title {
@@ -416,7 +433,7 @@ select {
 
 .page-intro__rule-list {
   display: grid;
-  gap: 11px;
+  gap: clamp(12px, 0.9vw, 16px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -425,12 +442,12 @@ select {
 .page-intro__rule-list li {
   display: grid;
   grid-template-columns: 10px minmax(0, 1fr);
-  gap: 12px;
+  gap: 14px;
   align-items: start;
   margin: 0;
   color: #46596d;
-  font-size: 0.87rem;
-  line-height: 1.38;
+  font-size: clamp(0.9rem, 0.86rem + 0.14vw, 0.98rem);
+  line-height: 1.5;
 }
 
 .page-intro__rule-list li::before {
@@ -1061,6 +1078,7 @@ input:disabled {
 }
 
 .detail-overview__action-card {
+  position: relative;
   display: grid;
   gap: 5px;
   align-content: start;
@@ -1075,6 +1093,79 @@ input:disabled {
   color: #30475d;
   font-size: 0.68rem;
   font-weight: 700;
+}
+
+.detail-overview__action-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  padding-right: 20px;
+}
+
+.detail-overview__info {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  flex: none;
+}
+
+.detail-overview__info-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 1px solid #d5dde5;
+  border-radius: 999px;
+  background: #edf1f5;
+  color: #8a96a3;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: help;
+}
+
+.detail-overview__info-trigger:focus-visible {
+  outline: 2px solid rgba(106, 122, 138, 0.28);
+  outline-offset: 2px;
+}
+
+.detail-overview__info-tooltip {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  z-index: 12;
+  width: min(280px, calc(100vw - 48px));
+  padding: 10px 12px;
+  border: 1px solid rgba(212, 219, 227, 0.95);
+  border-radius: 10px;
+  background: #fafbfd;
+  box-shadow: 0 12px 24px rgba(36, 55, 72, 0.08);
+  color: #5c6c7b;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-transform: none;
+  letter-spacing: normal;
+  transform: translateY(4px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease,
+    visibility 120ms ease;
+}
+
+.detail-overview__info:hover .detail-overview__info-tooltip,
+.detail-overview__info:focus-within .detail-overview__info-tooltip {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
 }
 
 .detail-overview__action-card strong {
@@ -1606,7 +1697,16 @@ input:disabled {
   }
 
   .page-intro {
-    grid-template-columns: minmax(0, 1.55fr) minmax(420px, 0.8fr);
+    grid-template-columns: repeat(16, minmax(0, 1fr));
+    column-gap: 14px;
+  }
+
+  .page-intro__copy {
+    grid-column: 1 / span 9;
+  }
+
+  .page-intro__rule {
+    grid-column: 10 / -1;
   }
 
   .page-grid {
@@ -1638,6 +1738,12 @@ input:disabled {
   }
 }
 
+@media (min-width: 961px) {
+  .page-intro h1 span:last-child {
+    white-space: nowrap;
+  }
+}
+
 @media (max-width: 1260px) {
   .app-shell {
     --shell-gap: clamp(28px, 4vw, 76px);
@@ -1646,11 +1752,19 @@ input:disabled {
   .login-layout,
   .page-intro {
     grid-template-columns: 1fr;
+    column-gap: 0;
   }
 
   .page-intro__copy,
   .page-intro__rule {
+    grid-column: auto;
     max-width: none;
+  }
+
+  .page-intro__copy {
+    align-self: start;
+    width: 100%;
+    justify-self: start;
   }
 
   .page-intro__rule {

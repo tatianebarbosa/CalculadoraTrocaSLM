@@ -8,7 +8,7 @@ const rawCatalogSourceMode =
 export const PEARSON_ORDER_DISCOUNT = 44;
 export const COPY_FEEDBACK_MS = 1600;
 // Controle visual para ambiente interno/restrito. Nao tratar este codigo como camada de seguranca.
-export const ACCESS_CODE = "calculadoraSAF2026";
+export const ACCESS_CODE = "SAF2026@";
 export const ACCESS_STORAGE_KEY = "troca-saf-login";
 export const ACCESS_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
 export const DEFAULT_LOGO_URL = `${runtimeEnv.BASE_URL}SAFLOGO.png`;

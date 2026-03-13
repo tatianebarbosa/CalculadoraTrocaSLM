@@ -3,43 +3,45 @@ import { formatMoney } from "../../lib/formatters";
 
 function buildFinalReinforcement(calc) {
   if (!calc.ready) {
-    return "Complete a simulação.";
+    return "Complete a simulacao.";
   }
 
   if (calc.requiresCancellationForJuros) {
-    return "A troca não pode seguir neste momento, pois os juros estão sendo reembolsados e isso gera sobra de valor na loja.";
+    return "A troca nao pode seguir neste momento, pois os juros estao sendo reembolsados e isso gera sobra de valor na loja.";
   }
 
   if (!calc.canExchange) {
-    return "A troca não pode seguir, pois sobraria crédito na loja.";
+    return "A troca nao pode seguir, pois sobraria credito na loja.";
   }
 
   if (calc.difference > 0) {
-    return "Troca liberada com diferença a pagar.";
+    return "Troca liberada com diferenca a pagar.";
   }
 
-  return "Troca liberada sem diferença de valor.";
+  return "Troca liberada sem diferenca de valor.";
 }
 
 export default function DetailOverview({ calc }) {
   const isBlocked = !calc.canExchange;
+  const shouldShowRefundInfo = calc.requiresCancellationForJuros || !calc.canExchange;
+  const refundInfoTooltipId = "refund-info-tooltip";
   const exchangeRoute = calc.ready ? `${calc.form.principalTurma} para ${calc.form.novaTurma}` : "Selecione as turmas";
   const actionLabel = calc.canExchange
     ? calc.difference > 0
-      ? "Diferença a pagar"
+      ? "Diferenca a pagar"
       : "Mesmo valor"
     : "Valor que sobraria na loja";
   const actionValue = calc.canExchange
     ? calc.difference > 0
       ? formatMoney(calc.difference)
-      : "Sem diferença"
+      : "Sem diferenca"
     : formatMoney(calc.leftover);
   const finalReinforcement = buildFinalReinforcement(calc);
   const highlightLabel = calc.requiresCancellationForJuros
     ? "Juros reembolsados na loja"
     : calc.canExchange
-      ? "Crédito que ficará disponível na loja"
-      : "Sobra de crédito na loja";
+      ? "Credito que ficara disponivel na loja"
+      : "Sobra de credito na loja";
   const highlightValue = calc.requiresCancellationForJuros
     ? formatMoney(calc.jurosCredit)
     : calc.canExchange
@@ -73,7 +75,7 @@ export default function DetailOverview({ calc }) {
     });
   } else if (calc.requiresCancellationForJuros && calc.difference > 0) {
     financialItems.push({
-      label: "Diferença após a nova compra",
+      label: "Diferenca apos a nova compra",
       value: formatMoney(calc.difference)
     });
   }
@@ -82,7 +84,7 @@ export default function DetailOverview({ calc }) {
     <div className="detail-overview">
       <section className="detail-overview__section detail-overview__section--status">
         <div className={isBlocked ? "detail-overview__status is-blocked" : "detail-overview__status"}>
-          <strong>{isBlocked ? "NÃO PODE TROCAR" : "PODE TROCAR"}</strong>
+          <strong>{isBlocked ? "NAO PODE TROCAR" : "PODE TROCAR"}</strong>
         </div>
       </section>
 
@@ -109,11 +111,29 @@ export default function DetailOverview({ calc }) {
 
         <div className="detail-overview__action-grid">
           <div className="detail-overview__action-card detail-overview__action-card--primary">
-            <span>Ação necessária</span>
+            <div className="detail-overview__action-heading">
+              <span>Acao necessaria</span>
+            </div>
+            {shouldShowRefundInfo ? (
+              <span className="detail-overview__info">
+                <button
+                  className="detail-overview__info-trigger"
+                  type="button"
+                  aria-label="Informacoes sobre reembolso"
+                  aria-describedby={refundInfoTooltipId}
+                >
+                  i
+                </button>
+                <span className="detail-overview__info-tooltip" id={refundInfoTooltipId} role="tooltip">
+                  Se for boleto, a solicitacao e feita pelo ERP. Se for cartao de credito, o reembolso e feito de
+                  forma automatica com o cancelamento do pedido.
+                </span>
+              </span>
+            ) : null}
             <strong>{buildFinancialAction(calc)}</strong>
           </div>
           <div className="detail-overview__action-card detail-overview__action-card--secondary">
-            <span>Próximo passo</span>
+            <span>Proximo passo</span>
             <strong>{buildNextStep(calc)}</strong>
           </div>
         </div>
