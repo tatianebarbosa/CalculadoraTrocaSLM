@@ -7,7 +7,7 @@ function buildFinalReinforcement(calc) {
   }
 
   if (calc.requiresCancellationForJuros) {
-    return "A troca não pode seguir diretamente, pois os juros geram sobra de valor na loja.";
+    return "A troca não pode seguir neste momento, pois os juros estão sendo reembolsados e isso gera sobra de valor na loja.";
   }
 
   if (!calc.canExchange) {
@@ -36,7 +36,7 @@ export default function DetailOverview({ calc }) {
     : formatMoney(calc.leftover);
   const finalReinforcement = buildFinalReinforcement(calc);
   const highlightLabel = calc.requiresCancellationForJuros
-    ? "Juros aplicados no pedido principal"
+    ? "Juros reembolsados na loja"
     : calc.canExchange
       ? "Crédito que ficará disponível na loja"
       : "Sobra de crédito na loja";

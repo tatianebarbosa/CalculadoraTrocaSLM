@@ -24,10 +24,10 @@ export const LIVE_CATALOG_NOTICE =
   "Dados carregados. Os novos valores serao usados nos calculos da calculadora.";
 
 export const RULE_TEXT =
-  "A análise compara o valor pago no pedido principal com o valor da nova compra, considerando SLM, workbook, Matemática Aplicada e Pearson, quando houver. O voucher é aplicado somente sobre o valor do SLM base. Quando houver juros no pedido principal, será necessário cancelar o pedido. Se sobrar valor na loja, a troca não pode seguir. Se faltar valor, a troca pode seguir com pagamento da diferença.";
+  "A análise compara o valor pago no pedido principal com o valor da nova compra, considerando SLM, workbook, Matemática Aplicada e Pearson, quando houver. O voucher é aplicado somente sobre o valor do SLM base. Aviso: neste momento, quando houver juros no pedido principal, a troca não pode seguir. A loja está reembolsando esse valor indevidamente, o que gera sobra na loja. Se sobrar valor na loja, a troca não pode seguir. Se faltar valor, a troca pode seguir com pagamento da diferença.";
 
 export const JUROS_WARNING_TEXT =
-  "Juros: entram como crédito financeiro adicional. Quando houver juros no pedido principal, a troca não pode seguir diretamente, porque sobra valor na loja referente aos juros. Nesses casos, é necessário cancelar o pedido, aguardar 24 horas e ajustar a matrícula no LEX antes da nova compra.";
+  "Aviso: neste momento, sempre que houver juros no pedido principal, o time deve tratar a troca como não pode trocar. A loja está reembolsando esse valor por falha operacional, e isso gera sobra na loja. O correto seria a loja não devolver juros, então essa orientação pode mudar no futuro. Para seguir, será necessário cancelar o pedido, aguardar 24 horas e ajustar a matrícula no LEX antes da nova compra.";
 
 export const DISPLAY_RULE_ITEMS = [
   {
@@ -40,7 +40,7 @@ export const DISPLAY_RULE_ITEMS = [
   },
   {
     label: "",
-    text: "Quando houver juros no pedido principal, será necessário cancelar o pedido."
+    text: "Aviso: neste momento, quando houver juros no pedido principal, a troca não pode seguir. A loja está reembolsando esse valor indevidamente, o que gera sobra na loja."
   },
   {
     label: "",

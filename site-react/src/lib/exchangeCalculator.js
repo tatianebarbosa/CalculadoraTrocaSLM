@@ -111,7 +111,7 @@ function buildQuickOutcome(calc) {
   }
 
   if (calc.requiresCancellationForJuros) {
-    return "A troca não pode seguir diretamente neste caso, pois os juros geram sobra de valor na loja.";
+    return "A troca não pode seguir neste momento, pois os juros estão sendo reembolsados e isso gera sobra de valor na loja.";
   }
 
   if (!calc.canExchange) {
@@ -134,7 +134,7 @@ export function buildJurosWarning(calc) {
 }
 
 function hasVoucherReactivation(calc) {
-  return !calc.canExchange && calc.principal.voucherApplied > 0;
+  return !calc.canExchange && !calc.requiresCancellationForJuros && calc.principal.voucherApplied > 0;
 }
 
 export function buildVoucherReactivationWarning(calc) {
@@ -155,6 +155,26 @@ function buildVoucherReactivationSentence(calc) {
 
 function appendVoucherReactivationSentence(text, calc) {
   return `${text}${buildVoucherReactivationSentence(calc)}`;
+}
+
+function hasPrincipalVoucherUsage(calc) {
+  return calc.principal.voucherApplied > 0;
+}
+
+function buildVoucherMessageParagraph(calc) {
+  if (!hasPrincipalVoucherUsage(calc)) {
+    return "";
+  }
+
+  if (calc.requiresCancellationForJuros || !calc.canExchange) {
+    return "\n\nAviso: houve uso de voucher no pedido principal. Após o cancelamento, esse voucher será reativado em até 24 horas e poderá ser reutilizado na nova compra.";
+  }
+
+  return "\n\nAviso: houve uso de voucher no pedido principal. Após a confirmação da troca, esse voucher será reativado em até 24 horas e poderá ser reutilizado na nova compra.";
+}
+
+function appendVoucherMessageParagraph(text, calc) {
+  return `${text}${buildVoucherMessageParagraph(calc)}`;
 }
 
 export function buildFinancialAction(calc) {
@@ -216,7 +236,7 @@ function buildRuleUsed(calc) {
 
   if (calc.jurosCredit > 0) {
     ruleParts.push(
-      "Os juros entram como crédito financeiro adicional. Quando houver juros no pedido principal, a troca não pode seguir diretamente, porque sobra valor na loja referente aos juros; por isso, é necessário cancelar o pedido principal."
+      "Aviso: neste momento, quando houver juros no pedido principal, a troca não pode seguir. A loja está reembolsando esse valor indevidamente, o que gera sobra na loja; por isso, é necessário cancelar o pedido principal."
     );
   }
 
@@ -229,7 +249,7 @@ function buildReason(calc) {
   }
 
   if (calc.requiresCancellationForJuros) {
-    return "A troca não pode seguir diretamente neste caso, pois os juros geram sobra de valor na loja. Nesses casos, será necessário cancelar o pedido principal.";
+    return "A troca não pode seguir neste momento, pois os juros estão sendo reembolsados na loja. Como esse valor não deveria ser devolvido, ele acaba sobrando na loja e impede a troca.";
   }
 
   if (!calc.canExchange) {
@@ -249,7 +269,7 @@ function buildSimpleSummary(calc) {
   }
 
   if (calc.requiresCancellationForJuros) {
-    return `A troca não pode seguir diretamente neste caso. Pedido principal: ${calc.form.principalTurma}. Nova compra: ${calc.form.novaTurma}. Como os juros geram sobra de valor na loja, será necessário cancelar o pedido principal, aguardar 24 horas, ajustar a matrícula no LEX e só então seguir com a nova compra.`;
+    return `A troca não pode seguir neste momento. Pedido principal: ${calc.form.principalTurma}. Nova compra: ${calc.form.novaTurma}. Como os juros estão sendo reembolsados na loja, esse valor acaba sobrando e impede a troca. Será necessário cancelar o pedido principal, aguardar 24 horas, ajustar a matrícula no LEX e só então seguir com a nova compra.`;
   }
 
   if (!calc.canExchange) {
@@ -271,7 +291,7 @@ function buildSchoolMessage(calc) {
   const principalAmount = formatMoney(calc.principal.paidMaterials);
 
   if (calc.requiresCancellationForJuros) {
-    return `Não será possível seguir com a troca diretamente neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Como há juros aplicados no pedido principal, haverá saldo disponibilizado na loja referente a esses juros.
+    return `Neste momento, não será possível seguir com a troca diretamente neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Como há juros aplicados no pedido principal, haverá saldo disponibilizado na loja referente a esses juros.
 
 Nesses casos, será necessário cancelar o pedido principal. Após o cancelamento, o crédito ficará disponível em até 24 horas no CPF do responsável pela compra principal. Antes desse prazo, não deve ser feita nenhuma alteração na LEX.
 
@@ -333,7 +353,7 @@ function buildGuardianMessage(calc) {
   const principalAmount = formatMoney(calc.principal.paidMaterials);
 
   if (calc.requiresCancellationForJuros) {
-    return `Não será possível seguir com a troca diretamente neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Como há juros aplicados no pedido principal, haverá saldo disponibilizado na loja referente a esses juros.
+    return `Neste momento, não será possível seguir com a troca diretamente neste caso. O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${principalAmount}, e a nova compra será para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.nova.paidMaterials)}. Como há juros aplicados no pedido principal, haverá saldo disponibilizado na loja referente a esses juros.
 
 Nesses casos, será necessário cancelar o pedido principal. Após o cancelamento, o crédito ficará disponível em até 24 horas no CPF utilizado na compra principal. Antes desse prazo, não será necessário realizar nenhuma ação.
 
@@ -419,7 +439,7 @@ export function calculateExchange(form, catalog) {
     ruleUsed: buildRuleUsed(baseCalc),
     voucherReactivationWarning: buildVoucherReactivationWarning(baseCalc),
     simpleSummary: appendVoucherReactivationSentence(buildSimpleSummary(baseCalc), baseCalc),
-    schoolMessage: appendVoucherReactivationSentence(buildSchoolMessage(baseCalc), baseCalc),
-    guardianMessage: appendVoucherReactivationSentence(buildGuardianMessage(baseCalc), baseCalc)
+    schoolMessage: appendVoucherMessageParagraph(buildSchoolMessage(baseCalc), baseCalc),
+    guardianMessage: appendVoucherMessageParagraph(buildGuardianMessage(baseCalc), baseCalc)
   };
 }
