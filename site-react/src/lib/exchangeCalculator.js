@@ -179,7 +179,7 @@ export function buildNextStep(calc) {
   }
 
   if (!calc.canExchange) {
-    return "Aguardar 24h e refazer no LEX";
+    return "Aguardar 24h e fazer matricula na LEX";
   }
 
   return "Aguardar 24h e ajustar o LEX";
