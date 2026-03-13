@@ -2,12 +2,12 @@ export default function LoginScreen({ logoUrl, accessCode, onAccessCodeChange, o
   return (
     <div className="page-frame">
       <div className="top-strip" aria-hidden="true" />
-      <div className="app-shell">
+      <div className="app-shell app-shell--login">
         <main className="login-layout">
           <section className="login-hero">
             <div className="login-hero__brand site-header__brand">
               <img className="site-header__logo" src={logoUrl} alt="" aria-hidden="true" />
-              <span className="site-header__brand-name">SAF Maple Bear</span>
+              <span className="site-header__brand-name">Maple Bear</span>
             </div>
             <p className="page-intro__eyebrow">Assistente operacional</p>
             <h1>

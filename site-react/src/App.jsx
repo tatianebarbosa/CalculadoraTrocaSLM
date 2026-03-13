@@ -284,7 +284,7 @@ export default function App() {
       <div className="app-shell">
         <header className="site-header">
           <div className="site-header__brand">
-            <img className="site-header__logo" src={DEFAULT_LOGO_URL} alt="SAF Maple Bear" />
+            <img className="site-header__logo" src={DEFAULT_LOGO_URL} alt="Maple Bear" />
             <span className="site-header__brand-name">Maple Bear</span>
           </div>
           <div className="site-header__actions">

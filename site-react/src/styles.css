@@ -84,6 +84,13 @@ select {
   margin: 0 auto 32px;
 }
 
+.app-shell--login {
+  min-height: 100vh;
+  display: grid;
+  align-items: center;
+  margin: 0 auto;
+}
+
 .site-header {
   display: flex;
   align-items: center;
@@ -181,7 +188,9 @@ select {
   grid-template-columns: minmax(0, 1fr) minmax(420px, 448px);
   gap: 36px;
   align-items: center;
-  min-height: calc(100vh - 210px);
+  width: min(100%, 1320px);
+  margin: 0 auto;
+  min-height: auto;
 }
 
 .login-layout > *,
@@ -1755,6 +1764,21 @@ input:disabled {
     column-gap: 0;
   }
 
+  .app-shell--login {
+    align-items: center;
+  }
+
+  .login-layout {
+    width: min(100%, 720px);
+    justify-items: center;
+    row-gap: 28px;
+  }
+
+  .login-hero,
+  .login-card {
+    justify-self: center;
+  }
+
   .page-intro__copy,
   .page-intro__rule {
     grid-column: auto;
@@ -1774,7 +1798,6 @@ input:disabled {
 
   .login-card {
     max-width: 460px;
-    justify-self: start;
   }
 
   .page-grid {
@@ -1862,6 +1885,11 @@ input:disabled {
     margin: 10px auto 24px;
   }
 
+  .app-shell--login {
+    min-height: 100vh;
+    align-items: center;
+  }
+
   .page-intro {
     gap: 18px;
   }
@@ -1919,8 +1947,8 @@ input:disabled {
   }
 
   .login-layout {
-    min-height: auto;
     gap: 24px;
+    width: 100%;
   }
 
   .login-card {
