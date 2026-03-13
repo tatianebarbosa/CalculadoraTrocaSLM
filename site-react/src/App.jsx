@@ -296,7 +296,7 @@ export default function App() {
               title="Abrir troca SLM em nova aba"
               aria-label="Abrir troca SLM em nova aba"
             >
-              Abrir troca SLM
+              Nova compra
             </a>
             <button className="site-header__secondary" type="button" onClick={handleLogout}>
               Sair
@@ -306,9 +306,9 @@ export default function App() {
 
         <section className="page-intro">
           <div className="page-intro__copy">
-            <p className="page-intro__eyebrow">Calculadora operacional</p>
+            <p className="page-intro__eyebrow">Assistente operacional</p>
             <h1>
-              <span>Calculadora</span>
+              <span>Assistente de</span>
               <span>Troca de Material</span>
             </h1>
             <p className="page-intro__subtitle">

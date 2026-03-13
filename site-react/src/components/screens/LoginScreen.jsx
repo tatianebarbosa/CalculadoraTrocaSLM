@@ -12,9 +12,9 @@ export default function LoginScreen({ logoUrl, accessCode, onAccessCodeChange, o
 
         <main className="login-layout">
           <section className="login-hero">
-            <p className="page-intro__eyebrow">Calculadora operacional</p>
+            <p className="page-intro__eyebrow">Assistente operacional</p>
             <h1>
-              <span>Calculadora</span>
+              <span>Assistente de</span>
               <span>Troca de Material</span>
             </h1>
             <p className="page-intro__subtitle">
@@ -24,7 +24,7 @@ export default function LoginScreen({ logoUrl, accessCode, onAccessCodeChange, o
 
           <section className="login-card">
             <span className="login-card__eyebrow">Acesso interno</span>
-            <h2>Entrar na calculadora</h2>
+            <h2>Entrar no assistente</h2>
             <p className="login-card__intro">
               Digite o codigo da equipe para organizar o acesso interno.
             </p>
