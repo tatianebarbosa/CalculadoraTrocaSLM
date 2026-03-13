@@ -1200,9 +1200,11 @@ input:disabled {
 .messages-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
+  gap: 14px;
 }
 
 .panel--messages .message-card {
+  border: 1px solid rgba(216, 222, 230, 0.9);
   box-shadow: none;
 }
 
@@ -1218,8 +1220,8 @@ input:disabled {
   justify-content: flex-start;
   height: 100%;
   padding: var(--card-pad-y) var(--card-pad-x);
-  border-radius: 5px;
-  background: #ffffff;
+  border-radius: 8px;
+  background: #fbfcfd;
 }
 
 .message-card .section-title {
