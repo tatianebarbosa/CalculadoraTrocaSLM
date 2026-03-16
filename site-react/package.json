@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "postinstall": "node ./scripts/patch_vite_dev_env.mjs",
     "dev": "vite",
     "refresh:catalog": "node ./scripts/export_catalog_snapshot.mjs",
     "build": "npm run refresh:catalog && vite build",
