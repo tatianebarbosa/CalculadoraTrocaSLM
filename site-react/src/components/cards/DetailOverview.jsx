@@ -82,7 +82,7 @@ export default function DetailOverview({ calc }) {
     <div className="detail-overview">
       <section className="detail-overview__section detail-overview__section--status">
         <div className={isBlocked ? "detail-overview__status is-blocked" : "detail-overview__status"}>
-          <strong>{isBlocked ? "NAO PODE TROCAR" : "PODE TROCAR"}</strong>
+          <strong>{isBlocked ? "NÃO PODE TROCAR" : "PODE TROCAR"}</strong>
         </div>
       </section>
 

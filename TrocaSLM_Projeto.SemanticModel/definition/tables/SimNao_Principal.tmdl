@@ -62,7 +62,7 @@ table SimNao_Principal
 			
 			IF(
 			    [Saldo que Sobraria na Loja] > 0,
-			    "NAO PODE TROCAR",
+			    "NÃO PODE TROCAR",
 			    "PODE TROCAR"
 			)
 		lineageTag: b0e56cfd-73c2-4131-ba8d-9ad79b0ddf7e
@@ -92,7 +92,7 @@ table SimNao_Principal
 	measure 'Resumo Simples' =
 			
 			IF(
-			    [Pode Fazer a Troca] = "NAO PODE TROCAR",
+			    [Pode Fazer a Troca] = "NÃO PODE TROCAR",
 			    "Não pode seguir com a troca. Sobraria o valor de " &
 			    FORMAT([Saldo que Sobraria na Loja], "R$ #,##0.00") &
 			    " na loja.",
@@ -108,7 +108,7 @@ table SimNao_Principal
 	measure 'Motivo da Analise' =
 			
 			IF(
-			    [Pode Fazer a Troca] = "NAO PODE TROCAR",
+			    [Pode Fazer a Troca] = "NÃO PODE TROCAR",
 			    "A nova compra possui valor menor que o valor que ficará disponível na loja, gerando saldo remanescente.",
 			    IF(
 			        [Diferenca a Pagar pelo Responsavel] > 0,
@@ -134,7 +134,7 @@ table SimNao_Principal
 			    semSelecao,
 			    "Selecione a turma do pedido principal e a turma da nova compra para gerar a mensagem pronta para envio à escola.",
 			    IF(
-			        [Pode Fazer a Troca] = "NAO PODE TROCAR",
+			        [Pode Fazer a Troca] = "NÃO PODE TROCAR",
 			        "Não vamos seguir com a troca neste caso. O pedido principal foi realizado para a turma " & turmaPrincipal &
 			        ", no valor de " & valorPrincipal &
 			        ", e a nova compra seria para a turma " & turmaNova &
@@ -175,7 +175,7 @@ table SimNao_Principal
 			    semSelecao,
 			    "Selecione a turma do pedido principal e a turma da nova compra para gerar a mensagem pronta para envio ao responsável.",
 			    IF(
-			        [Pode Fazer a Troca] = "NAO PODE TROCAR",
+			        [Pode Fazer a Troca] = "NÃO PODE TROCAR",
 			        "Não será possível seguir com a troca do material neste caso. O pedido principal foi realizado para a turma " & turmaPrincipal &
 			        ", no valor de " & valorPrincipal &
 			        ", e a nova compra seria para a turma " & turmaNova &
