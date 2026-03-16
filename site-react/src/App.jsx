@@ -309,7 +309,7 @@ export default function App() {
             <p className="page-intro__eyebrow">Assistente operacional</p>
             <h1>
               <span className="page-intro__title-lock">Assistente de</span>
-              <span>Troca de Material</span>
+              <span className="page-intro__title-lock">Troca de Material</span>
             </h1>
             <p className="page-intro__subtitle">
               Ferramenta interna para analisar a troca de material entre o pedido principal e a nova compra.

@@ -2140,7 +2140,7 @@ input:disabled {
   }
 
   .page-intro h1 {
-    max-width: 13ch;
+    max-width: 17ch;
     font-size: clamp(1.72rem, 7.6vw, 2.28rem);
     line-height: 0.98;
   }
@@ -2389,7 +2389,7 @@ input:disabled {
   }
 
   .page-intro h1 {
-    max-width: 13ch;
+    max-width: 17ch;
     font-size: clamp(1.56rem, 8vw, 1.98rem);
   }
 
