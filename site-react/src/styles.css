@@ -1051,9 +1051,11 @@ input:disabled {
 }
 
 .detail-overview__highlight--primary strong {
+  justify-self: center;
   font-size: 1.571rem;
   line-height: 1.1;
   letter-spacing: -0.02em;
+  text-align: center;
 }
 
 .detail-overview__grid {
