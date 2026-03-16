@@ -1045,6 +1045,8 @@ input:disabled {
 }
 
 .detail-overview__highlight.is-neutral strong {
+  justify-self: center;
+  text-align: center;
   color: #8b1d1f;
 }
 
