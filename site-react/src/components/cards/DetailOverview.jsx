@@ -23,8 +23,6 @@ function buildFinalReinforcement(calc) {
 
 export default function DetailOverview({ calc }) {
   const isBlocked = !calc.canExchange;
-  const shouldShowRefundInfo = calc.ready && (calc.requiresCancellationForJuros || !calc.canExchange);
-  const refundInfoTooltipId = "refund-info-tooltip";
   const exchangeRoute = calc.ready ? `${calc.form.principalTurma} para ${calc.form.novaTurma}` : "Selecione as turmas";
   const actionLabel = calc.canExchange
     ? calc.difference > 0
@@ -114,21 +112,6 @@ export default function DetailOverview({ calc }) {
             <div className="detail-overview__action-heading">
               <span>Acao necessaria</span>
             </div>
-            {shouldShowRefundInfo ? (
-              <span className="detail-overview__info">
-                <button
-                  className="detail-overview__info-trigger"
-                  type="button"
-                  aria-label="Informacoes sobre reembolso"
-                  aria-describedby={refundInfoTooltipId}
-                >
-                  i
-                </button>
-                <span className="detail-overview__info-tooltip" id={refundInfoTooltipId} role="tooltip">
-                  Caso o pagamento tenha sido feito em boleto, o reembolso deve ser solicitado ao time financeiro.
-                </span>
-              </span>
-            ) : null}
             <strong>{buildFinancialAction(calc)}</strong>
           </div>
           <div className="detail-overview__action-card detail-overview__action-card--secondary">
