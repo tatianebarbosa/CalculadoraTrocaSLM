@@ -988,9 +988,9 @@ input:disabled {
 }
 
 .detail-overview__item span {
-  color: #2f455b;
+  color: #233240;
   font-size: 0.62rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .detail-overview__status strong {
@@ -1027,13 +1027,13 @@ input:disabled {
 
 .detail-overview__highlight span {
   font-size: 0.56rem;
-  color: #455b71;
-  font-weight: 600;
+  color: #233240;
+  font-weight: 700;
   letter-spacing: 0.02em;
 }
 
 .detail-overview__highlight.is-neutral span {
-  color: #66575c;
+  color: #2f2a2c;
 }
 
 .detail-overview__highlight strong {
@@ -1082,7 +1082,7 @@ input:disabled {
 .detail-overview__item strong {
   font-size: 0.78rem;
   font-weight: 700;
-  color: #5a6a7a;
+  color: #1f2d3a;
 }
 
 .detail-overview__action-grid {
