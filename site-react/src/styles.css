@@ -405,6 +405,10 @@ select {
   text-wrap: balance;
 }
 
+.page-intro__title-lock {
+  white-space: nowrap;
+}
+
 .page-intro__subtitle {
   margin: 0;
   width: min(100%, clamp(560px, 46vw, 760px));
@@ -2136,7 +2140,7 @@ input:disabled {
   }
 
   .page-intro h1 {
-    max-width: 11ch;
+    max-width: 13ch;
     font-size: clamp(1.72rem, 7.6vw, 2.28rem);
     line-height: 0.98;
   }
@@ -2385,7 +2389,7 @@ input:disabled {
   }
 
   .page-intro h1 {
-    max-width: 10ch;
+    max-width: 13ch;
     font-size: clamp(1.56rem, 8vw, 1.98rem);
   }
 

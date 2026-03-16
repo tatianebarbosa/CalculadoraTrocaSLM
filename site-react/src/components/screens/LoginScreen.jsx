@@ -11,7 +11,7 @@ export default function LoginScreen({ logoUrl, accessCode, onAccessCodeChange, o
             </div>
             <p className="page-intro__eyebrow">Assistente operacional</p>
             <h1>
-              <span>Assistente de</span>
+              <span className="page-intro__title-lock">Assistente de</span>
               <span>Troca de Material</span>
             </h1>
             <p className="page-intro__subtitle">
