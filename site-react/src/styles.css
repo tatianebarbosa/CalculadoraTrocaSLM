@@ -1434,10 +1434,10 @@ input:disabled {
   justify-content: center;
   min-height: 36px;
   padding: 0 14px;
-  border: 1px solid transparent;
+  border: 1px solid rgba(216, 222, 230, 0.92);
   border-radius: 11px;
-  background: var(--accent-dark);
-  color: #ffffff;
+  background: #ffffff;
+  color: #2f4052;
   font-weight: 800;
   cursor: pointer;
   font-size: 0.78rem;
@@ -1454,7 +1454,9 @@ input:disabled {
 }
 
 .copy-button:hover {
-  background: var(--accent-dark-hover);
+  background: #ffffff;
+  border-color: rgba(203, 212, 222, 0.98);
+  color: #203244;
   transform: translateY(-1px);
 }
 
