@@ -2194,6 +2194,10 @@ input:disabled {
     flex-direction: column;
   }
 
+  .section-title--inline-action {
+    align-items: flex-start;
+  }
+
   .site-header {
     align-items: flex-start;
   }
