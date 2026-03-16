@@ -3,22 +3,22 @@ import { formatMoney } from "../../lib/formatters";
 
 function buildFinalReinforcement(calc) {
   if (!calc.ready) {
-    return "Complete a simulacao.";
+    return "Complete a simulação.";
   }
 
   if (calc.requiresCancellationForJuros) {
-    return "A troca nao pode seguir neste momento, pois os juros estao sendo reembolsados e isso gera sobra de valor na loja.";
+    return "A troca não pode seguir neste momento, pois os juros estão sendo reembolsados e isso gera sobra de valor na loja.";
   }
 
   if (!calc.canExchange) {
-    return "A troca nao pode seguir, pois sobraria credito na loja.";
+    return "A troca não pode seguir, pois sobraria crédito na loja.";
   }
 
   if (calc.difference > 0) {
-    return "Troca liberada com diferenca a pagar.";
+    return "Troca liberada com diferença a pagar.";
   }
 
-  return "Troca liberada sem diferenca de valor.";
+  return "Troca liberada sem diferença de valor.";
 }
 
 export default function DetailOverview({ calc }) {
@@ -26,20 +26,20 @@ export default function DetailOverview({ calc }) {
   const exchangeRoute = calc.ready ? `${calc.form.principalTurma} para ${calc.form.novaTurma}` : "Selecione as turmas";
   const actionLabel = calc.canExchange
     ? calc.difference > 0
-      ? "Diferenca a pagar"
+      ? "Diferença a pagar"
       : "Mesmo valor"
     : "Valor que sobraria na loja";
   const actionValue = calc.canExchange
     ? calc.difference > 0
       ? formatMoney(calc.difference)
-      : "Sem diferenca"
+      : "Sem diferença"
     : formatMoney(calc.leftover);
   const finalReinforcement = buildFinalReinforcement(calc);
   const highlightLabel = calc.requiresCancellationForJuros
     ? "Juros reembolsados na loja"
     : calc.canExchange
-      ? "Credito que ficara disponivel na loja"
-      : "Sobra de credito na loja";
+      ? "Crédito que ficará disponível na loja"
+      : "Sobra de crédito na loja";
   const highlightValue = calc.requiresCancellationForJuros
     ? formatMoney(calc.jurosCredit)
     : calc.canExchange
@@ -73,7 +73,7 @@ export default function DetailOverview({ calc }) {
     });
   } else if (calc.requiresCancellationForJuros && calc.difference > 0) {
     financialItems.push({
-      label: "Diferenca apos a nova compra",
+      label: "Diferença após a nova compra",
       value: formatMoney(calc.difference)
     });
   }
@@ -110,12 +110,12 @@ export default function DetailOverview({ calc }) {
         <div className="detail-overview__action-grid">
           <div className="detail-overview__action-card detail-overview__action-card--primary">
             <div className="detail-overview__action-heading">
-              <span>Acao necessaria</span>
+              <span>Ação necessária</span>
             </div>
             <strong>{buildFinancialAction(calc)}</strong>
           </div>
           <div className="detail-overview__action-card detail-overview__action-card--secondary">
-            <span>Proximo passo</span>
+            <span>Próximo passo</span>
             <strong>{buildNextStep(calc)}</strong>
           </div>
         </div>
