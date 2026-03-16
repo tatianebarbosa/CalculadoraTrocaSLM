@@ -19,6 +19,22 @@
 - A versao publicada fica em modo somente leitura. Para mudar os valores, atualize a base localmente e publique de novo.
 - Se o ambiente de build nao conseguir acessar Python ou o Excel, o processo reaproveita o `public/catalog.json` ja salvo no projeto.
 
+## Modulo de voucher isolado
+
+- O projeto agora possui uma entrada separada em `/voucher-preview/`.
+- Essa rota nao aparece na navegacao principal e nao substitui a calculadora atual.
+- Em `dev`, o modulo fica disponivel automaticamente.
+- Em build de preview, habilite `VITE_ENABLE_VOUCHER_PREVIEW=true` para liberar a rota.
+- Em producao, mantenha `VITE_ENABLE_VOUCHER_PREVIEW` desligado. Nesse caso, a rota continua isolada e mostra apenas a tela de modulo inativo.
+- As rotas server-side do modulo ficam em `/api/voucher-preview/*` e exigem `VOUCHER_PREVIEW_API_ENABLED=true` apenas em Preview/Development.
+
+## Como testar o preview de voucher
+
+1. Rode `npm run dev`.
+2. Abra `http://localhost:5173/voucher-preview/`.
+3. Para validar em ambiente de preview hospedado, configure `VITE_ENABLE_VOUCHER_PREVIEW=true` somente nas variaveis de Preview.
+4. Nao habilite essa variavel em Production ate a publicacao definitiva do modulo.
+
 ## Passo a passo
 
 1. Confirme se o arquivo `../base_powerbi_troca_slm.xlsx` esta atualizado.
@@ -54,6 +70,7 @@ O site publicado saira de `site-react/dist`.
 - `VITE_CATALOG_SOURCE=api`: forca leitura por API.
 - `VITE_CATALOG_API_URL`: aponta para uma API externa de catalogo.
 - `VITE_ENABLE_CATALOG_WRITE=true`: libera tentativa de gravacao por API em producao.
+- `VITE_ENABLE_VOUCHER_PREVIEW=true`: libera a rota isolada `/voucher-preview/` fora do modo `dev`.
 
 ## Observacao importante
 
