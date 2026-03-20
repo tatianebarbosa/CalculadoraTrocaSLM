@@ -46,6 +46,19 @@ function getTurmaData(catalog, turma) {
   return catalog.find((item) => item.turma === turma) ?? null;
 }
 
+function hasPearsonAvailable(base, field) {
+  return clampNumber(base?.[field], 0) > 0;
+}
+
+export function getPearsonAvailability(catalog, turma) {
+  const base = getTurmaData(catalog, turma);
+
+  return {
+    math: hasPearsonAvailable(base, "pearsonMath"),
+    science: hasPearsonAvailable(base, "pearsonScience")
+  };
+}
+
 function getVoucherAmount(mode, rawValue, slmBase) {
   const safeSlm = clampNumber(slmBase, 0);
   if (!safeSlm) {
@@ -78,9 +91,11 @@ function buildBreakdown(base, options) {
     };
   }
 
-  const pearsonMath = options.pearsonMath ? base.pearsonMath : 0;
-  const pearsonScience = options.pearsonScience ? base.pearsonScience : 0;
-  const pearsonDiscountItems = (options.pearsonMath ? 1 : 0) + (options.pearsonScience ? 1 : 0);
+  const hasPearsonMath = Boolean(options.pearsonMath) && hasPearsonAvailable(base, "pearsonMath");
+  const hasPearsonScience = Boolean(options.pearsonScience) && hasPearsonAvailable(base, "pearsonScience");
+  const pearsonMath = hasPearsonMath ? base.pearsonMath : 0;
+  const pearsonScience = hasPearsonScience ? base.pearsonScience : 0;
+  const pearsonDiscountItems = (hasPearsonMath ? 1 : 0) + (hasPearsonScience ? 1 : 0);
   const pearsonDiscount = pearsonDiscountItems * PEARSON_ORDER_DISCOUNT;
   const voucherApplied = getVoucherAmount(options.voucherMode, options.voucherValue, base.slm);
   const slmPaid = roundCurrency(Math.max(base.slm - voucherApplied, 0));

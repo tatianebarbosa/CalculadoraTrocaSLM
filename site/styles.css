@@ -296,6 +296,14 @@ input[type="number"]:focus {
   cursor: pointer;
 }
 
+.segmented button:disabled,
+.segmented button.is-disabled {
+  cursor: not-allowed;
+  border-style: dashed;
+  background: #f7f2eb;
+  color: #9b8b7d;
+}
+
 .segmented button.is-active {
   border-color: transparent;
   background: linear-gradient(135deg, var(--red), #d33e33);

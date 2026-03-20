@@ -16,7 +16,7 @@ import {
   requestSharedCatalog,
   storeAccessForOneWeek
 } from "./lib/catalogApi";
-import { buildFocusRows, calculateExchange } from "./lib/exchangeCalculator";
+import { buildFocusRows, calculateExchange, getPearsonAvailability } from "./lib/exchangeCalculator";
 import { clampNumber, roundCurrency } from "./lib/formatters";
 import LoginScreen from "./components/screens/LoginScreen";
 import CatalogUnlockDialog from "./components/dialogs/CatalogUnlockDialog";
@@ -86,11 +86,43 @@ export default function App() {
   }, [catalogCanBeEdited]);
 
   const turmaOptions = catalog.map((item) => ({ value: item.turma, label: item.turma }));
+  const principalPearsonAvailability = getPearsonAvailability(catalog, form.principalTurma);
+  const novaPearsonAvailability = getPearsonAvailability(catalog, form.novaTurma);
   const calc = calculateExchange(form, catalog);
+
+  useEffect(() => {
+    setForm((current) => {
+      const nextState = {};
+
+      if (current.principalPearsonMath && !principalPearsonAvailability.math) {
+        nextState.principalPearsonMath = false;
+      }
+
+      if (current.principalPearsonScience && !principalPearsonAvailability.science) {
+        nextState.principalPearsonScience = false;
+      }
+
+      if (current.novaPearsonMath && !novaPearsonAvailability.math) {
+        nextState.novaPearsonMath = false;
+      }
+
+      if (current.novaPearsonScience && !novaPearsonAvailability.science) {
+        nextState.novaPearsonScience = false;
+      }
+
+      return Object.keys(nextState).length ? { ...current, ...nextState } : current;
+    });
+  }, [
+    principalPearsonAvailability.math,
+    principalPearsonAvailability.science,
+    novaPearsonAvailability.math,
+    novaPearsonAvailability.science
+  ]);
+
   const principalFocusRows = buildFocusRows({
     turma: form.principalTurma,
-    hasMath: form.principalPearsonMath,
-    hasScience: form.principalPearsonScience,
+    hasMath: calc.principal.pearsonMath > 0,
+    hasScience: calc.principal.pearsonScience > 0,
     voucherMode: form.principalVoucherMode,
     voucherValue: form.principalVoucherValue,
     voucherApplied: calc.principal.voucherApplied,
@@ -99,8 +131,8 @@ export default function App() {
   });
   const novaFocusRows = buildFocusRows({
     turma: form.novaTurma,
-    hasMath: form.novaPearsonMath,
-    hasScience: form.novaPearsonScience,
+    hasMath: calc.nova.pearsonMath > 0,
+    hasScience: calc.nova.pearsonScience > 0,
     voucherMode: form.novaVoucherMode,
     voucherValue: form.novaVoucherValue,
     voucherApplied: calc.nova.voucherApplied,
@@ -335,6 +367,7 @@ export default function App() {
           <PrincipalFormSection
             form={form}
             turmaOptions={turmaOptions}
+            principalPearsonAvailability={principalPearsonAvailability}
             principalFocusRows={principalFocusRows}
             calc={calc}
             updateForm={updateForm}
@@ -345,6 +378,7 @@ export default function App() {
           <NovaCompraSection
             form={form}
             turmaOptions={turmaOptions}
+            novaPearsonAvailability={novaPearsonAvailability}
             novaFocusRows={novaFocusRows}
             calc={calc}
             updateForm={updateForm}

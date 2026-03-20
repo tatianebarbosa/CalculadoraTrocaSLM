@@ -803,6 +803,21 @@ input:disabled {
   transform: translateY(-1px);
 }
 
+.toggle-group button:disabled,
+.toggle-group button.is-disabled {
+  cursor: not-allowed;
+  transform: none;
+  border-style: dashed;
+  background: #f4f6f8;
+  color: #8fa0b1;
+  box-shadow: none;
+}
+
+.toggle-group button:disabled:hover,
+.toggle-group button.is-disabled:hover {
+  transform: none;
+}
+
 .toggle-group button.is-selected {
   border-color: #aab5c2;
   background: #f5f7fa;

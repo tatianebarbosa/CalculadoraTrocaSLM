@@ -8,6 +8,7 @@ import { formatMoney } from "../lib/formatters";
 export default function NovaCompraSection({
   form,
   turmaOptions,
+  novaPearsonAvailability,
   novaFocusRows,
   calc,
   updateForm,
@@ -33,23 +34,33 @@ export default function NovaCompraSection({
           />
         </Field>
 
-        <Field className="field--full field--toggle-compact" label="Pearson Math">
+        <Field
+          className="field--full field--toggle-compact"
+          label="Pearson Math"
+          hint={novaPearsonAvailability.math ? "" : "Indisponível para esta turma."}
+        >
           <ToggleGroup
             ariaLabel="Pearson Math da nova compra"
             value={form.novaPearsonMath}
             onChange={(value) => updateForm("novaPearsonMath", value)}
             options={BOOLEAN_OPTIONS}
             shouldHighlightOption={(optionValue) => optionValue === true}
+            isOptionDisabled={(optionValue) => optionValue === true && !novaPearsonAvailability.math}
           />
         </Field>
 
-        <Field className="field--full field--toggle-compact" label="Pearson Science">
+        <Field
+          className="field--full field--toggle-compact"
+          label="Pearson Science"
+          hint={novaPearsonAvailability.science ? "" : "Indisponível para esta turma."}
+        >
           <ToggleGroup
             ariaLabel="Pearson Science da nova compra"
             value={form.novaPearsonScience}
             onChange={(value) => updateForm("novaPearsonScience", value)}
             options={BOOLEAN_OPTIONS}
             shouldHighlightOption={(optionValue) => optionValue === true}
+            isOptionDisabled={(optionValue) => optionValue === true && !novaPearsonAvailability.science}
           />
         </Field>
 

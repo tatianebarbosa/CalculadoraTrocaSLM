@@ -84,14 +84,63 @@
     return Math.min(clampCurrency(rawValue), slmBase);
   }
 
+  function hasPearsonAvailable(base, field) {
+    return Number(base?.[field]) > 0;
+  }
+
+  function getPearsonAvailabilityByTarget(targetName) {
+    const turma =
+      targetName.indexOf("principal") === 0 ? formEls.principalTurma.value : formEls.novaTurma.value;
+    const base = getTurmaData(turma);
+
+    return {
+      math: hasPearsonAvailable(base, "pearsonMath"),
+      science: hasPearsonAvailable(base, "pearsonScience")
+    };
+  }
+
+  function canSelectPearson(targetName, value) {
+    if (value !== "Sim") {
+      return true;
+    }
+
+    const availability = getPearsonAvailabilityByTarget(targetName);
+
+    if (targetName.endsWith("PearsonMath")) {
+      return availability.math;
+    }
+
+    if (targetName.endsWith("PearsonScience")) {
+      return availability.science;
+    }
+
+    return true;
+  }
+
+  function syncUnavailablePearsons() {
+    Object.keys(toggles).forEach((targetName) => {
+      if (toggles[targetName] === "Sim" && !canSelectPearson(targetName, "Sim")) {
+        toggles[targetName] = "Nao";
+      }
+    });
+  }
+
   function buildSegmented(targetName) {
     const wrapper = document.querySelector(`[data-target="${targetName}"]`);
     ["Sim", "Nao"].forEach((value) => {
       const button = document.createElement("button");
+      const isDisabled = !canSelectPearson(targetName, value);
       button.type = "button";
       button.textContent = value === "Nao" ? "Não" : value;
-      button.className = value === toggles[targetName] ? "is-active" : "";
+      button.className = `${value === toggles[targetName] ? "is-active" : ""}${isDisabled ? " is-disabled" : ""}`.trim();
+      button.disabled = isDisabled;
+      if (isDisabled) {
+        button.title = "IndisponÃ­vel para esta turma";
+      }
       button.addEventListener("click", () => {
+        if (isDisabled) {
+          return;
+        }
         toggles[targetName] = value;
         buildAllSegmented();
         render();
@@ -101,6 +150,7 @@
   }
 
   function buildAllSegmented() {
+    syncUnavailablePearsons();
     document.querySelectorAll(".segmented").forEach((node) => {
       node.innerHTML = "";
       buildSegmented(node.dataset.target);
@@ -133,9 +183,11 @@
 
   // Regra de negocio da troca.
   function calculateBreakdown(base, options) {
-    const pearsonMath = options.pearsonMath ? base.pearsonMath : 0;
-    const pearsonScience = options.pearsonScience ? base.pearsonScience : 0;
-    const pearsonDiscountItems = (options.pearsonMath ? 1 : 0) + (options.pearsonScience ? 1 : 0);
+    const hasPearsonMath = Boolean(options.pearsonMath) && hasPearsonAvailable(base, "pearsonMath");
+    const hasPearsonScience = Boolean(options.pearsonScience) && hasPearsonAvailable(base, "pearsonScience");
+    const pearsonMath = hasPearsonMath ? base.pearsonMath : 0;
+    const pearsonScience = hasPearsonScience ? base.pearsonScience : 0;
+    const pearsonDiscountItems = (hasPearsonMath ? 1 : 0) + (hasPearsonScience ? 1 : 0);
     const pearsonDiscount = pearsonDiscountItems * PEARSON_ORDER_DISCOUNT;
     const voucherApplied = getVoucherAmount(options.voucher, base.slm);
     const slmPaid = Math.max(base.slm - voucherApplied, 0);
@@ -353,8 +405,13 @@
 
   function bindInputs() {
     Object.values(formEls).forEach((input) => {
-      input.addEventListener("input", render);
-      input.addEventListener("change", render);
+      const rerender = () => {
+        buildAllSegmented();
+        render();
+      };
+
+      input.addEventListener("input", rerender);
+      input.addEventListener("change", rerender);
     });
 
     document.querySelectorAll("[data-scroll]").forEach((button) => {

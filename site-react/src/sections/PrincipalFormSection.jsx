@@ -8,6 +8,7 @@ import { formatMoney } from "../lib/formatters";
 export default function PrincipalFormSection({
   form,
   turmaOptions,
+  principalPearsonAvailability,
   principalFocusRows,
   calc,
   updateForm,
@@ -33,23 +34,31 @@ export default function PrincipalFormSection({
           />
         </Field>
 
-        <Field label="Pearson Math">
+        <Field
+          label="Pearson Math"
+          hint={principalPearsonAvailability.math ? "" : "Indisponível para esta turma."}
+        >
           <ToggleGroup
             ariaLabel="Pearson Math do pedido principal"
             value={form.principalPearsonMath}
             onChange={(value) => updateForm("principalPearsonMath", value)}
             options={BOOLEAN_OPTIONS}
             shouldHighlightOption={(optionValue) => optionValue === true}
+            isOptionDisabled={(optionValue) => optionValue === true && !principalPearsonAvailability.math}
           />
         </Field>
 
-        <Field label="Pearson Science">
+        <Field
+          label="Pearson Science"
+          hint={principalPearsonAvailability.science ? "" : "Indisponível para esta turma."}
+        >
           <ToggleGroup
             ariaLabel="Pearson Science do pedido principal"
             value={form.principalPearsonScience}
             onChange={(value) => updateForm("principalPearsonScience", value)}
             options={BOOLEAN_OPTIONS}
             shouldHighlightOption={(optionValue) => optionValue === true}
+            isOptionDisabled={(optionValue) => optionValue === true && !principalPearsonAvailability.science}
           />
         </Field>
 
