@@ -1,33 +1,29 @@
 const USAGE_STORAGE_KEY = "troca-saf-usage-events";
-const USAGE_SESSION_KEY = "troca-saf-usage-session";
+const SIMULATION_USAGE_SESSION_KEY = "troca-saf-usage-simulation";
 const MAX_STORED_EVENTS = 600;
 
 export const USAGE_EVENT_TYPES = {
-  SESSION_STARTED: "session_started",
+  SIMULATION_USED: "simulation_used",
   LOGIN_SUCCESS: "login_success",
   MESSAGE_COPIED: "message_copied",
-  ERP_OPENED: "erp_opened",
-  CATALOG_UNLOCKED: "catalog_unlocked",
-  CATALOG_SAVED: "catalog_saved"
+  ERP_OPENED: "erp_opened"
 };
 
 const EVENT_LABELS = {
-  [USAGE_EVENT_TYPES.SESSION_STARTED]: "Sessao autenticada",
-  [USAGE_EVENT_TYPES.LOGIN_SUCCESS]: "Login concluido",
+  [USAGE_EVENT_TYPES.SIMULATION_USED]: "Simulação",
+  [USAGE_EVENT_TYPES.LOGIN_SUCCESS]: "Login concluído",
   [USAGE_EVENT_TYPES.MESSAGE_COPIED]: "Mensagem copiada",
-  [USAGE_EVENT_TYPES.ERP_OPENED]: "Nova troca aberta",
-  [USAGE_EVENT_TYPES.CATALOG_UNLOCKED]: "Edicao da base liberada",
-  [USAGE_EVENT_TYPES.CATALOG_SAVED]: "Base salva"
+  [USAGE_EVENT_TYPES.ERP_OPENED]: "Nova troca aberta"
 };
 
 const METRIC_DEFINITIONS = [
-  { type: USAGE_EVENT_TYPES.SESSION_STARTED, label: "Sessoes" },
+  { type: USAGE_EVENT_TYPES.SIMULATION_USED, label: "Simulação" },
   { type: USAGE_EVENT_TYPES.LOGIN_SUCCESS, label: "Logins" },
-  { type: USAGE_EVENT_TYPES.MESSAGE_COPIED, label: "Copias de mensagem" },
-  { type: USAGE_EVENT_TYPES.ERP_OPENED, label: "Nova troca" },
-  { type: USAGE_EVENT_TYPES.CATALOG_UNLOCKED, label: "Base liberada" },
-  { type: USAGE_EVENT_TYPES.CATALOG_SAVED, label: "Base salva" }
+  { type: USAGE_EVENT_TYPES.MESSAGE_COPIED, label: "Cópias de mensagem" },
+  { type: USAGE_EVENT_TYPES.ERP_OPENED, label: "Nova troca" }
 ];
+
+const REPORTED_EVENT_TYPES = new Set(METRIC_DEFINITIONS.map((metric) => metric.type));
 
 const shortDateFormatter = new Intl.DateTimeFormat("pt-BR", {
   day: "2-digit",
@@ -88,6 +84,29 @@ export function getDefaultUsageFilters() {
   };
 }
 
+export function getCurrentWeekUsageFilters() {
+  const endDate = new Date();
+  const startDate = new Date(endDate);
+  const dayOfWeek = startDate.getDay();
+  const distanceToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+  startDate.setDate(startDate.getDate() - distanceToMonday);
+
+  return {
+    startDate: formatInputDate(startDate),
+    endDate: formatInputDate(endDate)
+  };
+}
+
+export function getTodayUsageFilters() {
+  const today = new Date();
+
+  return {
+    startDate: formatInputDate(today),
+    endDate: formatInputDate(today)
+  };
+}
+
 export function readUsageEvents() {
   if (typeof window === "undefined") {
     return [];
@@ -140,17 +159,17 @@ export function trackUsageEvent(type) {
   return true;
 }
 
-export function ensureUsageSessionStarted() {
+export function ensureSimulationUsageTracked() {
   if (typeof window === "undefined") {
     return false;
   }
 
-  if (window.sessionStorage.getItem(USAGE_SESSION_KEY) === "1") {
+  if (window.sessionStorage.getItem(SIMULATION_USAGE_SESSION_KEY) === "1") {
     return false;
   }
 
-  const wasTracked = trackUsageEvent(USAGE_EVENT_TYPES.SESSION_STARTED);
-  window.sessionStorage.setItem(USAGE_SESSION_KEY, "1");
+  const wasTracked = trackUsageEvent(USAGE_EVENT_TYPES.SIMULATION_USED);
+  window.sessionStorage.setItem(SIMULATION_USAGE_SESSION_KEY, "1");
   return wasTracked;
 }
 
@@ -175,7 +194,9 @@ export function getUsageReport(filters = {}) {
     endDate: typeof filters.endDate === "string" ? filters.endDate : ""
   };
 
-  const filteredEvents = readUsageEvents().filter((event) => matchesUsageFilters(event, safeFilters));
+  const filteredEvents = readUsageEvents().filter(
+    (event) => REPORTED_EVENT_TYPES.has(event.type) && matchesUsageFilters(event, safeFilters)
+  );
   const usageByDay = new Map();
 
   filteredEvents.forEach((event) => {

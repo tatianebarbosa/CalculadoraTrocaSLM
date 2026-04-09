@@ -86,7 +86,7 @@ export async function requestSharedCatalog(method = "GET", catalog = null) {
 
   if (!CATALOG_WRITE_ENABLED) {
     throw new Error(
-      "A versao publicada esta em modo somente leitura. Para atualizar a base, gere um novo catalog.json e publique o site novamente."
+      "A versão publicada está em modo somente leitura. Para atualizar a base, gere um novo catalog.json e publique o site novamente."
     );
   }
 

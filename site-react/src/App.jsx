@@ -19,8 +19,10 @@ import {
 import { buildFocusRows, calculateExchange, getPearsonAvailability } from "./lib/exchangeCalculator";
 import { clampNumber, roundCurrency } from "./lib/formatters";
 import {
-  ensureUsageSessionStarted,
+  ensureSimulationUsageTracked,
+  getCurrentWeekUsageFilters,
   getDefaultUsageFilters,
+  getTodayUsageFilters,
   getUsageReport,
   trackUsageEvent,
   USAGE_EVENT_TYPES
@@ -103,16 +105,6 @@ export default function App() {
     setUsageReport(getUsageReport(usageFilters));
   }, [usageFilters, usageRevision]);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      return;
-    }
-
-    if (ensureUsageSessionStarted()) {
-      setUsageRevision((current) => current + 1);
-    }
-  }, [isAuthenticated]);
-
   const turmaOptions = catalog.map((item) => ({ value: item.turma, label: item.turma }));
   const principalPearsonAvailability = getPearsonAvailability(catalog, form.principalTurma);
   const novaPearsonAvailability = getPearsonAvailability(catalog, form.novaTurma);
@@ -171,6 +163,10 @@ export default function App() {
   const shouldShowCatalogNotice = isCatalogUnlocked || isCatalogLoading || isCatalogSaving || catalogNoticeType === "error";
 
   function updateForm(key, value) {
+    if (ensureSimulationUsageTracked()) {
+      setUsageRevision((current) => current + 1);
+    }
+
     setForm((current) => ({
       ...current,
       [key]: value
@@ -347,6 +343,51 @@ export default function App() {
     handleCatalogLock();
   }
 
+  function handleUsageDialogOpen() {
+    setUsageRevision((current) => current + 1);
+    setIsUsageDialogOpen(true);
+  }
+
+  function handleUsageDialogClose() {
+    setIsUsageDialogOpen(false);
+  }
+
+  function handleUsageFilterChange(key, value) {
+    setUsageFilters((current) => {
+      const nextFilters = {
+        ...current,
+        [key]: value
+      };
+
+      if (nextFilters.startDate && nextFilters.endDate && nextFilters.startDate > nextFilters.endDate) {
+        if (key === "startDate") {
+          nextFilters.endDate = value;
+        } else {
+          nextFilters.startDate = value;
+        }
+      }
+
+      return nextFilters;
+    });
+  }
+
+  function handleUsageFiltersReset() {
+    setUsageFilters(getDefaultUsageFilters());
+  }
+
+  function handleUsageCurrentWeek() {
+    setUsageFilters(getCurrentWeekUsageFilters());
+  }
+
+  function handleUsageToday() {
+    setUsageFilters(getTodayUsageFilters());
+  }
+
+  function handleErpOpen() {
+    trackUsageEvent(USAGE_EVENT_TYPES.ERP_OPENED);
+    setUsageRevision((current) => current + 1);
+  }
+
   if (!isAuthenticated) {
     return (
       <LoginScreen
@@ -380,6 +421,9 @@ export default function App() {
                 <a className="site-header__nav-link" href="#base">
                   Base
                 </a>
+                <button className="site-header__nav-button" type="button" onClick={handleUsageDialogOpen}>
+                  Uso do site
+                </button>
               </nav>
             </div>
 
@@ -391,6 +435,7 @@ export default function App() {
                 rel="noreferrer"
                 title="Abrir nova troca em outra aba"
                 aria-label="Abrir nova troca em outra aba"
+                onClick={handleErpOpen}
               >
                 Nova troca
               </a>
@@ -494,6 +539,18 @@ export default function App() {
             onSubmit={handleCatalogUnlockSubmit}
             onClose={handleCatalogUnlockClose}
             errorMessage={catalogUnlockError}
+          />
+        ) : null}
+
+        {isUsageDialogOpen ? (
+          <UsageDialog
+            filters={usageFilters}
+            report={usageReport}
+            onFilterChange={handleUsageFilterChange}
+            onApplyCurrentWeek={handleUsageCurrentWeek}
+            onApplyToday={handleUsageToday}
+            onResetFilters={handleUsageFiltersReset}
+            onClose={handleUsageDialogClose}
           />
         ) : null}
       </div>
