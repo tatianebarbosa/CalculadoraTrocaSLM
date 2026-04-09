@@ -1,3 +1,45 @@
+import { useState } from "react";
+
+function UsageHistoryDialog({ events, onClose }) {
+  return (
+    <div className="modal-backdrop usage-history-dialog__backdrop" role="presentation" onClick={onClose}>
+      <section
+        className="usage-history-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="usage-history-dialog-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="usage-history-dialog__header">
+          <div>
+            <span className="usage-dialog__eyebrow">Atividade</span>
+            <h3 id="usage-history-dialog-title">Todas as movimentações</h3>
+          </div>
+
+          <button className="usage-history-dialog__close" type="button" onClick={onClose} aria-label="Fechar histórico de atividades">
+            x
+          </button>
+        </div>
+
+        {events.length ? (
+          <div className="usage-history-dialog__list">
+            <ul className="usage-dialog__activity-list">
+              {events.map((event) => (
+                <li key={event.id}>
+                  <strong>{event.label}</strong>
+                  <span>{event.occurredAtLabel}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p className="usage-dialog__empty">Nenhuma atividade registrada para este recorte.</p>
+        )}
+      </section>
+    </div>
+  );
+}
+
 export default function UsageDialog({
   filters,
   report,
@@ -7,7 +49,10 @@ export default function UsageDialog({
   onResetFilters,
   onClose
 }) {
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const quickFilterButtonStyle = { borderRadius: "8px" };
+  const latestEvent = report.recentEvents[0] ?? null;
+  const hasActivityHistory = report.recentEvents.length > 1;
 
   return (
     <div className="modal-backdrop" role="presentation" onClick={onClose}>
@@ -29,9 +74,7 @@ export default function UsageDialog({
           </button>
         </div>
 
-        <p className="usage-dialog__intro">
-          Ajuste o período para ver a movimentação registrada.
-        </p>
+        <p className="usage-dialog__intro">Ajuste o período para ver a movimentação registrada.</p>
 
         <div className="usage-dialog__filters">
           <label className="field">
@@ -57,15 +100,15 @@ export default function UsageDialog({
           <div className="field usage-dialog__filter-shortcuts">
             <span className="field__label">Atalhos</span>
             <div className="usage-dialog__filter-actions">
-            <button className="catalog-editor__button usage-dialog__filter-button" type="button" onClick={onApplyToday} style={quickFilterButtonStyle}>
-              Hoje
-            </button>
-            <button className="catalog-editor__button usage-dialog__filter-button" type="button" onClick={onApplyCurrentWeek} style={quickFilterButtonStyle}>
-              Esta semana
-            </button>
-            <button className="catalog-editor__button usage-dialog__filter-button" type="button" onClick={onResetFilters} style={quickFilterButtonStyle}>
-              Últimos 30 dias
-            </button>
+              <button className="catalog-editor__button usage-dialog__filter-button" type="button" onClick={onApplyToday} style={quickFilterButtonStyle}>
+                Hoje
+              </button>
+              <button className="catalog-editor__button usage-dialog__filter-button" type="button" onClick={onApplyCurrentWeek} style={quickFilterButtonStyle}>
+                Esta semana
+              </button>
+              <button className="catalog-editor__button usage-dialog__filter-button" type="button" onClick={onResetFilters} style={quickFilterButtonStyle}>
+                Últimos 30 dias
+              </button>
             </div>
           </div>
         </div>
@@ -140,21 +183,25 @@ export default function UsageDialog({
             </section>
 
             <section className="usage-dialog__panel usage-dialog__panel--activity">
-              <div className="section-title">
+              <div className="section-title section-title--inline-action">
                 <div>
                   <p className="section-title__eyebrow">Atividade</p>
-                  <h3>Mais recentes</h3>
+                  <h3>Última atividade</h3>
                 </div>
+
+                {hasActivityHistory ? (
+                  <button className="usage-dialog__history-button" type="button" onClick={() => setIsHistoryOpen(true)}>
+                    Ver todas
+                  </button>
+                ) : null}
               </div>
 
-              {report.recentEvents.length ? (
+              {latestEvent ? (
                 <ul className="usage-dialog__activity-list">
-                  {report.recentEvents.map((event) => (
-                    <li key={event.id}>
-                      <strong>{event.label}</strong>
-                      <span>{event.occurredAtLabel}</span>
-                    </li>
-                  ))}
+                  <li key={latestEvent.id}>
+                    <strong>{latestEvent.label}</strong>
+                    <span>{latestEvent.occurredAtLabel}</span>
+                  </li>
                 </ul>
               ) : (
                 <p className="usage-dialog__empty">Nenhuma atividade recente para este recorte.</p>
@@ -162,6 +209,8 @@ export default function UsageDialog({
             </section>
           </div>
         </div>
+
+        {isHistoryOpen ? <UsageHistoryDialog events={report.recentEvents} onClose={() => setIsHistoryOpen(false)} /> : null}
       </section>
     </div>
   );

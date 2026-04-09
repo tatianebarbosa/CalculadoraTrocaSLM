@@ -217,7 +217,7 @@ export function getUsageReport(filters = {}) {
       count
     }));
 
-  const recentEvents = filteredEvents.slice(0, 8).map((event) => ({
+  const recentEvents = filteredEvents.map((event) => ({
     id: event.id,
     label: EVENT_LABELS[event.type] ?? event.type,
     occurredAtLabel: shortDateTimeFormatter.format(event.occurredAt)
