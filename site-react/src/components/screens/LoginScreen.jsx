@@ -23,7 +23,7 @@ export default function LoginScreen({ logoUrl, accessCode, onAccessCodeChange, o
             <span className="login-card__eyebrow">Acesso interno</span>
             <h2>Entrar no assistente</h2>
             <p className="login-card__intro">
-              Digite o código da equipe para organizar o acesso interno.
+              Digite o código da equipe para acessar a calculadora.
             </p>
 
             <form className="login-form" name="maple-bear-login" autoComplete="on" onSubmit={onSubmit}>

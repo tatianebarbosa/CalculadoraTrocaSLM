@@ -3,7 +3,7 @@ export default function ExplanationSection({ calc }) {
     <section className="panel panel--explanation" id="explicacao">
       <div className="section-title">
         <div>
-          <p className="section-title__eyebrow">Entendimento da análise</p>
+          <p className="section-title__eyebrow">Leitura da análise</p>
           <h3>Motivo, regra e resumo</h3>
         </div>
       </div>

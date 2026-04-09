@@ -27,6 +27,8 @@ import ExplanationSection from "./sections/ExplanationSection";
 import MessagesSection from "./sections/MessagesSection";
 import CatalogSection from "./sections/CatalogSection";
 
+const ERP_PREORDER_URL = "https://seb.operations.dynamics.com/?cmp=mbc&mi=PreOrderListPage";
+
 // Fluxo principal: autenticação, cálculo da troca e edição controlada da base.
 export default function App() {
   const [form, setForm] = useState(DEFAULT_FORM);
@@ -127,7 +129,9 @@ export default function App() {
     voucherValue: form.principalVoucherValue,
     voucherApplied: calc.principal.voucherApplied,
     pearsonDiscount: calc.principal.pearsonDiscount,
-    jurosCredit: calc.jurosCredit
+    hasJuros: calc.hasJuros,
+    useRealPaidAmount: calc.principalCreditIsManual,
+    showVoucherRow: false
   });
   const novaFocusRows = buildFocusRows({
     turma: form.novaTurma,
@@ -147,8 +151,23 @@ export default function App() {
     }));
   }
 
+  function parseNumericInput(rawValue) {
+    if (rawValue === "") {
+      return 0;
+    }
+
+    const normalizedValue = String(rawValue)
+      .trim()
+      .replace(/\s+/g, "")
+      .replace(/\.(?=\d{3}(?:\D|$))/g, "")
+      .replace(",", ".");
+
+    const parsedValue = Number(normalizedValue);
+    return Number.isFinite(parsedValue) ? parsedValue : 0;
+  }
+
   function handleNumberChange(key, rawValue) {
-    updateForm(key, rawValue === "" ? 0 : Number(rawValue));
+    updateForm(key, parseNumericInput(rawValue));
   }
 
   function handleNumberFocus(event) {
@@ -228,7 +247,7 @@ export default function App() {
 
     setIsCatalogUnlocked(true);
     handleCatalogUnlockClose();
-    setCatalogNotice("Edição liberada. Ao salvar, os novos dados serão usados nos cálculos da calculadora.");
+    setCatalogNotice("Edição liberada. Ao salvar, os novos dados passarão a ser usados nos cálculos.");
     setCatalogNoticeType("info");
   }
 
@@ -250,7 +269,7 @@ export default function App() {
     }
 
     setCatalog(getDefaultCatalog());
-    setCatalogNotice("Base restaurada. Clique em salvar para usar esses novos dados nos cálculos da calculadora.");
+    setCatalogNotice("Base restaurada. Clique em salvar para aplicar esses valores nos cálculos.");
     setCatalogNoticeType("info");
   }
 
@@ -267,7 +286,7 @@ export default function App() {
       const sharedCatalog = await requestSharedCatalog("PUT", catalog);
       setCatalog(sharedCatalog);
       setSavedCatalog(sharedCatalog);
-      setCatalogNotice("Dados salvos. Os novos valores serão usados nos cálculos da calculadora.");
+      setCatalogNotice("Dados salvos. Os novos valores já estão sendo usados nos cálculos.");
       setCatalogNoticeType("success");
     } catch (error) {
       setCatalogNotice(error instanceof Error ? error.message : "Falha ao salvar os novos dados.");
@@ -311,101 +330,140 @@ export default function App() {
   }
 
   return (
-    <div className="page-frame">
+    <div className="page-frame" id="top">
       <div className="top-strip" aria-hidden="true" />
       <div className="app-shell">
         <header className="site-header">
-          <div className="site-header__brand">
-            <img className="site-header__logo" src={DEFAULT_LOGO_URL} alt="Maple Bear" />
-            <span className="site-header__brand-name">Maple Bear</span>
-          </div>
-          <div className="site-header__actions">
-            <a
-              className="site-header__cta"
-              href="https://seb.operations.dynamics.com/?cmp=mbc&mi=PreOrderListPage"
-              target="_blank"
-              rel="noreferrer"
-              title="Abrir nova troca em outra aba"
-              aria-label="Abrir nova troca em outra aba"
-            >
-              Nova troca
-            </a>
-            <button className="site-header__secondary" type="button" onClick={handleLogout}>
-              Sair
-            </button>
+          <div className="site-header__inner">
+            <div className="site-header__brand-block">
+              <div className="site-header__brand">
+                <img className="site-header__logo" src={DEFAULT_LOGO_URL} alt="Logo SAF" />
+                <span className="site-header__brand-name">Assistente Troca SLM</span>
+              </div>
+
+              <nav className="site-header__nav" aria-label="Navegação principal">
+                <a className="site-header__nav-link is-active" href="#top">
+                  Simulação
+                </a>
+                <a className="site-header__nav-link" href="#mensagens">
+                  Mensagens
+                </a>
+                <a className="site-header__nav-link" href="#base">
+                  Base
+                </a>
+              </nav>
+            </div>
+
+            <div className="site-header__actions">
+              <a
+                className="site-header__cta"
+                href={ERP_PREORDER_URL}
+                target="_blank"
+                rel="noreferrer"
+                title="Abrir nova troca em outra aba"
+                aria-label="Abrir nova troca em outra aba"
+              >
+                Nova troca
+              </a>
+
+              <button className="site-header__secondary" type="button" onClick={handleLogout}>
+                Sair
+              </button>
+            </div>
           </div>
         </header>
 
-        <section className="page-intro">
-          <div className="page-intro__copy">
-            <p className="page-intro__eyebrow">Assistente operacional</p>
-            <h1>
-              <span className="page-intro__title-lock">Assistente de</span>
-              <span className="page-intro__title-lock">Troca de Material</span>
-            </h1>
-            <p className="page-intro__subtitle">
-              Ferramenta interna para analisar a troca de material entre o pedido principal e a nova compra.
-            </p>
+        <section className="page-hero">
+          <div className="page-hero__banner-bleed" aria-hidden="true">
+            <div className="page-hero__banner">
+              <div className="page-hero__shape page-hero__shape--red" />
+              <div className="page-hero__shape page-hero__shape--gold" />
+              <div className="page-hero__shape page-hero__shape--navy" />
+            </div>
           </div>
-          <div className="page-intro__rule">
-            <span className="page-intro__rule-title">Regra central</span>
-            <ul className="page-intro__rule-list">
-              {DISPLAY_RULE_ITEMS.map((item) => (
-                <li key={item.label || item.text}>
-                  <span className="page-intro__rule-copy">
-                    {item.label ? <strong className="page-intro__rule-label">{item.label}:</strong> : null}
-                    {item.label ? " " : null}
-                    <span className="page-intro__rule-text">{item.text}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
+
+          <div className="page-hero__content">
+            <p className="page-hero__eyebrow">Assistente operacional</p>
+            <h1 className="page-hero__title">Análise de Troca SLM</h1>
+            <p className="page-hero__subtitle">
+              Canal interno para comparar o pedido principal e a nova compra, validar voucher, Pearson e juros e orientar a decisão operacional.
+            </p>
           </div>
         </section>
 
-        <main className="page-grid">
-          <PrincipalFormSection
-            form={form}
-            turmaOptions={turmaOptions}
-            principalPearsonAvailability={principalPearsonAvailability}
-            principalFocusRows={principalFocusRows}
-            calc={calc}
-            updateForm={updateForm}
-            handleNumberChange={handleNumberChange}
-            handleNumberFocus={handleNumberFocus}
-          />
-          <ResultSection calc={calc} />
-          <NovaCompraSection
-            form={form}
-            turmaOptions={turmaOptions}
-            novaPearsonAvailability={novaPearsonAvailability}
-            novaFocusRows={novaFocusRows}
-            calc={calc}
-            updateForm={updateForm}
-            handleNumberChange={handleNumberChange}
-            handleNumberFocus={handleNumberFocus}
-          />
-          <ExplanationSection calc={calc} />
-          <MessagesSection calc={calc} copiedKey={copiedKey} onCopy={handleCopy} />
-          <CatalogSection
-            catalog={catalog}
-            canEditCatalog={catalogCanBeEdited}
-            isCatalogUnlocked={isCatalogUnlocked}
-            isCatalogLoading={isCatalogLoading}
-            isCatalogSaving={isCatalogSaving}
-            catalogNotice={catalogNotice}
-            catalogNoticeType={catalogNoticeType}
-            shouldShowCatalogNotice={shouldShowCatalogNotice}
-            onUnlockOpen={handleCatalogUnlockOpen}
-            onSave={handleCatalogSave}
-            onReset={handleCatalogReset}
-            onLock={handleCatalogLock}
-            onValueChange={handleCatalogValueChange}
-          />
+        <main className="workspace-layout">
+          <section className="workspace-main" aria-label="Área principal da simulação">
+            <div className="workspace-primary-grid">
+              <PrincipalFormSection
+                form={form}
+                turmaOptions={turmaOptions}
+                principalPearsonAvailability={principalPearsonAvailability}
+                principalFocusRows={principalFocusRows}
+                calc={calc}
+                updateForm={updateForm}
+                handleNumberChange={handleNumberChange}
+                handleNumberFocus={handleNumberFocus}
+              />
+              <ResultSection calc={calc} />
+              <NovaCompraSection
+                form={form}
+                turmaOptions={turmaOptions}
+                novaPearsonAvailability={novaPearsonAvailability}
+                novaFocusRows={novaFocusRows}
+                calc={calc}
+                updateForm={updateForm}
+                handleNumberChange={handleNumberChange}
+                handleNumberFocus={handleNumberFocus}
+              />
+            </div>
+          </section>
+
+          <div className="workspace-full">
+            <MessagesSection calc={calc} copiedKey={copiedKey} onCopy={handleCopy} />
+          </div>
+
+          <aside className="workspace-sidebar" aria-label="Contexto e apoio da simulação">
+            <div className="workspace-sidebar__support-grid">
+              <section className="panel panel--context panel--rules">
+                <div className="section-title">
+                  <div>
+                    <p className="section-title__eyebrow">Regras da análise</p>
+                    <h3>Critérios operacionais</h3>
+                  </div>
+                </div>
+
+                <ul className="context-list">
+                  {DISPLAY_RULE_ITEMS.map((item) => (
+                    <li key={item.label || item.text}>{item.text}</li>
+                  ))}
+                </ul>
+              </section>
+
+              <ExplanationSection calc={calc} />
+            </div>
+          </aside>
+
+          <div className="workspace-full">
+            <CatalogSection
+              catalog={catalog}
+              canEditCatalog={catalogCanBeEdited}
+              isCatalogUnlocked={isCatalogUnlocked}
+              isCatalogLoading={isCatalogLoading}
+              isCatalogSaving={isCatalogSaving}
+              catalogNotice={catalogNotice}
+              catalogNoticeType={catalogNoticeType}
+              shouldShowCatalogNotice={shouldShowCatalogNotice}
+              onUnlockOpen={handleCatalogUnlockOpen}
+              onSave={handleCatalogSave}
+              onReset={handleCatalogReset}
+              onLock={handleCatalogLock}
+              onValueChange={handleCatalogValueChange}
+            />
+          </div>
         </main>
 
-        <footer className="page-credit" aria-label="Credito de desenvolvimento">
-          Desenvolvido por Tatiane Xavier · Março/2026
+        <footer className="page-credit" aria-label="Crédito de desenvolvimento">
+          Desenvolvido por Tatiane Xavier | Mar/2026
         </footer>
 
         {isCatalogUnlockDialogOpen ? (

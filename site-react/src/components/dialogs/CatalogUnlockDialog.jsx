@@ -10,7 +10,7 @@ export default function CatalogUnlockDialog({ accessCode, onAccessCodeChange, on
       >
         <span className="catalog-unlock-dialog__eyebrow">Edição da base</span>
         <h3 id="catalog-unlock-title">Digite a senha</h3>
-        <p className="catalog-unlock-dialog__intro">Use o mesmo código do login para liberar a edição.</p>
+        <p className="catalog-unlock-dialog__intro">Use o mesmo código do login para liberar a edição desta base.</p>
 
         <form className="catalog-unlock-dialog__form" onSubmit={onSubmit}>
           <input

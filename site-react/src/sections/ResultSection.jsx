@@ -6,13 +6,14 @@ export default function ResultSection({ calc }) {
     <section className="panel panel--detail panel--principal-detail">
       <div className="section-title">
         <div>
-          <p className="section-title__eyebrow">Resultado da troca</p>
+          <p className="section-title__eyebrow">Decisão operacional</p>
+          <h3>Resultado da troca</h3>
         </div>
       </div>
 
       <DetailOverview calc={calc} />
 
-      {calc.jurosCredit > 0 ? (
+      {calc.hasJuros ? (
         <div className="explanation-card detail-warning-card">
           <p>{buildJurosWarning(calc)}</p>
         </div>

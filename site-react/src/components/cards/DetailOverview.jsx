@@ -1,4 +1,3 @@
-import { buildFinancialAction, buildNextStep } from "../../lib/exchangeCalculator";
 import { formatMoney } from "../../lib/formatters";
 
 function buildFinalReinforcement(calc) {
@@ -7,28 +6,65 @@ function buildFinalReinforcement(calc) {
   }
 
   if (calc.requiresCancellationForJuros) {
-    return "A troca não pode seguir neste momento, pois os juros estão sendo reembolsados e isso gera sobra de valor na loja.";
+    return "A troca não pode seguir neste momento, pois há juros vinculados ao pedido principal.";
   }
 
   if (!calc.canExchange) {
-    return "A troca não pode seguir, pois sobraria crédito na loja.";
+    return "A troca não pode seguir, pois haveria saldo remanescente na loja.";
   }
 
   if (calc.difference > 0) {
     return "Troca liberada com diferença a pagar.";
   }
 
-  return "Troca liberada sem diferença de valor.";
+  return "Troca liberada sem diferença a pagar.";
+}
+
+function buildCompositionSummary(breakdown) {
+  const parts = [];
+
+  if (breakdown.slmPaid > 0) {
+    parts.push(`SLM ${formatMoney(breakdown.slmPaid)}`);
+  }
+
+  if (breakdown.workbook > 0) {
+    parts.push(`Workbook ${formatMoney(breakdown.workbook)}`);
+  }
+
+  if (breakdown.matematica > 0) {
+    parts.push(`Mat. Aplicada ${formatMoney(breakdown.matematica)}`);
+  }
+
+  if (breakdown.pearsonMath > 0) {
+    parts.push(`Pearson Math ${formatMoney(breakdown.pearsonMath)}`);
+  }
+
+  if (breakdown.pearsonScience > 0) {
+    parts.push(`Pearson Science ${formatMoney(breakdown.pearsonScience)}`);
+  }
+
+  if (breakdown.pearsonDiscount > 0) {
+    parts.push(`Desc. Pearson -${formatMoney(breakdown.pearsonDiscount)}`);
+  }
+
+  return parts.join(" + ");
+}
+
+function buildPrincipalSummaryText(calc) {
+  if (calc.principalCreditIsManual) {
+    return "Valor pago real informado";
+  }
+
+  return buildCompositionSummary(calc.principal);
 }
 
 export default function DetailOverview({ calc }) {
   const isBlocked = !calc.canExchange;
-  const exchangeRoute = calc.ready ? `${calc.form.principalTurma} para ${calc.form.novaTurma}` : "Selecione as turmas";
   const actionLabel = calc.canExchange
     ? calc.difference > 0
       ? "Diferença a pagar"
       : "Mesmo valor"
-    : "Valor que sobraria na loja";
+    : "Saldo que sobraria na loja";
   const actionValue = calc.canExchange
     ? calc.difference > 0
       ? formatMoney(calc.difference)
@@ -36,32 +72,32 @@ export default function DetailOverview({ calc }) {
     : formatMoney(calc.leftover);
   const finalReinforcement = buildFinalReinforcement(calc);
   const highlightLabel = calc.requiresCancellationForJuros
-    ? "Juros reembolsados na loja"
+    ? "Juros vinculados ao pedido"
     : calc.canExchange
-      ? "Crédito que ficará disponível na loja"
-      : "Sobra de crédito na loja";
+      ? "Crédito disponível na loja"
+      : "Saldo remanescente na loja";
   const highlightValue = calc.requiresCancellationForJuros
-    ? formatMoney(calc.jurosCredit)
+    ? "Sim"
     : calc.canExchange
       ? formatMoney(calc.totalAvailable)
       : formatMoney(calc.leftover);
   const financialHighlightClass = calc.canExchange
     ? "detail-overview__highlight detail-overview__highlight--primary"
     : "detail-overview__highlight detail-overview__highlight--primary is-neutral";
-  const financialGridClass =
-    !calc.canExchange && (!calc.requiresCancellationForJuros || calc.difference <= 0)
-      ? "detail-overview__grid detail-overview__grid--compact"
-      : "detail-overview__grid";
   const financialSectionClass = isBlocked
     ? "detail-overview__section detail-overview__section--financial is-blocked"
     : "detail-overview__section detail-overview__section--financial";
   const financialItems = [
     {
-      label: "Valor do pedido principal",
-      value: formatMoney(calc.principal.paidMaterials)
+      label: "Pedido principal",
+      context: calc.form.principalTurma,
+      breakdown: buildPrincipalSummaryText(calc),
+      value: formatMoney(calc.principalCredit)
     },
     {
-      label: "Valor da nova compra",
+      label: "Nova compra",
+      context: calc.form.novaTurma,
+      breakdown: buildCompositionSummary(calc.nova),
       value: formatMoney(calc.nova.paidMaterials)
     }
   ];
@@ -94,35 +130,24 @@ export default function DetailOverview({ calc }) {
           <strong>{highlightValue}</strong>
         </div>
 
-        <div className={financialGridClass}>
-          {financialItems.map((item) => (
-            <div key={item.label} className="detail-overview__item">
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="detail-overview__section detail-overview__section--actions">
-        <p className="detail-overview__section-label">O que fazer</p>
-
-        <div className="detail-overview__action-grid">
-          <div className="detail-overview__action-card detail-overview__action-card--primary">
-            <div className="detail-overview__action-heading">
-              <span>Ação necessária</span>
-            </div>
-            <strong>{buildFinancialAction(calc)}</strong>
-          </div>
-          <div className="detail-overview__action-card detail-overview__action-card--secondary">
-            <span>Próximo passo</span>
-            <strong>{buildNextStep(calc)}</strong>
+        <div className="focus-card detail-overview__summary-card">
+          <span className="focus-card__title">Resumo da troca</span>
+          <div className="focus-card__rows">
+            {financialItems.map((item) => (
+              <div key={item.label} className="focus-card__row detail-overview__summary-row">
+                <span>{item.label}</span>
+                <div className="detail-overview__summary-content">
+                  {item.context ? <small className="detail-overview__summary-context">{item.context}</small> : null}
+                  {item.breakdown ? <small className="detail-overview__summary-breakdown">{item.breakdown}</small> : null}
+                  <strong>{item.value}</strong>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       <section className="detail-overview__section detail-overview__section--details">
-        <p className="detail-overview__comparison">{exchangeRoute}</p>
         <p className={isBlocked ? "detail-overview__footnote is-blocked" : "detail-overview__footnote"}>
           {finalReinforcement}
         </p>

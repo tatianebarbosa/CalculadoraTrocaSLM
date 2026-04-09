@@ -1,9 +1,20 @@
-import { BOOLEAN_OPTIONS, PEARSON_HINT_TEXT, VOUCHER_MODE_OPTIONS } from "../config/appConfig";
+import { useEffect, useState } from "react";
+import { BOOLEAN_OPTIONS, PEARSON_HINT_TEXT } from "../config/appConfig";
 import Field from "../components/common/Field";
+import InfoDot from "../components/common/InfoDot";
 import DropdownSelect from "../components/common/DropdownSelect";
 import ToggleGroup from "../components/common/ToggleGroup";
 import FocusCard from "../components/cards/FocusCard";
 import { formatMoney } from "../lib/formatters";
+
+const paidAmountFormatter = new Intl.NumberFormat("pt-BR", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+
+function formatPaidAmountInput(value) {
+  return Number(value) > 0 ? paidAmountFormatter.format(Number(value)) : "";
+}
 
 export default function PrincipalFormSection({
   form,
@@ -15,6 +26,45 @@ export default function PrincipalFormSection({
   handleNumberChange,
   handleNumberFocus
 }) {
+  const [paidAmountInput, setPaidAmountInput] = useState(() => formatPaidAmountInput(form.principalPaidAmount));
+  const [isPaidAmountFocused, setIsPaidAmountFocused] = useState(false);
+
+  useEffect(() => {
+    if (!isPaidAmountFocused) {
+      setPaidAmountInput(formatPaidAmountInput(form.principalPaidAmount));
+    }
+  }, [form.principalPaidAmount, isPaidAmountFocused]);
+
+  function handlePaidAmountFocus(event) {
+    setIsPaidAmountFocused(true);
+    handleNumberFocus(event);
+  }
+
+  function handlePaidAmountBlur() {
+    setIsPaidAmountFocused(false);
+    setPaidAmountInput(formatPaidAmountInput(form.principalPaidAmount));
+  }
+
+  function handlePaidAmountChange(event) {
+    const nextValue = event.target.value;
+    setPaidAmountInput(nextValue);
+    handleNumberChange("principalPaidAmount", nextValue);
+  }
+
+  const pearsonMathLabel = (
+    <>
+      Pearson Math
+      <InfoDot text={PEARSON_HINT_TEXT} ariaLabel="Ver regra de desconto do Pearson para Pearson Math" />
+    </>
+  );
+
+  const pearsonScienceLabel = (
+    <>
+      Pearson Science
+      <InfoDot text={PEARSON_HINT_TEXT} ariaLabel="Ver regra de desconto do Pearson para Pearson Science" />
+    </>
+  );
+
   return (
     <section className="panel panel--form panel--principal" id="pedido">
       <div className="section-title">
@@ -34,10 +84,7 @@ export default function PrincipalFormSection({
           />
         </Field>
 
-        <Field
-          label="Pearson Math"
-          hint={principalPearsonAvailability.math ? "" : "Indisponível para esta turma."}
-        >
+        <Field label={pearsonMathLabel}>
           <ToggleGroup
             ariaLabel="Pearson Math do pedido principal"
             value={form.principalPearsonMath}
@@ -48,10 +95,7 @@ export default function PrincipalFormSection({
           />
         </Field>
 
-        <Field
-          label="Pearson Science"
-          hint={principalPearsonAvailability.science ? "" : "Indisponível para esta turma."}
-        >
+        <Field label={pearsonScienceLabel}>
           <ToggleGroup
             ariaLabel="Pearson Science do pedido principal"
             value={form.principalPearsonScience}
@@ -62,45 +106,37 @@ export default function PrincipalFormSection({
           />
         </Field>
 
-        <p className="field-note field-note--full">{PEARSON_HINT_TEXT}</p>
-
-        <Field className="field--full" label="Voucher no SLM">
-          <div className="compound-field">
-            <ToggleGroup
-              ariaLabel="Modo do voucher principal"
-              value={form.principalVoucherMode}
-              onChange={(value) => updateForm("principalVoucherMode", value)}
-              options={VOUCHER_MODE_OPTIONS}
-              shouldHighlightOption={() => Number(form.principalVoucherValue) > 0}
-            />
-            <input
-              type="number"
-              min="0"
-              max={form.principalVoucherMode === "percent" ? "100" : undefined}
-              step="1"
-              value={form.principalVoucherValue}
-              onFocus={handleNumberFocus}
-              onChange={(event) => handleNumberChange("principalVoucherValue", event.target.value)}
-            />
-          </div>
+        <Field
+          className="field--full"
+          label="Valor pago com desconto"
+          hint="Preencha este campo com o valor efetivamente pago quando o pedido tiver sido realizado com voucher."
+        >
+          <input
+            type="text"
+            inputMode="decimal"
+            placeholder="Ex.: 3.562,35"
+            value={paidAmountInput}
+            onFocus={handlePaidAmountFocus}
+            onBlur={handlePaidAmountBlur}
+            onChange={handlePaidAmountChange}
+          />
         </Field>
 
-        <Field className="field--full" label="Valor dos juros">
-          <input
-            type="number"
-            min="0"
-            step="1"
-            value={form.jurosValor}
-            onFocus={handleNumberFocus}
-            onChange={(event) => handleNumberChange("jurosValor", event.target.value)}
+        <Field className="field--full" label="Juros aplicados?">
+          <ToggleGroup
+            ariaLabel="Juros aplicados no pedido principal"
+            value={form.principalHasJuros}
+            onChange={(value) => updateForm("principalHasJuros", value)}
+            options={BOOLEAN_OPTIONS}
+            shouldHighlightOption={(optionValue) => optionValue === true}
           />
         </Field>
       </div>
 
       <FocusCard
         title="Resumo do pedido principal"
-        valueLabel="Valor considerado"
-        value={formatMoney(calc.principal.paidMaterials)}
+        valueLabel="Crédito considerado"
+        value={formatMoney(calc.principalCredit)}
         rows={principalFocusRows}
       />
     </section>

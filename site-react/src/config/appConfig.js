@@ -20,14 +20,13 @@ export const CATALOG_SOURCE_MODE = ["api", "static", "auto"].includes(rawCatalog
   : "auto";
 export const CATALOG_WRITE_ENABLED = runtimeEnv.DEV || runtimeEnv.VITE_ENABLE_CATALOG_WRITE === "true";
 export const PUBLISHED_CATALOG_NOTICE = "";
-export const LIVE_CATALOG_NOTICE =
-  "Dados carregados. Os novos valores serão usados nos cálculos da calculadora.";
+export const LIVE_CATALOG_NOTICE = "Dados carregados. Os valores mais recentes da base já estão sendo usados nos cálculos.";
 
 export const RULE_TEXT =
-  "A análise compara o valor pago no pedido principal com o valor da nova compra, considerando SLM, workbook, Matemática Aplicada e Pearson, quando houver. O voucher é aplicado somente sobre o valor do SLM base. Aviso: neste momento, quando houver juros no pedido principal, a troca não pode seguir. A loja está reembolsando esse valor indevidamente, o que gera sobra na loja. Se sobrar valor na loja, a troca não pode seguir. Se faltar valor, a troca pode seguir com pagamento da diferença.";
+  "A análise compara o valor pago no pedido principal com o valor da nova compra, considerando SLM, workbook, Matemática Aplicada e Pearson, quando houver. O voucher é aplicado somente sobre o SLM base. Quando Pearson é adquirido junto com o SLM, aplica-se desconto fixo de R$ 44 por item selecionado. Se a troca puder seguir e houver voucher no pedido principal, o código anterior pode reaparecer no Magento, mas deve ser cancelado e substituído por um novo voucher fixo. Quando houver juros no pedido principal, a troca não deve seguir. Se sobrar valor na loja, a troca não pode seguir. Se faltar valor, a diferença pode ser paga na nova compra.";
 
 export const JUROS_WARNING_TEXT =
-  "Juros geram sobra de valor na loja e impedem a troca do material.";
+  "Quando há juros vinculados ao pedido principal, a troca não deve seguir por regra da operação.";
 
 export const DISPLAY_RULE_ITEMS = [
   {
@@ -36,11 +35,19 @@ export const DISPLAY_RULE_ITEMS = [
   },
   {
     label: "",
-    text: "O voucher é aplicado somente sobre o valor do SLM base."
+    text: "O voucher é aplicado somente sobre o SLM base."
   },
   {
     label: "",
-    text: "Aviso: neste momento, quando houver juros no pedido principal, a troca não pode seguir. A loja está reembolsando esse valor indevidamente, o que gera sobra na loja."
+    text: "Quando Pearson é adquirido junto com o SLM, aplica-se desconto fixo de R$ 44 por item selecionado."
+  },
+  {
+    label: "",
+    text: "Se a troca puder seguir e houver voucher no pedido principal, o código anterior pode reaparecer no Magento, mas deve ser cancelado e substituído por um novo voucher fixo."
+  },
+  {
+    label: "",
+    text: "Quando houver juros no pedido principal, a troca não deve seguir."
   },
   {
     label: "",
@@ -48,7 +55,7 @@ export const DISPLAY_RULE_ITEMS = [
   },
   {
     label: "",
-    text: "Se faltar valor, a troca pode seguir com pagamento da diferença."
+    text: "Se faltar valor, a diferença pode ser paga na nova compra."
   }
 ];
 
@@ -58,7 +65,8 @@ export const DEFAULT_FORM = {
   principalPearsonScience: false,
   principalVoucherMode: "currency",
   principalVoucherValue: 0,
-  jurosValor: 0,
+  principalPaidAmount: 0,
+  principalHasJuros: false,
   novaTurma: "Senior Kindergarten",
   novaPearsonMath: false,
   novaPearsonScience: false,
@@ -67,7 +75,7 @@ export const DEFAULT_FORM = {
 };
 
 export const PEARSON_HINT_TEXT =
-  "Quando Pearson for adquirido junto com o SLM, será considerado desconto de R$ 44 por Pearson selecionado.";
+  "Quando Pearson é adquirido junto com o SLM, aplica-se desconto de R$ 44 por item selecionado.";
 
 export const BOOLEAN_OPTIONS = [
   { label: "Não", value: false },

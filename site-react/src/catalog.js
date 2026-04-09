@@ -1,4 +1,4 @@
-// Base local de seguranca.
+// Base local de segurança.
 // Se a leitura do Excel compartilhado falhar, a calculadora continua usando estes valores.
 export const DEFAULT_CATALOG = [
   { turma: "Early Toddler (Bear Care)", slm: 2999, workbook: 0, matematica: 0, pearsonMath: 0, pearsonScience: 0 },

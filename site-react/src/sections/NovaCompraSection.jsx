@@ -1,5 +1,6 @@
 import { BOOLEAN_OPTIONS, PEARSON_HINT_TEXT, VOUCHER_MODE_OPTIONS } from "../config/appConfig";
 import Field from "../components/common/Field";
+import InfoDot from "../components/common/InfoDot";
 import DropdownSelect from "../components/common/DropdownSelect";
 import ToggleGroup from "../components/common/ToggleGroup";
 import FocusCard from "../components/cards/FocusCard";
@@ -15,6 +16,20 @@ export default function NovaCompraSection({
   handleNumberChange,
   handleNumberFocus
 }) {
+  const pearsonMathLabel = (
+    <>
+      Pearson Math
+      <InfoDot text={PEARSON_HINT_TEXT} ariaLabel="Ver regra de desconto do Pearson para Pearson Math" />
+    </>
+  );
+
+  const pearsonScienceLabel = (
+    <>
+      Pearson Science
+      <InfoDot text={PEARSON_HINT_TEXT} ariaLabel="Ver regra de desconto do Pearson para Pearson Science" />
+    </>
+  );
+
   return (
     <section className="panel panel--form panel--nova" id="nova">
       <div className="section-title">
@@ -34,11 +49,7 @@ export default function NovaCompraSection({
           />
         </Field>
 
-        <Field
-          className="field--full field--toggle-compact"
-          label="Pearson Math"
-          hint={novaPearsonAvailability.math ? "" : "Indisponível para esta turma."}
-        >
+        <Field className="field--full field--toggle-compact" label={pearsonMathLabel}>
           <ToggleGroup
             ariaLabel="Pearson Math da nova compra"
             value={form.novaPearsonMath}
@@ -49,11 +60,7 @@ export default function NovaCompraSection({
           />
         </Field>
 
-        <Field
-          className="field--full field--toggle-compact"
-          label="Pearson Science"
-          hint={novaPearsonAvailability.science ? "" : "Indisponível para esta turma."}
-        >
+        <Field className="field--full field--toggle-compact" label={pearsonScienceLabel}>
           <ToggleGroup
             ariaLabel="Pearson Science da nova compra"
             value={form.novaPearsonScience}
@@ -63,8 +70,6 @@ export default function NovaCompraSection({
             isOptionDisabled={(optionValue) => optionValue === true && !novaPearsonAvailability.science}
           />
         </Field>
-
-        <p className="field-note field-note--full">{PEARSON_HINT_TEXT}</p>
 
         <Field className="field--full" label="Voucher no SLM">
           <div className="compound-field">
