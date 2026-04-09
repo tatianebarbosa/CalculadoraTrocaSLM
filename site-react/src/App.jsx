@@ -18,8 +18,16 @@ import {
 } from "./lib/catalogApi";
 import { buildFocusRows, calculateExchange, getPearsonAvailability } from "./lib/exchangeCalculator";
 import { clampNumber, roundCurrency } from "./lib/formatters";
+import {
+  ensureUsageSessionStarted,
+  getDefaultUsageFilters,
+  getUsageReport,
+  trackUsageEvent,
+  USAGE_EVENT_TYPES
+} from "./lib/usageAnalytics";
 import LoginScreen from "./components/screens/LoginScreen";
 import CatalogUnlockDialog from "./components/dialogs/CatalogUnlockDialog";
+import UsageDialog from "./components/dialogs/UsageDialog";
 import PrincipalFormSection from "./sections/PrincipalFormSection";
 import ResultSection from "./sections/ResultSection";
 import NovaCompraSection from "./sections/NovaCompraSection";
@@ -46,6 +54,10 @@ export default function App() {
   const [catalogNoticeType, setCatalogNoticeType] = useState("info");
   const [isCatalogLoading, setIsCatalogLoading] = useState(true);
   const [isCatalogSaving, setIsCatalogSaving] = useState(false);
+  const [isUsageDialogOpen, setIsUsageDialogOpen] = useState(false);
+  const [usageFilters, setUsageFilters] = useState(() => getDefaultUsageFilters());
+  const [usageReport, setUsageReport] = useState(() => getUsageReport(getDefaultUsageFilters()));
+  const [usageRevision, setUsageRevision] = useState(0);
   const catalogCanBeEdited = canWriteCatalog();
 
   useEffect(() => {
@@ -86,6 +98,20 @@ export default function App() {
       isCancelled = true;
     };
   }, [catalogCanBeEdited]);
+
+  useEffect(() => {
+    setUsageReport(getUsageReport(usageFilters));
+  }, [usageFilters, usageRevision]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    if (ensureUsageSessionStarted()) {
+      setUsageRevision((current) => current + 1);
+    }
+  }, [isAuthenticated]);
 
   const turmaOptions = catalog.map((item) => ({ value: item.turma, label: item.turma }));
   const principalPearsonAvailability = getPearsonAvailability(catalog, form.principalTurma);
@@ -179,6 +205,8 @@ export default function App() {
   async function handleCopy(key, text) {
     try {
       await navigator.clipboard.writeText(text);
+      trackUsageEvent(USAGE_EVENT_TYPES.MESSAGE_COPIED);
+      setUsageRevision((current) => current + 1);
       setCopiedKey(key);
       window.setTimeout(() => {
         setCopiedKey((current) => (current === key ? "" : current));
@@ -200,6 +228,8 @@ export default function App() {
 
     if (accessCode.trim() === ACCESS_CODE) {
       storeAccessForOneWeek();
+      trackUsageEvent(USAGE_EVENT_TYPES.LOGIN_SUCCESS);
+      setUsageRevision((current) => current + 1);
       setIsAuthenticated(true);
       setLoginError("");
       setAccessCode("");
@@ -338,7 +368,6 @@ export default function App() {
             <div className="site-header__brand-block">
               <div className="site-header__brand">
                 <img className="site-header__logo" src={DEFAULT_LOGO_URL} alt="Logo SAF" />
-                <span className="site-header__brand-name">Assistente Troca SLM</span>
               </div>
 
               <nav className="site-header__nav" aria-label="Navegação principal">
@@ -374,14 +403,6 @@ export default function App() {
         </header>
 
         <section className="page-hero">
-          <div className="page-hero__banner-bleed" aria-hidden="true">
-            <div className="page-hero__banner">
-              <div className="page-hero__shape page-hero__shape--red" />
-              <div className="page-hero__shape page-hero__shape--gold" />
-              <div className="page-hero__shape page-hero__shape--navy" />
-            </div>
-          </div>
-
           <div className="page-hero__content">
             <p className="page-hero__eyebrow">Assistente operacional</p>
             <h1 className="page-hero__title">Análise de Troca SLM</h1>

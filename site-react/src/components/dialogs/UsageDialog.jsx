@@ -1,0 +1,153 @@
+export default function UsageDialog({
+  filters,
+  report,
+  onFilterChange,
+  onResetFilters,
+  onClose
+}) {
+  return (
+    <div className="modal-backdrop" role="presentation" onClick={onClose}>
+      <section
+        className="usage-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="usage-dialog-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="usage-dialog__header">
+          <div>
+            <span className="usage-dialog__eyebrow">Uso do site</span>
+            <h3 id="usage-dialog-title">Utilizacao registrada</h3>
+          </div>
+
+          <button className="usage-dialog__close" type="button" onClick={onClose} aria-label="Fechar modal de uso do site">
+            Fechar
+          </button>
+        </div>
+
+        <p className="usage-dialog__intro">
+          Dados salvos neste navegador. Ajuste o periodo para ver a movimentacao registrada.
+        </p>
+
+        <div className="usage-dialog__filters">
+          <label className="field">
+            <span className="field__label">De</span>
+            <input
+              className="usage-dialog__input"
+              type="date"
+              value={filters.startDate}
+              onChange={(event) => onFilterChange("startDate", event.target.value)}
+            />
+          </label>
+
+          <label className="field">
+            <span className="field__label">Ate</span>
+            <input
+              className="usage-dialog__input"
+              type="date"
+              value={filters.endDate}
+              onChange={(event) => onFilterChange("endDate", event.target.value)}
+            />
+          </label>
+
+          <div className="usage-dialog__filter-actions">
+            <button className="catalog-editor__button" type="button" onClick={onResetFilters}>
+              Ultimos 30 dias
+            </button>
+          </div>
+        </div>
+
+        <div className="usage-dialog__summary-grid">
+          <article className="usage-dialog__summary-card">
+            <span>Eventos no periodo</span>
+            <strong>{report.totalEvents}</strong>
+          </article>
+
+          <article className="usage-dialog__summary-card">
+            <span>Dias com uso</span>
+            <strong>{report.daysWithUsage}</strong>
+          </article>
+
+          <article className="usage-dialog__summary-card">
+            <span>Ultima atividade</span>
+            <strong>{report.lastActivityLabel}</strong>
+          </article>
+        </div>
+
+        <div className="usage-dialog__section">
+          <div className="section-title section-title--inline-action">
+            <div>
+              <p className="section-title__eyebrow">Resumo</p>
+              <h3>Tipos de uso</h3>
+            </div>
+          </div>
+
+          <div className="usage-dialog__metric-grid">
+            {report.metrics.map((metric) => (
+              <article key={metric.type} className="usage-dialog__metric-card">
+                <span>{metric.label}</span>
+                <strong>{metric.value}</strong>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div className="usage-dialog__content-grid">
+          <section className="usage-dialog__panel">
+            <div className="section-title">
+              <div>
+                <p className="section-title__eyebrow">Movimento</p>
+                <h3>Por dia</h3>
+              </div>
+            </div>
+
+            {report.timeline.length ? (
+              <div className="usage-dialog__table-wrap">
+                <table className="usage-dialog__table">
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {report.timeline.map((item) => (
+                      <tr key={item.dateKey}>
+                        <td>{item.label}</td>
+                        <td>{item.count}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="usage-dialog__empty">Nenhum registro encontrado para o periodo selecionado.</p>
+            )}
+          </section>
+
+          <section className="usage-dialog__panel">
+            <div className="section-title">
+              <div>
+                <p className="section-title__eyebrow">Atividade</p>
+                <h3>Mais recentes</h3>
+              </div>
+            </div>
+
+            {report.recentEvents.length ? (
+              <ul className="usage-dialog__activity-list">
+                {report.recentEvents.map((event) => (
+                  <li key={event.id}>
+                    <strong>{event.label}</strong>
+                    <span>{event.occurredAtLabel}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="usage-dialog__empty">Nenhuma atividade recente para este recorte.</p>
+            )}
+          </section>
+        </div>
+      </section>
+    </div>
+  );
+}
