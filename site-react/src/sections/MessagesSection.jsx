@@ -1,6 +1,8 @@
 import MessageCard from "../components/cards/MessageCard";
 
 export default function MessagesSection({ calc, copiedKey, onCopy }) {
+  const hasGuardianSchoolContactMessage = Boolean(calc.guardianSchoolContactMessage);
+
   return (
     <section className="panel panel--messages" id="mensagens">
       <div className="section-title">
@@ -25,6 +27,15 @@ export default function MessagesSection({ calc, copiedKey, onCopy }) {
           copied={copiedKey === "guardian"}
           onCopy={() => onCopy("guardian", calc.guardianMessage)}
         />
+        {hasGuardianSchoolContactMessage ? (
+          <MessageCard
+            title="Mensagem do responsável para a escola"
+            body={calc.guardianSchoolContactMessage}
+            buttonLabel="Copiar"
+            copied={copiedKey === "guardian-school"}
+            onCopy={() => onCopy("guardian-school", calc.guardianSchoolContactMessage)}
+          />
+        ) : null}
       </div>
     </section>
   );

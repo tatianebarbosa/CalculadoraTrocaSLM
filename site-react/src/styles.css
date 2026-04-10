@@ -1359,7 +1359,7 @@ input:disabled {
 }
 
 .messages-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   align-items: stretch;
   gap: var(--space-page-card);
 }
@@ -1413,13 +1413,14 @@ input:disabled {
 
 .message-card__body {
   display: grid;
-  gap: 14px;
+  gap: 10px;
   flex: 1 1 auto;
+  align-content: start;
 }
 
 .message-card__list {
   display: grid;
-  gap: 10px;
+  gap: 6px;
   margin: 0;
   padding-left: 20px;
   color: #32465a;
@@ -4138,7 +4139,7 @@ input[type="password"]:focus,
 }
 
 .messages-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
 .message-card {
@@ -4197,11 +4198,12 @@ input[type="password"]:focus,
 }
 
 .message-card__body {
-  gap: 16px;
+  gap: 10px;
+  align-content: start;
 }
 
 .message-card__list {
-  gap: 10px;
+  gap: 6px;
   padding-left: 18px;
 }
 

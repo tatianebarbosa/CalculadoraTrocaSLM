@@ -270,7 +270,7 @@ function buildCancellationDeadlineParagraph(calc, audience = "generic") {
   }
 
   if (audience === "guardian") {
-    return "Durante o cancelamento e o prazo de 24 horas, não deve ser feito nenhum ajuste na LEX em nenhum perfil da família, pois isso pode impedir a continuidade do cancelamento. Fora isso, não será necessária nenhuma outra ação do responsável.";
+    return "Durante o cancelamento e o prazo de 24 horas, não deve ser feito nenhum ajuste na LEX em nenhum perfil da família, pois isso pode impedir a continuidade do cancelamento. Fora isso, não será necessária nenhuma outra ação.";
   }
 
   return "Importante: até a conclusão do cancelamento e do prazo de 24 horas, a escola não deve realizar nenhum ajuste na LEX em nenhum perfil da família. Se houver qualquer alteração antes disso, o cancelamento pode não ser concluído corretamente.";
@@ -537,6 +537,49 @@ function buildGuardianMessage(calc) {
   ]);
 }
 
+function needsGuardianSchoolContactMessage(calc) {
+  if (!calc.ready) {
+    return false;
+  }
+
+  const guardianActionLines = calc.canExchange
+    ? buildExchangeActionLines(calc, "guardian")
+    : buildCancellationActionLines(calc, "guardian");
+
+  return guardianActionLines.some((line) => line.toLowerCase().includes("escola"));
+}
+
+function buildGuardianSchoolContactLeadParagraph(calc) {
+  return `Olá! Entrei em contato com o time SAF para tratar a troca de material. A compra foi realizada para a turma ${calc.form.principalTurma}, mas a turma correta do(a) aluno(a) é ${calc.form.novaTurma}.`;
+}
+
+function buildGuardianSchoolContactDeadlineParagraph(calc) {
+  if (calc.requiresCancellationForJuros || !calc.canExchange) {
+    return "Fui orientado(a) a aguardar a conclusão do cancelamento e o prazo de 24 horas. Depois disso, a escola precisa ajustar a matrícula do(a) aluno(a) na LEX para liberar novamente o crédito e o material correto para a nova compra.";
+  }
+
+  return "Fui orientado(a) a aguardar a conclusão da troca e o prazo de 24 horas. Depois disso, a escola precisa ajustar a matrícula do(a) aluno(a) na LEX para liberar novamente o crédito e o material correto para a nova compra.";
+}
+
+function buildGuardianSchoolContactMessage(calc) {
+  if (!needsGuardianSchoolContactMessage(calc)) {
+    return "";
+  }
+
+  return joinMessageBlocks([
+    "Orientamos a enviar a seguinte mensagem à escola:",
+    buildGuardianSchoolContactLeadParagraph(calc),
+    buildGuardianSchoolContactDeadlineParagraph(calc),
+    `A escola deve:\n${buildBulletList([
+      "acessar a LEX",
+      "abrir a aba Cursos",
+      `localizar a turma ${calc.form.novaTurma}`,
+      "realizar a nova matrícula do(a) aluno(a) nessa turma"
+    ])}`,
+    "Após esse ajuste, o crédito e o material correto ficarão liberados na loja para a nova compra."
+  ]);
+}
+
 export function calculateExchange(form, catalog) {
   const principalBase = getTurmaData(catalog, form.principalTurma);
   const novaBase = getTurmaData(catalog, form.novaTurma);
@@ -599,6 +642,7 @@ export function calculateExchange(form, catalog) {
     voucherReactivationWarning: buildVoucherReactivationWarning(baseCalc),
     simpleSummary: buildSimpleSummary(baseCalc),
     schoolMessage: buildSchoolMessage(baseCalc),
-    guardianMessage: buildGuardianMessage(baseCalc)
+    guardianMessage: buildGuardianMessage(baseCalc),
+    guardianSchoolContactMessage: buildGuardianSchoolContactMessage(baseCalc)
   };
 }
