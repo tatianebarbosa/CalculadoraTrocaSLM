@@ -631,6 +631,19 @@ select {
   font-size: 0.857rem;
 }
 
+.field-label-inline {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.field-label-inline__meta {
+  color: var(--muted);
+  font-size: 0.92em;
+  font-weight: 500;
+  opacity: 0.88;
+}
+
 .field__hint {
   margin-top: 6px;
   color: #32475d;
@@ -3592,7 +3605,46 @@ input[type="password"],
 }
 
 .dropdown-select__trigger {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 10px;
+  padding: 7px 10px;
+}
+
+.dropdown-select__trigger-copy,
+.dropdown-select__option-copy {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.dropdown-select__trigger-copy {
+  flex: 1;
+  overflow: hidden;
+}
+
+.dropdown-select__trigger-label,
+.dropdown-select__option-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-select__trigger-meta,
+.dropdown-select__option-meta {
+  color: var(--muted);
+  font-size: 0.64rem;
+  font-weight: 500;
+  line-height: 1.28;
+  white-space: nowrap;
+  opacity: 0.88;
+}
+
+.dropdown-select__trigger-meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 select:focus,
@@ -3619,6 +3671,7 @@ input[type="password"]:focus,
 }
 
 .dropdown-select__option {
+  display: block;
   padding: 8px 10px;
   border-bottom: 1px solid rgba(95, 117, 150, 0.12);
   font-size: 0.76rem;
@@ -3908,6 +3961,8 @@ input[type="password"]:focus,
 }
 
 .detail-overview__summary-row {
+  display: grid;
+  grid-template-columns: minmax(104px, 132px) minmax(0, 1fr);
   align-items: flex-start;
   gap: 16px;
 }
@@ -3915,8 +3970,8 @@ input[type="password"]:focus,
 .detail-overview__summary-content {
   display: grid;
   gap: 4px;
-  justify-items: end;
-  text-align: right;
+  width: 100%;
+  min-width: 0;
 }
 
 .detail-overview__summary-context {
@@ -3924,14 +3979,18 @@ input[type="password"]:focus,
   font-size: 0.74rem;
   font-weight: 800;
   line-height: 1.12;
+  text-align: left;
 }
 
 .detail-overview__summary-breakdown {
   color: var(--muted);
   font-size: 0.7rem;
   line-height: 1.28;
-  max-width: none;
-  white-space: nowrap;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+  text-wrap: pretty;
 }
 
 .detail-overview__summary-content strong {
@@ -3939,6 +3998,20 @@ input[type="password"]:focus,
   font-size: 0.92rem;
   font-weight: 800;
   line-height: 1.18;
+  justify-self: end;
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .detail-overview__summary-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .detail-overview__summary-content strong {
+    justify-self: start;
+    text-align: left;
+  }
 }
 
 .detail-overview__comparison {

@@ -17,7 +17,7 @@ import {
   storeAccessForOneWeek
 } from "./lib/catalogApi";
 import { buildFocusRows, calculateExchange, getPearsonAvailability } from "./lib/exchangeCalculator";
-import { clampNumber, roundCurrency } from "./lib/formatters";
+import { clampNumber, formatMoney, roundCurrency } from "./lib/formatters";
 import {
   ensureSimulationUsageTracked,
   getCurrentWeekUsageFilters,
@@ -38,6 +38,17 @@ import MessagesSection from "./sections/MessagesSection";
 import CatalogSection from "./sections/CatalogSection";
 
 const ERP_PREORDER_URL = "https://seb.operations.dynamics.com/?cmp=mbc&mi=PreOrderListPage";
+
+function getPearsonValues(item) {
+  return {
+    math: clampNumber(item?.pearsonMath, 0),
+    science: clampNumber(item?.pearsonScience, 0)
+  };
+}
+
+function buildTurmaOptionMeta(item) {
+  return formatMoney(item.slm);
+}
 
 // Fluxo principal: autenticação, cálculo da troca e edição controlada da base.
 export default function App() {
@@ -105,9 +116,17 @@ export default function App() {
     setUsageReport(getUsageReport(usageFilters));
   }, [usageFilters, usageRevision]);
 
-  const turmaOptions = catalog.map((item) => ({ value: item.turma, label: item.turma }));
+  const turmaOptions = catalog.map((item) => ({
+    value: item.turma,
+    label: item.turma,
+    meta: buildTurmaOptionMeta(item)
+  }));
+  const principalCatalogItem = catalog.find((item) => item.turma === form.principalTurma) ?? null;
+  const novaCatalogItem = catalog.find((item) => item.turma === form.novaTurma) ?? null;
   const principalPearsonAvailability = getPearsonAvailability(catalog, form.principalTurma);
   const novaPearsonAvailability = getPearsonAvailability(catalog, form.novaTurma);
+  const principalPearsonValues = getPearsonValues(principalCatalogItem);
+  const novaPearsonValues = getPearsonValues(novaCatalogItem);
   const calc = calculateExchange(form, catalog);
 
   useEffect(() => {
@@ -143,6 +162,8 @@ export default function App() {
     turma: form.principalTurma,
     hasMath: calc.principal.pearsonMath > 0,
     hasScience: calc.principal.pearsonScience > 0,
+    pearsonMathValue: calc.principal.pearsonMath,
+    pearsonScienceValue: calc.principal.pearsonScience,
     voucherMode: form.principalVoucherMode,
     voucherValue: form.principalVoucherValue,
     voucherApplied: calc.principal.voucherApplied,
@@ -155,6 +176,8 @@ export default function App() {
     turma: form.novaTurma,
     hasMath: calc.nova.pearsonMath > 0,
     hasScience: calc.nova.pearsonScience > 0,
+    pearsonMathValue: calc.nova.pearsonMath,
+    pearsonScienceValue: calc.nova.pearsonScience,
     voucherMode: form.novaVoucherMode,
     voucherValue: form.novaVoucherValue,
     voucherApplied: calc.nova.voucherApplied,
@@ -464,6 +487,7 @@ export default function App() {
                 form={form}
                 turmaOptions={turmaOptions}
                 principalPearsonAvailability={principalPearsonAvailability}
+                principalPearsonValues={principalPearsonValues}
                 principalFocusRows={principalFocusRows}
                 calc={calc}
                 updateForm={updateForm}
@@ -475,6 +499,7 @@ export default function App() {
                 form={form}
                 turmaOptions={turmaOptions}
                 novaPearsonAvailability={novaPearsonAvailability}
+                novaPearsonValues={novaPearsonValues}
                 novaFocusRows={novaFocusRows}
                 calc={calc}
                 updateForm={updateForm}

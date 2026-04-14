@@ -13,11 +13,27 @@ function getAdjustmentMeta(hasDiscount, hasJuros) {
   return { label: "Desconto", emptyText: "Sem desconto" };
 }
 
+function formatFocusPearsonSummary({ hasMath, hasScience, pearsonMathValue = 0, pearsonScienceValue = 0 }) {
+  const parts = [];
+
+  if (pearsonMathValue > 0) {
+    parts.push(`Math ${formatMoney(pearsonMathValue)}`);
+  }
+
+  if (pearsonScienceValue > 0) {
+    parts.push(`Science ${formatMoney(pearsonScienceValue)}`);
+  }
+
+  return parts.length ? parts.join(" | ") : formatPearsonSelection(hasMath, hasScience);
+}
+
 // Monta os textos resumidos usados nos cards laterais.
 export function buildFocusRows({
   turma,
   hasMath,
   hasScience,
+  pearsonMathValue = 0,
+  pearsonScienceValue = 0,
   voucherMode,
   voucherValue,
   voucherApplied,
@@ -41,7 +57,15 @@ export function buildFocusRows({
 
   const rows = [
     ["Turma", turma],
-    ["Pearson", formatPearsonSelection(hasMath, hasScience)]
+    [
+      "Pearson",
+      formatFocusPearsonSummary({
+        hasMath,
+        hasScience,
+        pearsonMathValue,
+        pearsonScienceValue
+      })
+    ]
   ];
 
   if (showVoucherRow) {

@@ -6,28 +6,39 @@ import ToggleGroup from "../components/common/ToggleGroup";
 import FocusCard from "../components/cards/FocusCard";
 import { formatMoney } from "../lib/formatters";
 
+function buildPearsonLabel(title, amount, ariaLabel) {
+  return (
+    <>
+      <span className="field-label-inline">
+        <span>{title}</span>
+        {amount > 0 ? <span className="field-label-inline__meta">({formatMoney(amount)})</span> : null}
+      </span>
+      <InfoDot text={PEARSON_HINT_TEXT} ariaLabel={ariaLabel} />
+    </>
+  );
+}
+
 export default function NovaCompraSection({
   form,
   turmaOptions,
   novaPearsonAvailability,
+  novaPearsonValues,
   novaFocusRows,
   calc,
   updateForm,
   handleNumberChange,
   handleNumberFocus
 }) {
-  const pearsonMathLabel = (
-    <>
-      Pearson Math
-      <InfoDot text={PEARSON_HINT_TEXT} ariaLabel="Ver regra de desconto do Pearson para Pearson Math" />
-    </>
+  const pearsonMathLabel = buildPearsonLabel(
+    "Pearson Math",
+    novaPearsonValues.math,
+    "Ver regra de desconto do Pearson para Pearson Math"
   );
 
-  const pearsonScienceLabel = (
-    <>
-      Pearson Science
-      <InfoDot text={PEARSON_HINT_TEXT} ariaLabel="Ver regra de desconto do Pearson para Pearson Science" />
-    </>
+  const pearsonScienceLabel = buildPearsonLabel(
+    "Pearson Science",
+    novaPearsonValues.science,
+    "Ver regra de desconto do Pearson para Pearson Science"
   );
 
   return (

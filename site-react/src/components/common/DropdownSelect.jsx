@@ -37,7 +37,9 @@ export default function DropdownSelect({ value, onChange, options, ariaLabel }) 
         aria-label={ariaLabel}
         onClick={() => setIsOpen((current) => !current)}
       >
-        <span>{selectedOption?.label ?? "Selecione"}</span>
+        <span className="dropdown-select__trigger-copy">
+          <span className="dropdown-select__trigger-label">{selectedOption?.label ?? "Selecione"}</span>
+        </span>
         <span className="dropdown-select__caret" aria-hidden="true">
           ▾
         </span>
@@ -57,7 +59,10 @@ export default function DropdownSelect({ value, onChange, options, ariaLabel }) 
                 setIsOpen(false);
               }}
             >
-              {option.label}
+              <span className="dropdown-select__option-copy">
+                <span className="dropdown-select__option-label">{option.label}</span>
+                {option.meta ? <span className="dropdown-select__option-meta">{option.meta}</span> : null}
+              </span>
             </button>
           ))}
         </div>

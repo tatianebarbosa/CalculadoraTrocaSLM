@@ -16,10 +16,23 @@ function formatPaidAmountInput(value) {
   return Number(value) > 0 ? paidAmountFormatter.format(Number(value)) : "";
 }
 
+function buildPearsonLabel(title, amount, ariaLabel) {
+  return (
+    <>
+      <span className="field-label-inline">
+        <span>{title}</span>
+        {amount > 0 ? <span className="field-label-inline__meta">({formatMoney(amount)})</span> : null}
+      </span>
+      <InfoDot text={PEARSON_HINT_TEXT} ariaLabel={ariaLabel} />
+    </>
+  );
+}
+
 export default function PrincipalFormSection({
   form,
   turmaOptions,
   principalPearsonAvailability,
+  principalPearsonValues,
   principalFocusRows,
   calc,
   updateForm,
@@ -51,18 +64,16 @@ export default function PrincipalFormSection({
     handleNumberChange("principalPaidAmount", nextValue);
   }
 
-  const pearsonMathLabel = (
-    <>
-      Pearson Math
-      <InfoDot text={PEARSON_HINT_TEXT} ariaLabel="Ver regra de desconto do Pearson para Pearson Math" />
-    </>
+  const pearsonMathLabel = buildPearsonLabel(
+    "Pearson Math",
+    principalPearsonValues.math,
+    "Ver regra de desconto do Pearson para Pearson Math"
   );
 
-  const pearsonScienceLabel = (
-    <>
-      Pearson Science
-      <InfoDot text={PEARSON_HINT_TEXT} ariaLabel="Ver regra de desconto do Pearson para Pearson Science" />
-    </>
+  const pearsonScienceLabel = buildPearsonLabel(
+    "Pearson Science",
+    principalPearsonValues.science,
+    "Ver regra de desconto do Pearson para Pearson Science"
   );
 
   return (
