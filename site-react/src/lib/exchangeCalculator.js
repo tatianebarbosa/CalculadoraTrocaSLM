@@ -453,7 +453,7 @@ function buildPearsonSolutionSuggestion({ ready, canExchange, requiresCancellati
   return candidates[0];
 }
 
-function buildAcceptedSolutionRequirement({ novaBase, form }) {
+function buildAcceptedSolutionRequirement({ novaBase, form, totalAvailable }) {
   if (!novaBase) {
     return null;
   }
@@ -475,11 +475,19 @@ function buildAcceptedSolutionRequirement({ novaBase, form }) {
     nextMath: requiredMath,
     nextScience: requiredScience
   });
+  const originalBreakdown = buildBreakdown(novaBase, {
+    pearsonMath: requiredMath ? false : form.novaPearsonMath,
+    pearsonScience: requiredScience ? false : form.novaPearsonScience,
+    voucherMode: form.novaVoucherMode,
+    voucherValue: form.novaVoucherValue
+  });
+  const originalLeftover = roundCurrency(Math.max(totalAvailable - originalBreakdown.paidMaterials, 0));
 
   return {
     requiredMath,
     requiredScience,
     itemsLabel,
+    originalLeftover,
     note: `A troca só pode seguir se a nova compra incluir obrigatoriamente ${itemsLabel}, mesmo que esse item apareça como opcional na loja.`
   };
 }
@@ -606,6 +614,28 @@ function buildSimpleSummary(calc) {
   return `A troca pode seguir. Pedido principal: ${formatMoney(calc.principalCredit)}. Nova compra: ${formatMoney(calc.nova.paidMaterials)}. Não há diferença a pagar. Aguarde até 24 horas para a liberação do crédito, sem fazer ajustes na LEX em nenhum perfil da família antes da efetivação da troca.`;
 }
 
+function buildExchangeMessageOpening(calc) {
+  const valueIntro = buildMessageValueIntro(calc);
+  const differenceSentence = buildExchangeDifferenceSentence(calc);
+
+  if (calc.acceptedSolutionRequirement) {
+    return `Se a condiÃ§Ã£o operacional for aceita, a troca pode seguir neste caso. As condiÃ§Ãµes financeiras serÃ£o as seguintes: ${valueIntro} ${differenceSentence}`;
+  }
+
+  return `A troca pode seguir neste caso. ${valueIntro} ${differenceSentence}`;
+}
+
+function buildExchangeMessageOpeningResolved(calc) {
+  const valueIntro = buildMessageValueIntro(calc);
+  const differenceSentence = buildExchangeDifferenceSentence(calc);
+
+  if (calc.acceptedSolutionRequirement) {
+    return `Se a condi\u00e7\u00e3o operacional for aceita, a troca pode seguir neste caso. As condi\u00e7\u00f5es financeiras ser\u00e3o as seguintes: ${valueIntro} ${differenceSentence}`;
+  }
+
+  return `A troca pode seguir neste caso. ${valueIntro} ${differenceSentence}`;
+}
+
 function buildSchoolMessage(calc) {
   if (!calc.ready) {
     return "Preencha o pedido principal e a nova compra para gerar a mensagem.";
@@ -634,7 +664,7 @@ function buildSchoolMessage(calc) {
   }
 
   return joinMessageBlocks([
-    `A troca pode seguir neste caso. ${buildMessageValueIntro(calc)} ${buildExchangeDifferenceSentence(calc)}`,
+    buildExchangeMessageOpeningResolved(calc),
     buildExchangeCreditReleaseParagraph(),
     buildExchangeLexHoldParagraph("school"),
     buildExchangeLexRiskParagraph(),
@@ -672,7 +702,7 @@ function buildGuardianMessage(calc) {
   }
 
   return joinMessageBlocks([
-    `A troca pode seguir neste caso. ${buildMessageValueIntro(calc)} ${buildExchangeDifferenceSentence(calc)}`,
+    buildExchangeMessageOpeningResolved(calc),
     buildExchangeCreditReleaseParagraph(),
     buildExchangeLexHoldParagraph("guardian"),
     buildExchangeLexRiskParagraph(),
@@ -706,6 +736,19 @@ function buildGuardianSchoolContactDeadlineParagraph(calc) {
   return "Fui orientado(a) a aguardar a conclusão da troca e o prazo de 24 horas. Depois disso, a escola precisa ajustar a matrícula do(a) aluno(a) na LEX para liberar novamente o crédito e o material correto para a nova compra.";
 }
 
+function buildGuardianSchoolContactLeadResolved(calc) {
+  if (calc.acceptedSolutionRequirement) {
+    const financialSentence =
+      calc.difference > 0
+        ? ` Nesse cen\u00e1rio, haver\u00e1 diferen\u00e7a de ${formatMoney(calc.difference)} a pagar na nova compra.`
+        : " Nesse cen\u00e1rio, n\u00e3o haver\u00e1 diferen\u00e7a a pagar na nova compra.";
+
+    return `Ol\u00e1! Entrei em contato com o time SAF para tratar a troca de material. A compra foi realizada para a turma ${calc.form.principalTurma}, mas a turma correta do(a) aluno(a) \u00e9 ${calc.form.novaTurma}. Para que a troca siga sem cancelamento e reembolso, a nova compra dever\u00e1 incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apare\u00e7a como opcional na loja.${financialSentence}`;
+  }
+
+  return `Ol\u00e1! Entrei em contato com o time SAF para tratar a troca de material. A compra foi realizada para a turma ${calc.form.principalTurma}, mas a turma correta do(a) aluno(a) \u00e9 ${calc.form.novaTurma}.`;
+}
+
 function buildGuardianSchoolContactMessage(calc) {
   if (!needsGuardianSchoolContactMessage(calc)) {
     return "";
@@ -713,7 +756,7 @@ function buildGuardianSchoolContactMessage(calc) {
 
   return joinMessageBlocks([
     "Orientamos a enviar a seguinte mensagem à escola:",
-    buildGuardianSchoolContactLeadParagraph(calc),
+    buildGuardianSchoolContactLeadResolved(calc),
     buildGuardianSchoolContactDeadlineParagraph(calc),
     `A escola deve:\n${buildBulletList([
       "acessar a LEX",
@@ -745,25 +788,62 @@ function buildAcceptedSolutionNotice(calc) {
   return `Importante: só devemos seguir com a troca se a nova compra incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareça como opcional na loja.`;
 }
 
+function buildAcceptedSolutionNarrativeSummary(calc) {
+  if (!calc.acceptedSolutionRequirement) {
+    return "";
+  }
+
+  const initialIssue = `Na configuração original, a troca não poderia seguir porque haveria saldo remanescente de ${formatMoney(calc.acceptedSolutionRequirement.originalLeftover)} na loja.`;
+  const solutionLead = `Para evitar seguir com cancelamento e reembolso, existe uma solução operacional: a nova compra deve incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareça como opcional na loja.`;
+
+  if (calc.difference > 0) {
+    return `${initialIssue} ${solutionLead} Nesse cenário, a troca pode seguir com diferença de ${formatMoney(calc.difference)} a pagar.`;
+  }
+
+  return `${initialIssue} ${solutionLead} Nesse cenário, a troca pode seguir sem diferença a pagar.`;
+}
+
+function buildAcceptedSolutionContextIntro(calc) {
+  if (!calc.acceptedSolutionRequirement) {
+    return "";
+  }
+
+  return `Na configuração original, a troca não poderia seguir porque haveria saldo remanescente de ${formatMoney(calc.acceptedSolutionRequirement.originalLeftover)} na loja. Para evitar seguir com cancelamento e reembolso, a solução é realizar a nova compra com inclusão obrigatória de ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareça como opcional na loja.`;
+}
+
+function buildAcceptedSolutionContextLead(calc) {
+  if (!calc.acceptedSolutionRequirement) {
+    return "";
+  }
+
+  return `Na configuraÃ§Ã£o original, a troca nÃ£o poderia seguir porque haveria saldo remanescente de ${formatMoney(calc.acceptedSolutionRequirement.originalLeftover)} na loja. Para evitar seguir com cancelamento e reembolso, existe uma soluÃ§Ã£o operacional: realizar a nova compra com inclusÃ£o obrigatÃ³ria de ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareÃ§a como opcional na loja. Se essa condiÃ§Ã£o for aceita, as orientaÃ§Ãµes abaixo passam a valer para seguir com a troca.`;
+}
+
+function buildAcceptedSolutionContextLeadResolved(calc) {
+  if (!calc.acceptedSolutionRequirement) {
+    return "";
+  }
+
+  return `Na configura\u00e7\u00e3o original, a troca n\u00e3o poderia seguir porque haveria saldo remanescente de ${formatMoney(calc.acceptedSolutionRequirement.originalLeftover)} na loja. Para evitar seguir com cancelamento e reembolso, existe uma solu\u00e7\u00e3o operacional: realizar a nova compra com inclus\u00e3o obrigat\u00f3ria de ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apare\u00e7a como opcional na loja. Se essa condi\u00e7\u00e3o for aceita, as orienta\u00e7\u00f5es abaixo passam a valer para seguir com a troca.`;
+}
+
 function applyAcceptedSolutionMessaging(calc, outputs) {
   if (!calc.acceptedSolutionRequirement) {
     return outputs;
   }
 
-  const acceptedSummary = buildAcceptedSolutionSummary(calc);
-  const acceptedNotice = buildAcceptedSolutionNotice(calc);
+  const acceptedSummary = buildAcceptedSolutionNarrativeSummary(calc);
+  const acceptedNotice = buildAcceptedSolutionContextLeadResolved(calc);
 
   return {
     ...outputs,
     reason: `A troca só foi viabilizada com a inclusão obrigatória de ${calc.acceptedSolutionRequirement.itemsLabel} na nova compra.`,
     quickSummary: acceptedSummary,
     ruleUsed: `${outputs.ruleUsed} Nesta simulação, a troca só pode seguir se a nova compra incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareça como opcional na loja.`,
-    simpleSummary: `${acceptedSummary} ${outputs.simpleSummary}`,
+    simpleSummary: acceptedSummary,
     schoolMessage: `${acceptedNotice}\n\n${outputs.schoolMessage}`,
     guardianMessage: `${acceptedNotice}\n\n${outputs.guardianMessage}`,
     guardianSchoolContactMessage: outputs.guardianSchoolContactMessage
-      ? `${acceptedNotice}\n\n${outputs.guardianSchoolContactMessage}`
-      : outputs.guardianSchoolContactMessage
   };
 }
 
@@ -830,7 +910,8 @@ export function calculateExchange(form, catalog) {
   });
   const acceptedSolutionRequirement = buildAcceptedSolutionRequirement({
     novaBase,
-    form
+    form,
+    totalAvailable
   });
   const calcWithSuggestion = {
     ...baseCalc,
