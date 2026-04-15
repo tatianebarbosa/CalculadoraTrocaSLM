@@ -1,7 +1,7 @@
 import DetailOverview from "../components/cards/DetailOverview";
 import { buildJurosWarning } from "../lib/exchangeCalculator";
 
-export default function ResultSection({ calc }) {
+export default function ResultSection({ calc, onAcceptSolution }) {
   return (
     <section className="panel panel--detail panel--principal-detail">
       <div className="section-title">
@@ -11,7 +11,7 @@ export default function ResultSection({ calc }) {
         </div>
       </div>
 
-      <DetailOverview calc={calc} />
+      <DetailOverview calc={calc} onAcceptSolution={onAcceptSolution} />
 
       {calc.hasJuros ? (
         <div className="explanation-card detail-warning-card">

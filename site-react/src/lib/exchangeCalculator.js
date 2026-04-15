@@ -363,6 +363,127 @@ function buildQuickOutcome(calc) {
   return buildOutcomeText(calc);
 }
 
+function buildAddedPearsonLabel({ currentMath, currentScience, nextMath, nextScience }) {
+  const added = [];
+
+  if (nextMath && !currentMath) {
+    added.push("Pearson Math");
+  }
+
+  if (nextScience && !currentScience) {
+    added.push("Pearson Science");
+  }
+
+  return added.join(" + ");
+}
+
+function buildPearsonSolutionSuggestion({ ready, canExchange, requiresCancellationForJuros, totalAvailable, novaBase, form }) {
+  if (!ready || canExchange || requiresCancellationForJuros || !novaBase) {
+    return null;
+  }
+
+  const currentMath = Boolean(form.novaPearsonMath);
+  const currentScience = Boolean(form.novaPearsonScience);
+  const canAddMath = hasPearsonAvailable(novaBase, "pearsonMath") && !currentMath;
+  const canAddScience = hasPearsonAvailable(novaBase, "pearsonScience") && !currentScience;
+
+  if (!canAddMath && !canAddScience) {
+    return null;
+  }
+
+  const candidates = [];
+  const seen = new Set();
+
+  function pushCandidate(nextMath, nextScience) {
+    const key = `${nextMath}-${nextScience}`;
+
+    if (seen.has(key) || (nextMath === currentMath && nextScience === currentScience)) {
+      return;
+    }
+
+    seen.add(key);
+
+    const breakdown = buildBreakdown(novaBase, {
+      pearsonMath: nextMath,
+      pearsonScience: nextScience,
+      voucherMode: form.novaVoucherMode,
+      voucherValue: form.novaVoucherValue
+    });
+    const difference = roundCurrency(Math.max(breakdown.paidMaterials - totalAvailable, 0));
+    const leftover = roundCurrency(Math.max(totalAvailable - breakdown.paidMaterials, 0));
+
+    if (leftover > 0) {
+      return;
+    }
+
+    const addedItemsLabel = buildAddedPearsonLabel({ currentMath, currentScience, nextMath, nextScience });
+    const addedMath = nextMath && !currentMath;
+    const addedScience = nextScience && !currentScience;
+    const addedCount = (addedMath ? 1 : 0) + (addedScience ? 1 : 0);
+
+    candidates.push({
+      addedItemsLabel,
+      addedMath,
+      addedScience,
+      addedCount,
+      nextMath,
+      nextScience,
+      difference,
+      paidMaterials: breakdown.paidMaterials
+    });
+  }
+
+  if (canAddMath) {
+    pushCandidate(true, currentScience);
+  }
+
+  if (canAddScience) {
+    pushCandidate(currentMath, true);
+  }
+
+  if (canAddMath && canAddScience) {
+    pushCandidate(true, true);
+  }
+
+  if (!candidates.length) {
+    return null;
+  }
+
+  candidates.sort((a, b) => a.difference - b.difference || a.addedCount - b.addedCount || a.paidMaterials - b.paidMaterials);
+  return candidates[0];
+}
+
+function buildAcceptedSolutionRequirement({ novaBase, form }) {
+  if (!novaBase) {
+    return null;
+  }
+
+  const requiredMath =
+    Boolean(form.acceptedSolutionPearsonMath) && Boolean(form.novaPearsonMath) && hasPearsonAvailable(novaBase, "pearsonMath");
+  const requiredScience =
+    Boolean(form.acceptedSolutionPearsonScience) &&
+    Boolean(form.novaPearsonScience) &&
+    hasPearsonAvailable(novaBase, "pearsonScience");
+
+  if (!requiredMath && !requiredScience) {
+    return null;
+  }
+
+  const itemsLabel = buildAddedPearsonLabel({
+    currentMath: false,
+    currentScience: false,
+    nextMath: requiredMath,
+    nextScience: requiredScience
+  });
+
+  return {
+    requiredMath,
+    requiredScience,
+    itemsLabel,
+    note: `A troca só pode seguir se a nova compra incluir obrigatoriamente ${itemsLabel}, mesmo que esse item apareça como opcional na loja.`
+  };
+}
+
 export function buildJurosWarning(calc) {
   if (!calc.hasJuros) {
     return null;
@@ -604,6 +725,48 @@ function buildGuardianSchoolContactMessage(calc) {
   ]);
 }
 
+function buildAcceptedSolutionSummary(calc) {
+  if (!calc.acceptedSolutionRequirement) {
+    return "";
+  }
+
+  if (calc.difference > 0) {
+    return `A troca pode seguir, mas somente se a nova compra incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareça como opcional na loja. Nesse cenário, haverá diferença de ${formatMoney(calc.difference)} a pagar.`;
+  }
+
+  return `A troca pode seguir, mas somente se a nova compra incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareça como opcional na loja.`;
+}
+
+function buildAcceptedSolutionNotice(calc) {
+  if (!calc.acceptedSolutionRequirement) {
+    return "";
+  }
+
+  return `Importante: só devemos seguir com a troca se a nova compra incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareça como opcional na loja.`;
+}
+
+function applyAcceptedSolutionMessaging(calc, outputs) {
+  if (!calc.acceptedSolutionRequirement) {
+    return outputs;
+  }
+
+  const acceptedSummary = buildAcceptedSolutionSummary(calc);
+  const acceptedNotice = buildAcceptedSolutionNotice(calc);
+
+  return {
+    ...outputs,
+    reason: `A troca só foi viabilizada com a inclusão obrigatória de ${calc.acceptedSolutionRequirement.itemsLabel} na nova compra.`,
+    quickSummary: acceptedSummary,
+    ruleUsed: `${outputs.ruleUsed} Nesta simulação, a troca só pode seguir se a nova compra incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareça como opcional na loja.`,
+    simpleSummary: `${acceptedSummary} ${outputs.simpleSummary}`,
+    schoolMessage: `${acceptedNotice}\n\n${outputs.schoolMessage}`,
+    guardianMessage: `${acceptedNotice}\n\n${outputs.guardianMessage}`,
+    guardianSchoolContactMessage: outputs.guardianSchoolContactMessage
+      ? `${acceptedNotice}\n\n${outputs.guardianSchoolContactMessage}`
+      : outputs.guardianSchoolContactMessage
+  };
+}
+
 export function calculateExchange(form, catalog) {
   const principalBase = getTurmaData(catalog, form.principalTurma);
   const novaBase = getTurmaData(catalog, form.novaTurma);
@@ -657,16 +820,36 @@ export function calculateExchange(form, catalog) {
     leftoverJurosPart,
     form
   };
+  const solutionSuggestion = buildPearsonSolutionSuggestion({
+    ready,
+    canExchange,
+    requiresCancellationForJuros,
+    totalAvailable,
+    novaBase,
+    form
+  });
+  const acceptedSolutionRequirement = buildAcceptedSolutionRequirement({
+    novaBase,
+    form
+  });
+  const calcWithSuggestion = {
+    ...baseCalc,
+    solutionSuggestion,
+    acceptedSolutionRequirement
+  };
+  const finalOutputs = applyAcceptedSolutionMessaging(calcWithSuggestion, {
+    reason: buildReason(calcWithSuggestion),
+    quickSummary: buildQuickOutcome(calcWithSuggestion),
+    ruleUsed: buildRuleUsed(calcWithSuggestion),
+    voucherReactivationWarning: buildVoucherReactivationWarning(calcWithSuggestion),
+    simpleSummary: buildSimpleSummary(calcWithSuggestion),
+    schoolMessage: buildSchoolMessage(calcWithSuggestion),
+    guardianMessage: buildGuardianMessage(calcWithSuggestion),
+    guardianSchoolContactMessage: buildGuardianSchoolContactMessage(calcWithSuggestion)
+  });
 
   return {
-    ...baseCalc,
-    reason: buildReason(baseCalc),
-    quickSummary: buildQuickOutcome(baseCalc),
-    ruleUsed: buildRuleUsed(baseCalc),
-    voucherReactivationWarning: buildVoucherReactivationWarning(baseCalc),
-    simpleSummary: buildSimpleSummary(baseCalc),
-    schoolMessage: buildSchoolMessage(baseCalc),
-    guardianMessage: buildGuardianMessage(baseCalc),
-    guardianSchoolContactMessage: buildGuardianSchoolContactMessage(baseCalc)
+    ...calcWithSuggestion,
+    ...finalOutputs
   };
 }

@@ -70,6 +70,8 @@ export const DEFAULT_FORM = {
   novaTurma: "Senior Kindergarten",
   novaPearsonMath: false,
   novaPearsonScience: false,
+  acceptedSolutionPearsonMath: false,
+  acceptedSolutionPearsonScience: false,
   novaVoucherMode: "currency",
   novaVoucherValue: 0
 };

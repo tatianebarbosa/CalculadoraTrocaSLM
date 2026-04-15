@@ -192,7 +192,31 @@ export default function App() {
 
     setForm((current) => ({
       ...current,
-      [key]: value
+      [key]: value,
+      ...(key === "acceptedSolutionPearsonMath" || key === "acceptedSolutionPearsonScience"
+        ? {}
+        : {
+            acceptedSolutionPearsonMath: false,
+            acceptedSolutionPearsonScience: false
+          })
+    }));
+  }
+
+  function handleAcceptSolution() {
+    if (!calc.solutionSuggestion) {
+      return;
+    }
+
+    if (ensureSimulationUsageTracked()) {
+      setUsageRevision((current) => current + 1);
+    }
+
+    setForm((current) => ({
+      ...current,
+      novaPearsonMath: calc.solutionSuggestion.nextMath,
+      novaPearsonScience: calc.solutionSuggestion.nextScience,
+      acceptedSolutionPearsonMath: calc.solutionSuggestion.addedMath,
+      acceptedSolutionPearsonScience: calc.solutionSuggestion.addedScience
     }));
   }
 
@@ -494,7 +518,7 @@ export default function App() {
                 handleNumberChange={handleNumberChange}
                 handleNumberFocus={handleNumberFocus}
               />
-              <ResultSection calc={calc} />
+              <ResultSection calc={calc} onAcceptSolution={handleAcceptSolution} />
               <NovaCompraSection
                 form={form}
                 turmaOptions={turmaOptions}

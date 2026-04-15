@@ -4002,6 +4002,57 @@ input[type="password"]:focus,
   text-align: right;
 }
 
+.detail-overview__solution {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid rgba(25, 100, 59, 0.16);
+  border-radius: var(--radius-lg);
+  background: #eef7f0;
+}
+
+.detail-overview__solution.is-applied {
+  background: #edf4fb;
+  border-color: rgba(24, 43, 73, 0.14);
+}
+
+.detail-overview__solution span {
+  color: #19643b;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.detail-overview__solution.is-applied span {
+  color: var(--ink);
+}
+
+.detail-overview__solution p {
+  margin: 0;
+  color: #274735;
+  font-size: 0.9rem;
+  line-height: 1.52;
+}
+
+.detail-overview__solution.is-applied p {
+  color: rgba(24, 43, 73, 0.9);
+}
+
+.detail-overview__solution-button {
+  justify-self: start;
+  min-height: 36px;
+  padding: 0 14px;
+  border-color: rgba(25, 100, 59, 0.22);
+  background: #ffffff;
+  color: #19643b;
+}
+
+.detail-overview__solution-button:hover {
+  background: #f8fcf8;
+  border-color: rgba(25, 100, 59, 0.32);
+}
+
 @media (max-width: 720px) {
   .detail-overview__summary-row {
     grid-template-columns: 1fr;

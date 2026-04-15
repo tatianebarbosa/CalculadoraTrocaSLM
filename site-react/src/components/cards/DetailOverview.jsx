@@ -13,6 +13,10 @@ function buildFinalReinforcement(calc) {
     return "A troca não pode seguir, pois haveria saldo remanescente na loja.";
   }
 
+  if (calc.acceptedSolutionRequirement) {
+    return `A troca pode seguir, mas somente com a compra obrigatória de ${calc.acceptedSolutionRequirement.itemsLabel}.`;
+  }
+
   if (calc.difference > 0) {
     return "Troca liberada com diferença a pagar.";
   }
@@ -58,7 +62,32 @@ function buildPrincipalSummaryText(calc) {
   return buildCompositionSummary(calc.principal);
 }
 
-export default function DetailOverview({ calc }) {
+function buildSolutionText(solutionSuggestion) {
+  if (!solutionSuggestion) {
+    return "";
+  }
+
+  const outcomeText =
+    solutionSuggestion.difference > 0
+      ? `a troca pode seguir com diferença de ${formatMoney(solutionSuggestion.difference)} a pagar.`
+      : "a troca pode seguir sem diferença a pagar.";
+
+  return `Se incluir ${solutionSuggestion.addedItemsLabel} na nova compra, o saldo remanescente deixa de existir e ${outcomeText}`;
+}
+
+function buildAppliedSolutionText(calc) {
+  if (!calc.acceptedSolutionRequirement) {
+    return "";
+  }
+
+  if (calc.difference > 0) {
+    return `Seguiremos com a troca somente se a nova compra incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareça como opcional na loja. Nesse cenário, a diferença será de ${formatMoney(calc.difference)} a pagar.`;
+  }
+
+  return `Seguiremos com a troca somente se a nova compra incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareça como opcional na loja.`;
+}
+
+export default function DetailOverview({ calc, onAcceptSolution }) {
   const isBlocked = !calc.canExchange;
   const actionLabel = calc.canExchange
     ? calc.difference > 0
@@ -114,6 +143,9 @@ export default function DetailOverview({ calc }) {
     });
   }
 
+  const solutionText = buildSolutionText(calc.solutionSuggestion);
+  const appliedSolutionText = buildAppliedSolutionText(calc);
+
   return (
     <div className="detail-overview">
       <section className="detail-overview__section detail-overview__section--status">
@@ -145,6 +177,18 @@ export default function DetailOverview({ calc }) {
             ))}
           </div>
         </div>
+
+        {solutionText || appliedSolutionText ? (
+          <div className={`detail-overview__solution ${appliedSolutionText ? "is-applied" : ""}`.trim()}>
+            <span>{appliedSolutionText ? "Solução aplicada" : "Solução possível"}</span>
+            <p>{appliedSolutionText || solutionText}</p>
+            {solutionText && !appliedSolutionText ? (
+              <button className="copy-button detail-overview__solution-button" type="button" onClick={onAcceptSolution}>
+                Aceitar solução
+              </button>
+            ) : null}
+          </div>
+        ) : null}
       </section>
 
       <section className="detail-overview__section detail-overview__section--details">
