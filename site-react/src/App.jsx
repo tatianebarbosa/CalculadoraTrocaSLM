@@ -193,9 +193,12 @@ export default function App() {
     setForm((current) => ({
       ...current,
       [key]: value,
-      ...(key === "acceptedSolutionPearsonMath" || key === "acceptedSolutionPearsonScience"
+      ...(key === "acceptedSolutionPearsonMath" ||
+      key === "acceptedSolutionPearsonScience" ||
+      key === "simulateSolutionMessages"
         ? {}
         : {
+            simulateSolutionMessages: false,
             acceptedSolutionPearsonMath: false,
             acceptedSolutionPearsonScience: false
           })
@@ -213,10 +216,9 @@ export default function App() {
 
     setForm((current) => ({
       ...current,
-      novaPearsonMath: calc.solutionSuggestion.nextMath,
-      novaPearsonScience: calc.solutionSuggestion.nextScience,
-      acceptedSolutionPearsonMath: calc.solutionSuggestion.addedMath,
-      acceptedSolutionPearsonScience: calc.solutionSuggestion.addedScience
+      simulateSolutionMessages: !current.simulateSolutionMessages,
+      acceptedSolutionPearsonMath: false,
+      acceptedSolutionPearsonScience: false
     }));
   }
 

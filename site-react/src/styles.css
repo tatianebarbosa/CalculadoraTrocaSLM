@@ -4003,9 +4003,10 @@ input[type="password"]:focus,
 }
 
 .detail-overview__solution {
-  position: relative;
   display: grid;
-  gap: 6px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 12px;
+  row-gap: 6px;
   padding: 12px 14px;
   border: 1px solid rgba(25, 100, 59, 0.16);
   border-radius: var(--radius-lg);
@@ -4018,7 +4019,8 @@ input[type="password"]:focus,
 }
 
 .detail-overview__solution span {
-  padding-right: 116px;
+  grid-column: 1;
+  grid-row: 1;
   color: #19643b;
   font-size: 0.76rem;
   font-weight: 800;
@@ -4031,6 +4033,8 @@ input[type="password"]:focus,
 }
 
 .detail-overview__solution p {
+  grid-column: 1 / -1;
+  grid-row: 2;
   margin: 0;
   color: #274735;
   font-size: 0.9rem;
@@ -4042,22 +4046,10 @@ input[type="password"]:focus,
 }
 
 .detail-overview__solution-button {
-  position: absolute;
-  top: 10px;
-  right: 14px;
-  min-height: 24px;
-  padding: 0 10px;
-  border-radius: 999px;
-  border-color: rgba(25, 100, 59, 0.22);
-  background: #ffffff;
-  color: #19643b;
-  font-size: 0.74rem;
-  line-height: 1;
-}
-
-.detail-overview__solution-button:hover {
-  background: #f8fcf8;
-  border-color: rgba(25, 100, 59, 0.32);
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  align-self: start;
 }
 
 @media (max-width: 720px) {
@@ -4277,6 +4269,31 @@ input[type="password"]:focus,
   padding: 24px;
   border-radius: var(--radius-xl);
   background: #ffffff;
+}
+
+.messages-context {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border: 1px solid rgba(25, 100, 59, 0.16);
+  border-radius: 16px;
+  background: #eef7f0;
+}
+
+.messages-context__label {
+  color: #19643b;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.messages-context__text {
+  margin: 0;
+  color: rgba(24, 43, 73, 0.88);
+  font-size: 0.96rem;
+  line-height: 1.62;
 }
 
 .message-card .section-title {
@@ -4805,6 +4822,11 @@ input[type="password"]:focus,
   .message-card__copy-button {
     position: static;
     width: 100%;
+  }
+
+  .messages-context {
+    padding: 12px;
+    border-radius: 12px;
   }
 
   .integrated-page {

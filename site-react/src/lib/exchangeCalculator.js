@@ -377,6 +377,50 @@ function buildAddedPearsonLabel({ currentMath, currentScience, nextMath, nextSci
   return added.join(" + ");
 }
 
+function buildAlternativesLabel(alternatives) {
+  const labels = alternatives.map((option) => option.addedItemsLabel).filter(Boolean);
+
+  if (!labels.length) {
+    return "";
+  }
+
+  if (labels.length === 1) {
+    return labels[0];
+  }
+
+  if (labels.length === 2) {
+    return `${labels[0]} ou ${labels[1]}`;
+  }
+
+  return `${labels.slice(0, -1).join(", ")} ou ${labels[labels.length - 1]}`;
+}
+
+function buildAlternativeOutcomeText(option) {
+  if (option.difference > 0) {
+    return `${option.addedItemsLabel} com diferença de ${formatMoney(option.difference)} a pagar`;
+  }
+
+  return `${option.addedItemsLabel} sem diferença a pagar`;
+}
+
+function buildAlternativesOutcomeText(alternatives) {
+  const parts = alternatives.map((option) => buildAlternativeOutcomeText(option));
+
+  if (!parts.length) {
+    return "";
+  }
+
+  if (parts.length === 1) {
+    return parts[0];
+  }
+
+  if (parts.length === 2) {
+    return `${parts[0]} ou ${parts[1]}`;
+  }
+
+  return `${parts.slice(0, -1).join(", ")} ou ${parts[parts.length - 1]}`;
+}
+
 function buildPearsonSolutionSuggestion({ ready, canExchange, requiresCancellationForJuros, totalAvailable, novaBase, form }) {
   if (!ready || canExchange || requiresCancellationForJuros || !novaBase) {
     return null;
@@ -450,7 +494,20 @@ function buildPearsonSolutionSuggestion({ ready, canExchange, requiresCancellati
   }
 
   candidates.sort((a, b) => a.difference - b.difference || a.addedCount - b.addedCount || a.paidMaterials - b.paidMaterials);
-  return candidates[0];
+  const bestCandidate = candidates[0];
+  const minAddedCount = Math.min(...candidates.map((candidate) => candidate.addedCount));
+  const alternatives = candidates
+    .filter((candidate) => candidate.addedCount === minAddedCount)
+    .slice()
+    .sort((a, b) => a.addedItemsLabel.localeCompare(b.addedItemsLabel));
+
+  return {
+    ...bestCandidate,
+    alternatives,
+    hasAlternativeChoice: alternatives.length > 1,
+    alternativesLabel: buildAlternativesLabel(alternatives),
+    alternativesOutcomeText: buildAlternativesOutcomeText(alternatives)
+  };
 }
 
 function buildAcceptedSolutionRequirement({ novaBase, form, totalAvailable }) {
@@ -489,6 +546,156 @@ function buildAcceptedSolutionRequirement({ novaBase, form, totalAvailable }) {
     itemsLabel,
     originalLeftover,
     note: `A troca só pode seguir se a nova compra incluir obrigatoriamente ${itemsLabel}, mesmo que esse item apareça como opcional na loja.`
+  };
+}
+
+function buildSimulatedSolutionValueIntro(calc) {
+  if (!calc.solutionSuggestion) {
+    return "";
+  }
+
+  if (calc.solutionSuggestion.hasAlternativeChoice) {
+    return `O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${formatMoney(calc.principalCredit)}, e a nova compra somente poderia seguir para a turma ${calc.form.novaTurma} se fosse realizada com inclusão obrigatória de um dos seguintes itens: ${calc.solutionSuggestion.alternativesLabel}, mesmo que esses itens apareçam como opcionais na loja.`;
+  }
+
+  return `O pedido principal foi realizado para a turma ${calc.form.principalTurma}, no valor de ${formatMoney(calc.principalCredit)}, e a nova compra somente poderia seguir para a turma ${calc.form.novaTurma}, no valor de ${formatMoney(calc.solutionSuggestion.paidMaterials)}, se fosse realizada com inclus\u00e3o obrigat\u00f3ria de ${calc.solutionSuggestion.addedItemsLabel}, mesmo que esse item apare\u00e7a como opcional na loja.`;
+}
+
+function buildSimulatedSolutionDifferenceSentence(calc) {
+  if (!calc.solutionSuggestion) {
+    return "";
+  }
+
+  if (calc.solutionSuggestion.hasAlternativeChoice) {
+    return `O valor final dependerá do item escolhido: ${calc.solutionSuggestion.alternativesOutcomeText}.`;
+  }
+
+  if (calc.solutionSuggestion.difference > 0) {
+    return `Nesse cen\u00e1rio, haver\u00e1 diferen\u00e7a de ${formatMoney(calc.solutionSuggestion.difference)} a pagar para concluir a nova compra.`;
+  }
+
+  return "Nesse cen\u00e1rio, n\u00e3o haver\u00e1 diferen\u00e7a a pagar para concluir a nova compra.";
+}
+
+function buildSimulatedSolutionGuaranteeParagraph(calc, audience = "generic") {
+  if (!calc.solutionSuggestion) {
+    return "";
+  }
+
+  const subject =
+    audience === "guardian"
+      ? "voc\u00ea realmente far\u00e1 essa nova compra"
+      : "o respons\u00e1vel realmente far\u00e1 essa nova compra";
+
+  if (calc.solutionSuggestion.hasAlternativeChoice) {
+    return `Só podemos seguir com a troca se houver confirmação de que ${subject} com um desses itens incluído: ${calc.solutionSuggestion.alternativesLabel}. Sem essa garantia, o correto é seguir com cancelamento e reembolso.`;
+  }
+
+  return `S\u00f3 podemos seguir com a troca se houver confirma\u00e7\u00e3o de que ${subject} com ${calc.solutionSuggestion.addedItemsLabel} inclu\u00eddo. Sem essa garantia, o correto \u00e9 seguir com cancelamento e reembolso.`;
+}
+
+function buildSimulatedSolutionActionLines(calc, audience = "generic") {
+  if (!calc.solutionSuggestion) {
+    return [];
+  }
+
+  const itemsLabel = calc.solutionSuggestion.hasAlternativeChoice
+    ? `um destes itens: ${calc.solutionSuggestion.alternativesLabel}`
+    : calc.solutionSuggestion.addedItemsLabel;
+  const hasAlternativeChoice = calc.solutionSuggestion.hasAlternativeChoice;
+  const solutionDifference = calc.solutionSuggestion.difference;
+  const alternativeDifferenceNote = hasAlternativeChoice
+    ? ` O valor complementar dependerá do item escolhido: ${calc.solutionSuggestion.alternativesOutcomeText}.`
+    : "";
+  const purchaseLine =
+    shouldShowVoucherExchangeGuidance(calc)
+      ? hasAlternativeChoice
+        ? `Realizar a nova compra do material correto, com inclusão obrigatória de ${itemsLabel}, utilizando o novo voucher fixo que será criado por nossa equipe.${alternativeDifferenceNote}`
+        : solutionDifference > 0
+        ? `Realizar a nova compra do material correto, com inclus\u00e3o obrigat\u00f3ria de ${itemsLabel}, utilizando o novo voucher fixo que ser\u00e1 criado por nossa equipe. Ap\u00f3s a aplica\u00e7\u00e3o do voucher, ser\u00e1 necess\u00e1rio efetuar o pagamento complementar de ${formatMoney(solutionDifference)}.`
+        : `Realizar a nova compra do material correto, com inclus\u00e3o obrigat\u00f3ria de ${itemsLabel}, utilizando o novo voucher fixo que ser\u00e1 criado por nossa equipe.`
+      : hasAlternativeChoice
+        ? `Realizar a nova compra do material correto, com inclusão obrigatória de ${itemsLabel}.${alternativeDifferenceNote}`
+        : solutionDifference > 0
+        ? `Realizar a nova compra do material correto, com inclus\u00e3o obrigat\u00f3ria de ${itemsLabel} e pagamento complementar de ${formatMoney(solutionDifference)}.`
+        : `Realizar a nova compra do material correto, com inclus\u00e3o obrigat\u00f3ria de ${itemsLabel}.`;
+
+  if (audience === "guardian") {
+    return [
+      "Aguardar a escola ajustar a matr\u00edcula na turma correta na LEX, liberando novamente o material na Maple Bear Store.",
+      "Acessar a loja com o mesmo CPF utilizado na compra principal.",
+      purchaseLine
+    ];
+  }
+
+  return [
+    "Ajustar a matr\u00edcula do(a) aluno(a) na turma correta na LEX, para que o material seja liberado novamente na Maple Bear Store.",
+    "Orientar o respons\u00e1vel a acessar a loja com o mesmo CPF utilizado na compra principal.",
+    purchaseLine
+  ];
+}
+
+function buildSimulatedSolutionSchoolMessage(calc) {
+  return joinMessageBlocks([
+    `A troca n\u00e3o poder\u00e1 seguir neste caso. ${buildMessageValueIntro(calc, "cancellation")}`,
+    buildCancellationReasonParagraph(calc, "school"),
+    `Existe, por\u00e9m, uma solu\u00e7\u00e3o poss\u00edvel para evitar cancelamento e reembolso. ${buildSimulatedSolutionValueIntro(calc)} ${buildSimulatedSolutionDifferenceSentence(calc)}`,
+    buildSimulatedSolutionGuaranteeParagraph(calc, "school"),
+    "Se essa condi\u00e7\u00e3o for confirmada, o fluxo poder\u00e1 seguir da seguinte forma:",
+    buildExchangeCreditReleaseParagraph(),
+    buildExchangeLexHoldParagraph("school"),
+    buildExchangeLexRiskParagraph(),
+    buildExchangeWaitParagraph("school"),
+    `Depois das 24 horas, a escola dever\u00e1:\n${buildBulletList(buildSimulatedSolutionActionLines(calc, "school"))}`,
+    buildVoucherParagraph(calc)
+  ]);
+}
+
+function buildSimulatedSolutionGuardianMessage(calc) {
+  return joinMessageBlocks([
+    `A troca n\u00e3o poder\u00e1 seguir neste caso. ${buildMessageValueIntro(calc, "cancellation")}`,
+    buildCancellationReasonParagraph(calc, "guardian"),
+    `Existe, por\u00e9m, uma solu\u00e7\u00e3o poss\u00edvel para evitar cancelamento e reembolso. ${buildSimulatedSolutionValueIntro(calc)} ${buildSimulatedSolutionDifferenceSentence(calc)}`,
+    buildSimulatedSolutionGuaranteeParagraph(calc, "guardian"),
+    "Se essa condi\u00e7\u00e3o for confirmada, o fluxo poder\u00e1 seguir da seguinte forma:",
+    buildExchangeCreditReleaseParagraph(),
+    buildExchangeLexHoldParagraph("guardian"),
+    buildExchangeLexRiskParagraph(),
+    buildExchangeWaitParagraph("guardian"),
+    `Depois das 24 horas, ser\u00e1 necess\u00e1rio:\n${buildBulletList(buildSimulatedSolutionActionLines(calc, "guardian"))}`,
+    buildVoucherParagraph(calc)
+  ]);
+}
+
+function buildSimulatedSolutionGuardianSchoolContactMessage(calc) {
+  if (!calc.solutionSuggestion) {
+    return "";
+  }
+
+  return joinMessageBlocks([
+    "Orientamos a enviar a seguinte mensagem \u00e0 escola:",
+    `Ol\u00e1! A solu\u00e7\u00e3o da troca de material j\u00e1 foi alinhada com o time SAF. A compra correta do(a) aluno(a) ser\u00e1 para a turma ${calc.form.novaTurma}.`,
+    "Depois que a troca for efetivada e ap\u00f3s o prazo de 24 horas, a escola precisa ajustar a matr\u00edcula do(a) aluno(a) na LEX para liberar novamente o cr\u00e9dito e o material correto para a nova compra.",
+    `A escola deve:\n${buildBulletList([
+      "acessar a LEX",
+      "abrir a aba Cursos",
+      `localizar a turma ${calc.form.novaTurma}`,
+      "realizar a nova matr\u00edcula do(a) aluno(a) nessa turma"
+    ])}`,
+    "Ap\u00f3s esse ajuste, o cr\u00e9dito e o material correto ficar\u00e3o liberados na loja para a nova compra."
+  ]);
+}
+
+function applySimulatedSolutionMessaging(calc, outputs) {
+  if (!calc.isSolutionSimulated || !calc.solutionSuggestion) {
+    return outputs;
+  }
+
+  return {
+    ...outputs,
+    schoolMessage: buildSimulatedSolutionSchoolMessage(calc),
+    guardianMessage: buildSimulatedSolutionGuardianMessage(calc),
+    guardianSchoolContactMessage: buildSimulatedSolutionGuardianSchoolContactMessage(calc)
   };
 }
 
@@ -913,12 +1120,16 @@ export function calculateExchange(form, catalog) {
     form,
     totalAvailable
   });
+  const isSolutionSimulated = Boolean(form.simulateSolutionMessages) && Boolean(solutionSuggestion);
   const calcWithSuggestion = {
     ...baseCalc,
     solutionSuggestion,
-    acceptedSolutionRequirement
+    acceptedSolutionRequirement,
+    isSolutionSimulated
   };
-  const finalOutputs = applyAcceptedSolutionMessaging(calcWithSuggestion, {
+  const finalOutputs = applyAcceptedSolutionMessaging(
+    calcWithSuggestion,
+    applySimulatedSolutionMessaging(calcWithSuggestion, {
     reason: buildReason(calcWithSuggestion),
     quickSummary: buildQuickOutcome(calcWithSuggestion),
     ruleUsed: buildRuleUsed(calcWithSuggestion),
@@ -927,7 +1138,8 @@ export function calculateExchange(form, catalog) {
     schoolMessage: buildSchoolMessage(calcWithSuggestion),
     guardianMessage: buildGuardianMessage(calcWithSuggestion),
     guardianSchoolContactMessage: buildGuardianSchoolContactMessage(calcWithSuggestion)
-  });
+    })
+  );
 
   return {
     ...calcWithSuggestion,

@@ -2,26 +2,26 @@ import { formatMoney } from "../../lib/formatters";
 
 function buildFinalReinforcement(calc) {
   if (!calc.ready) {
-    return "Complete a simulação.";
+    return "Complete a simulacao.";
   }
 
   if (calc.requiresCancellationForJuros) {
-    return "A troca não pode seguir neste momento, pois há juros vinculados ao pedido principal.";
+    return "A troca n\u00e3o pode seguir neste momento, pois h\u00e1 juros vinculados ao pedido principal.";
   }
 
   if (!calc.canExchange) {
-    return "A troca não pode seguir, pois haveria saldo remanescente na loja.";
+    return "A troca n\u00e3o pode seguir, pois haveria saldo remanescente na loja.";
   }
 
   if (calc.acceptedSolutionRequirement) {
-    return `A troca pode seguir, mas somente com a compra obrigatória de ${calc.acceptedSolutionRequirement.itemsLabel}.`;
+    return `A troca pode seguir, mas somente com a compra obrigat\u00f3ria de ${calc.acceptedSolutionRequirement.itemsLabel}.`;
   }
 
   if (calc.difference > 0) {
-    return "Troca liberada com diferença a pagar.";
+    return "Troca liberada com diferen\u00e7a a pagar.";
   }
 
-  return "Troca liberada sem diferença a pagar.";
+  return "Troca liberada sem diferen\u00e7a a pagar.";
 }
 
 function buildCompositionSummary(breakdown) {
@@ -67,10 +67,14 @@ function buildSolutionText(solutionSuggestion) {
     return "";
   }
 
+  if (solutionSuggestion.hasAlternativeChoice) {
+    return `Se incluir ${solutionSuggestion.alternativesLabel} na nova compra, o saldo remanescente deixa de existir e a troca pode seguir. O valor final dependerá do item escolhido: ${solutionSuggestion.alternativesOutcomeText}.`;
+  }
+
   const outcomeText =
     solutionSuggestion.difference > 0
-      ? `a troca pode seguir com diferença de ${formatMoney(solutionSuggestion.difference)} a pagar.`
-      : "a troca pode seguir sem diferença a pagar.";
+      ? `a troca pode seguir com diferen\u00e7a de ${formatMoney(solutionSuggestion.difference)} a pagar.`
+      : "a troca pode seguir sem diferen\u00e7a a pagar.";
 
   return `Se incluir ${solutionSuggestion.addedItemsLabel} na nova compra, o saldo remanescente deixa de existir e ${outcomeText}`;
 }
@@ -81,29 +85,25 @@ function buildAppliedSolutionText(calc) {
   }
 
   if (calc.difference > 0) {
-    return `Seguiremos com a troca somente se a nova compra incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareça como opcional na loja. Nesse cenário, a diferença será de ${formatMoney(calc.difference)} a pagar.`;
+    return `Seguiremos com a troca somente se a nova compra incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apare\u00e7a como opcional na loja. Nesse cen\u00e1rio, a diferen\u00e7a ser\u00e1 de ${formatMoney(calc.difference)} a pagar.`;
   }
 
-  return `Seguiremos com a troca somente se a nova compra incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apareça como opcional na loja.`;
+  return `Seguiremos com a troca somente se a nova compra incluir obrigatoriamente ${calc.acceptedSolutionRequirement.itemsLabel}, mesmo que esse item apare\u00e7a como opcional na loja.`;
 }
 
 export default function DetailOverview({ calc, onAcceptSolution }) {
   const isBlocked = !calc.canExchange;
-  const actionLabel = calc.canExchange
-    ? calc.difference > 0
-      ? "Diferença a pagar"
-      : "Mesmo valor"
-    : "Saldo que sobraria na loja";
+  const actionLabel = calc.canExchange ? (calc.difference > 0 ? "Diferen\u00e7a a pagar" : "Mesmo valor") : "Saldo que sobraria na loja";
   const actionValue = calc.canExchange
     ? calc.difference > 0
       ? formatMoney(calc.difference)
-      : "Sem diferença"
+      : "Sem diferen\u00e7a"
     : formatMoney(calc.leftover);
   const finalReinforcement = buildFinalReinforcement(calc);
   const highlightLabel = calc.requiresCancellationForJuros
     ? "Juros vinculados ao pedido"
     : calc.canExchange
-      ? "Crédito disponível na loja"
+      ? "Cr\u00e9dito dispon\u00edvel na loja"
       : "Saldo remanescente na loja";
   const highlightValue = calc.requiresCancellationForJuros
     ? "Sim"
@@ -138,19 +138,28 @@ export default function DetailOverview({ calc, onAcceptSolution }) {
     });
   } else if (calc.requiresCancellationForJuros && calc.difference > 0) {
     financialItems.push({
-      label: "Diferença após a nova compra",
+      label: "Diferen\u00e7a ap\u00f3s a nova compra",
       value: formatMoney(calc.difference)
     });
   }
 
   const solutionText = buildSolutionText(calc.solutionSuggestion);
   const appliedSolutionText = buildAppliedSolutionText(calc);
+  const solutionHeading = appliedSolutionText
+    ? "Solu\u00e7\u00e3o aplicada"
+    : calc.isSolutionSimulated
+      ? "Simula\u00e7\u00e3o ativa"
+      : "Solu\u00e7\u00e3o poss\u00edvel";
+  const solutionButtonLabel = calc.isSolutionSimulated ? "Desativar simula\u00e7\u00e3o" : "Simular solu\u00e7\u00e3o";
+  const solutionButtonClass = calc.isSolutionSimulated
+    ? "message-card__copy-button detail-overview__solution-button is-copied"
+    : "message-card__copy-button detail-overview__solution-button";
 
   return (
     <div className="detail-overview">
       <section className="detail-overview__section detail-overview__section--status">
         <div className={isBlocked ? "detail-overview__status is-blocked" : "detail-overview__status"}>
-          <strong>{isBlocked ? "NÃO PODE TROCAR" : "PODE TROCAR"}</strong>
+          <strong>{isBlocked ? "N\u00c3O PODE TROCAR" : "PODE TROCAR"}</strong>
         </div>
       </section>
 
@@ -180,11 +189,11 @@ export default function DetailOverview({ calc, onAcceptSolution }) {
 
         {solutionText || appliedSolutionText ? (
           <div className={`detail-overview__solution ${appliedSolutionText ? "is-applied" : ""}`.trim()}>
-            <span>{appliedSolutionText ? "Solução aplicada" : "Solução possível"}</span>
+            <span>{solutionHeading}</span>
             <p>{appliedSolutionText || solutionText}</p>
             {solutionText && !appliedSolutionText ? (
-              <button className="copy-button detail-overview__solution-button" type="button" onClick={onAcceptSolution}>
-                Aceitar solução
+              <button className={solutionButtonClass} type="button" onClick={onAcceptSolution}>
+                {solutionButtonLabel}
               </button>
             ) : null}
           </div>
