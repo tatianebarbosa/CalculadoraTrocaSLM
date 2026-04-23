@@ -451,7 +451,6 @@ export default function App() {
 
   return (
     <div className="page-frame" id="top">
-      <div className="top-strip" aria-hidden="true" />
       <div className="app-shell">
         <header className="site-header">
           <div className="site-header__inner">

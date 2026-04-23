@@ -74,10 +74,6 @@ select {
   background: var(--bg);
 }
 
-.top-strip {
-  display: none;
-}
-
 .app-shell {
   --shell-width: min(var(--shell-max), calc(100vw - var(--shell-gap)));
   width: var(--shell-width);
@@ -3027,12 +3023,6 @@ body {
   overflow-x: clip;
 }
 
-.top-strip {
-  display: block;
-  height: 10px;
-  background: linear-gradient(90deg, #27354d 0%, #1d2c42 100%);
-}
-
 .app-shell {
   --workspace-content-max: 1520px;
   width: 100%;
@@ -5129,10 +5119,6 @@ input[type="password"]:focus,
 }
 
 @media (max-width: 720px) {
-  .top-strip {
-    height: 8px;
-  }
-
   html {
     font-size: 64%;
   }
