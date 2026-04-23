@@ -154,6 +154,10 @@ export default function DetailOverview({ calc, onAcceptSolution }) {
   const solutionButtonClass = calc.isSolutionSimulated
     ? "message-card__copy-button detail-overview__solution-button is-copied"
     : "message-card__copy-button detail-overview__solution-button";
+  const detailsSectionClass =
+    solutionText || appliedSolutionText
+      ? "detail-overview__section detail-overview__section--details is-pinned"
+      : "detail-overview__section detail-overview__section--details";
 
   return (
     <div className="detail-overview">
@@ -200,7 +204,7 @@ export default function DetailOverview({ calc, onAcceptSolution }) {
         ) : null}
       </section>
 
-      <section className="detail-overview__section detail-overview__section--details">
+      <section className={detailsSectionClass}>
         <p className={isBlocked ? "detail-overview__footnote is-blocked" : "detail-overview__footnote"}>
           {finalReinforcement}
         </p>

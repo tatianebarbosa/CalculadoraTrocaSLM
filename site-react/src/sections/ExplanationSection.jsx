@@ -5,6 +5,7 @@ export default function ExplanationSection({ calc }) {
         <div>
           <p className="section-title__eyebrow">Leitura da análise</p>
           <h3>Motivo, regra e resumo</h3>
+          <p className="section-title__summary">Visão curta para validar o racional da troca e orientar o próximo passo.</p>
         </div>
       </div>
 

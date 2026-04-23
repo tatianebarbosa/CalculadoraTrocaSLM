@@ -8,6 +8,7 @@ export default function ResultSection({ calc, onAcceptSolution }) {
         <div>
           <p className="section-title__eyebrow">Decisão operacional</p>
           <h3>Resultado da troca</h3>
+          <p className="section-title__summary">Leia a decisão, o impacto financeiro e a solução obrigatória quando houver.</p>
         </div>
       </div>
 

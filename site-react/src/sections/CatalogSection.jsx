@@ -24,6 +24,7 @@ export default function CatalogSection({
         <div>
           <p className="section-title__eyebrow">Base interna</p>
           <h3 className="section-title__subheading">Valores por turma</h3>
+          <p className="section-title__summary">Referência de valores usada pela análise para cada composição de material.</p>
         </div>
 
         {canEditCatalog && !isCatalogUnlocked ? (

@@ -81,7 +81,8 @@ export default function PrincipalFormSection({
       <div className="section-title">
         <div>
           <p className="section-title__eyebrow">Pedido principal</p>
-          <h3>Entrada do pedido principal</h3>
+          <h3>Dados do pedido principal</h3>
+          <p className="section-title__summary">Defina a base financeira do pedido original para calcular o crédito disponível.</p>
         </div>
       </div>
 
@@ -119,7 +120,7 @@ export default function PrincipalFormSection({
 
         <Field
           className="field--full"
-          label="Valor pago com desconto"
+          label="Valor efetivamente pago"
           hint="Preencha este campo com o valor efetivamente pago quando o pedido tiver sido realizado com voucher."
         >
           <input
@@ -133,9 +134,9 @@ export default function PrincipalFormSection({
           />
         </Field>
 
-        <Field className="field--full" label="Juros aplicados?">
+        <Field className="field--full" label="Pedido com juros?">
           <ToggleGroup
-            ariaLabel="Juros aplicados no pedido principal"
+            ariaLabel="Pedido principal com juros"
             value={form.principalHasJuros}
             onChange={(value) => updateForm("principalHasJuros", value)}
             options={BOOLEAN_OPTIONS}

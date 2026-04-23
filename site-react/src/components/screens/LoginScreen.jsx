@@ -15,7 +15,7 @@ export default function LoginScreen({ logoUrl, accessCode, onAccessCodeChange, o
               <span className="page-intro__title-lock">Troca de Material</span>
             </h1>
             <p className="page-intro__subtitle">
-              Ferramenta interna para analisar a troca de material entre o pedido principal e a nova compra.
+              Ferramenta interna para padronizar análises de troca de SLM, reduzir inconsistências e orientar a decisão operacional.
             </p>
           </section>
 
