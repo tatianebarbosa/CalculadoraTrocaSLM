@@ -82,7 +82,6 @@ export default function PrincipalFormSection({
         <div>
           <p className="section-title__eyebrow">Pedido principal</p>
           <h3>Dados do pedido principal</h3>
-          <p className="section-title__summary">Defina a base financeira do pedido original para calcular o crédito disponível.</p>
         </div>
       </div>
 

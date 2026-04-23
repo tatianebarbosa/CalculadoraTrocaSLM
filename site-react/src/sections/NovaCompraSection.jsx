@@ -47,7 +47,6 @@ export default function NovaCompraSection({
         <div>
           <p className="section-title__eyebrow">Nova compra</p>
           <h3>Dados da nova compra</h3>
-          <p className="section-title__summary">Monte a nova composição e acompanhe o impacto final da troca.</p>
         </div>
       </div>
 
