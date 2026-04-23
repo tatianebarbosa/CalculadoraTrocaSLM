@@ -546,7 +546,6 @@ export default function App() {
                   <div>
                     <p className="section-title__eyebrow">Regras da análise</p>
                     <h3>Critérios operacionais</h3>
-                    <p className="section-title__summary">Condições que liberam, bloqueiam ou exigem ajuste antes de seguir com a troca.</p>
                   </div>
                 </div>
 

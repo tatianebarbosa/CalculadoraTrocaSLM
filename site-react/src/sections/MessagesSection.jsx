@@ -16,7 +16,6 @@ export default function MessagesSection({ calc, copiedKey, onCopy }) {
         <div>
           <p className="section-title__eyebrow">Mensagens prontas</p>
           <h3>Copiar e enviar</h3>
-          <p className="section-title__summary">Comunicação final pronta para uso, sem retrabalho na operação.</p>
         </div>
       </div>
 
